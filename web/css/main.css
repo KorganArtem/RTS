@@ -7,6 +7,15 @@ and open the template in the editor.
     Created on : 04.08.2017, 14:04:25
     Author     : korgan
 */
+.closeModButt{
+    position: absolute;
+    display: block;
+    margin-right: 10px;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    font-size: 20px;
+}
 .clickable{
     cursor: pointer;
 }

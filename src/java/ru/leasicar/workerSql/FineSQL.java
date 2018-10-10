@@ -80,7 +80,7 @@ public class FineSQL {
             JsonObject oneFine = new JsonObject();
             oneFine.addProperty("carNumber", fineListRs.getString("carNumber"));
             oneFine.addProperty("driver_lastname", fineListRs.getString("driver_lastname"));
-            oneFine.addProperty("bill_id", "<div class='billid' id='"+fineListRs.getString("bill_id")+"'>"+fineListRs.getString("bill_id")+"</div>");
+            oneFine.addProperty("bill_id", fineListRs.getString("bill_id"));
             oneFine.addProperty("gis_status", fineListRs.getString("gis_status"));
             oneFine.addProperty("pay_bill_date", fineListRs.getString("pay_bill_date"));
             oneFine.addProperty("last_bill_date" , fineListRs.getString("last_bill_date"));
@@ -105,7 +105,7 @@ public class FineSQL {
     }
     public JsonObject getOneFine(String bill_id) throws SQLException{
         Statement fineSt = con.createStatement();
-        ResultSet fineRs = fineSt.executeQuery("SELECT finecar.*, drivers.driver_lastname FROM drivers "
+        ResultSet fineRs = fineSt.executeQuery("SELECT finecar.*, drivers.driver_lastname , drivers.driver_firstname FROM drivers "
                 + "RIGHT JOIN (SELECT `offenses`.*, cars.number as carNumber FROM `offenses`  " +
                 "INNER JOIN cars \n" +
                 "ON offenses.carId=cars.id \n" +
@@ -115,6 +115,7 @@ public class FineSQL {
         if(fineRs.next()){
             oneFine.addProperty("carNumber", fineRs.getString("carNumber"));
             oneFine.addProperty("driver_lastname", fineRs.getString("driver_lastname"));
+            oneFine.addProperty("driver_firstname", fineRs.getString("driver_firstname"));
             oneFine.addProperty("bill_id", fineRs.getString("bill_id"));
             oneFine.addProperty("gis_status", fineRs.getString("gis_status"));
             oneFine.addProperty("pay_bill_date", fineRs.getString("pay_bill_date"));
@@ -132,5 +133,9 @@ public class FineSQL {
             oneFine.addProperty("driverId", fineRs.getString("driverId"));
         }
         return oneFine;
+    }
+    public void setDriver(int driverId, String bill_id) throws SQLException{
+        Statement st = con.createStatement();
+        st.execute("UPDATE offenses SET driverId="+driverId+" WHERE bill_id='"+ bill_id +"'");
     }
 }

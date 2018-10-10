@@ -22,8 +22,12 @@
     }   
     FineSQL fsql = new FineSQL();
     JsonObject  fineData =  fsql.getOneFine(request.getParameter("bill_id"));
-System.out.println(fineData.get("driver_lastname"));
-System.out.println(fineData.get("gis_discount_uptodate"));
+    String driverName = "";
+    if(fineData.get("driverId").getAsInt()>0) {
+        driverName = fineData.get("driver_lastname").getAsString()+" "+fineData.get("driver_firstname").getAsString();
+    }
+    else
+        driverName = "Неизвестно";
 %>
 <div>
     <label>Номер постановления </label>
@@ -72,6 +76,11 @@ System.out.println(fineData.get("gis_discount_uptodate"));
     <label>Номер ТС </label>
     <span><%= fineData.get("carNumber").getAsString() %></span>
 </div>
+<div>
+    <label>Водитель</label>
+    <span><%= driverName %></span>
+    <span id="setGuilty"> <img src="img/writing.png"</span>
+</div>
 <% 
     int userId = ac.getUserId(request.getSession().getId());
     System.out.println(userId);
@@ -79,11 +88,13 @@ System.out.println(fineData.get("gis_discount_uptodate"));
         DriverSQL dsql = new DriverSQL();
         String driverList=dsql.listDriverForSelect();
         %>
-    <input id="setGuilty" type="button" value="Назначить козла отпущения"/>
+    
     <div id="guiltyList" style="display: none">
-        <select>
+        <input id="bill_id" type="text" disabled value="<%= fineData.get("bill_id").getAsString() %>" style="display: none"/>
+        <select id="guilty">
             <%= driverList %>
         </select>
+        <input id="saveGuilty" type="button" value="Сохранить"/>
     </div>
 <%
     }
@@ -91,5 +102,8 @@ System.out.println(fineData.get("gis_discount_uptodate"));
 <script>
     $("#setGuilty").click(function(){
         $("#guiltyList").css('display', 'block');
+    });
+    $("#saveGuilty").click(function(){
+        editFineSend($("#bill_id").val(), $("#guilty").val())
     });
 </script>

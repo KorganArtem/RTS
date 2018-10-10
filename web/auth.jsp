@@ -23,7 +23,7 @@
                     <!--input type="hidden" name="_token" value="1TnfSZJnszskC8caL6fwcNIExcNa8E77zgc2B7Pp"-->
                     <div class="row">
                         <div class="col-12">
-                            <div class="logo"><!--img src="https://gettpartner.ru/theme/img/logo1.png" alt="RTS" width="100"/--><h1>RTS</h1></div>
+                            <div class="logo"><img src="img/RTS_log.png" alt="RTS" width="100"/></div>
                         </div>
                     </div>
                     <div class="row">

@@ -96,8 +96,10 @@
         </div>
         <div id='editDriver'></div>
     </div>
-    <div id='modal_form'><!-- Сaмo oкнo --> 
-        <!-- Тут любoе сoдержимoе -->
+    <div id='modal_form'>
+        <div class="closeModButt" onClick="closeModWind()">x</div>
+        <div id="modalConteiner">
+        </div>
     </div>
     <div id='overlay'>   
     </div>

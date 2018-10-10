@@ -314,7 +314,7 @@ $('#mainProp').click(function (){
 /////                             Show fine list                           /////
 ////////////////////////////////////////////////////////////////////////////////
 var tableFine;
-$('#fineList').click(function (){
+function showFine(){
     $('.itemDisplay').css('display', 'none');
     $('.itemMenu').attr('disabled', false);
     $('#mainProp').attr('disabled', true);
@@ -376,12 +376,26 @@ $('#fineList').click(function (){
             alert('Error in geting car list!'+msg);
         }
     });
+}
+$('#fineList').click(function(){
+    showFine();
 });
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////       штрафы     //////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
 function workWithFine(){
 //    $(".billid").click(function(){
 //        $("#"+this.id).html($("#"+this.id).html()+"<br>sfsdf");
 //    });
-    $('#tableFine tbody').on( 'click', 'tr', function (indexes) {
+    $('#tableFine tbody').on( 'dblclick', 'tr', function (indexes) {
         
         var bill_id = tableFine.row( this );
         if ( $(this).hasClass('selected') ) {
@@ -392,9 +406,9 @@ function workWithFine(){
             $(this).addClass('selected');
         }
 //        tableFine.row( this ).data().bill_id="sdf";
-//        console.log(bill_id.data().bill_id);
+        console.log(tableFine.row( this ).data().bill_id);
         
-        editFineShow(bill_id);
+        editFineShow(bill_id.data().bill_id);
     } );
 }
 function editFineShow(bill_id){
@@ -403,11 +417,26 @@ function editFineShow(bill_id){
         url: 'fineEdit.jsp',
         data: 'bill_id='+bill_id,
         success: function(data){
-            $('#modal_form').html(data);
+            $('#modalConteiner').html(data);
             openModWind(470, 400);
         }
     });
 }
+function editFineSend(bill_id, driverId){
+    $.ajax({
+        type: 'POST',
+        url: 'FineProcces',
+        data: 'bill_id='+bill_id+'&driverId='+driverId,
+        success: function(data){
+            alert('Изменения сохранены');
+            editFineShow(bill_id);
+            showFine(); 
+        }
+    });
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /////                             Show add car form                        /////
 ////////////////////////////////////////////////////////////////////////////////
