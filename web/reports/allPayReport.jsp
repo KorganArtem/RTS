@@ -4,6 +4,7 @@
     Author     : korgan
 --%>
 
+<%@page import="ru.leasicar.workerSql.PaySQL"%>
 <%@page import="ru.leasicar.workerSql.UserSQL"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -21,9 +22,11 @@ if(!ac.isLogIn(request.getSession().getId())){%>
     SimpleDateFormat dtf = new SimpleDateFormat("yyyy-MM-dd");
 UserSQL usql = new UserSQL();
 Date dt = new Date();
+PaySQL psql = new PaySQL();
 String dateNow =dtf.format(dt);
 String dateWeek =dtf.format(dt.getTime()-604800000);
 String selectUser = usql.getUserForSelect();
+String selectSourcePay = psql.paySourceSelect();
 %>
 <html>
     <head>
@@ -42,16 +45,20 @@ String selectUser = usql.getUserForSelect();
                 <option value="0">Все операторы</option>
                 <%= selectUser %>
             </select>
+            <select id="paySource">
+                <option value="0">Источник</option>
+                <%= selectSourcePay %>
+            </select>
             <input id="getDriverReport" type="button" value="Показать" />
         </div>
         <div id="reportPlace">
         </div>
         <script> 
-            function getDriverReport(begin, end, operators){
+            function getReport(begin, end, operators, paySource){
                 $.ajax({
                     type: 'POST',
-                    url: '/AllPayReport',
-                    data: 'begin='+begin+'&end='+end+'&operatorId='+operators,
+                    url: '../AllPayReport',
+                    data: 'begin='+begin+'&end='+end+'&operatorId='+operators+'&paySource='+paySource,
                     success: function(data){
                         $("#reportPlace").html(data);
                         $("#driverReport").DataTable({paging: false});
@@ -62,11 +69,11 @@ String selectUser = usql.getUserForSelect();
                 });
             }
             $(document).ready(function (){
-                getDriverReport($("#beginPeriod").val(), $("#endPeriod").val(), $("#operators").val());
+                getReport($("#beginPeriod").val(), $("#endPeriod").val(), $("#operators").val(), $("#paySource").val());
             });
             $("#getDriverReport").click(function (){
                 alert("Получить");
-                getDriverReport($("#beginPeriod").val(), $("#endPeriod").val(), $("#operators").val());
+                getReport($("#beginPeriod").val(), $("#endPeriod").val(), $("#operators").val(), $("#paySource").val());
             })
         </script>
     </body>

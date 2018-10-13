@@ -57,7 +57,12 @@ public class AllPayReport extends HttpServlet {
                     System.out.println("operator ID is not passed! "+request.getParameter("operatorId"));
                 }
                 ReportSQL rsql = new ReportSQL();
-                Map payList = new TreeMap<>(rsql.getAllPayList(operatorId, begin, end));
+                Map report;
+                if(request.getParameter("paySource").equals("0"))
+                    report = rsql.getAllPayList(operatorId, begin, end);
+                else
+                    report = rsql.getAllPayList(operatorId, begin, end, request.getParameter("paySource"));
+                Map payList = new TreeMap<>(report);
                 out.println("<table id='driverReport' class='report'>");
                 out.println("<thead><tr><td>Дата</td><td>Тип</td><td>Источник</td><td>Сумма</td><td>Оператор</td><td>Водитель</td></tr></thead>");
                 Iterator<Map.Entry<String, Map>> entries = payList.entrySet().iterator();

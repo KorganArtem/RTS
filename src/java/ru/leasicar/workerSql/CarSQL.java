@@ -179,9 +179,11 @@ public class CarSQL {
     public String getFreeCarList() throws SQLException{
         String carData = "<option value='0'>Выбрать</option>";
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM `cars` WHERE `id` not in (SELECT `carId` FROM `drivers` WHERE `driver_deleted`=0)");
+        ResultSet rs = st.executeQuery("SELECT zap1.*, models.* FROM models \n" +
+                            "INNER JOIN (SELECT * FROM `cars` WHERE `id` not in (SELECT `carId` FROM `drivers` WHERE `driver_deleted`=0) ORDER BY number) zap1" +
+                            " ON zap1.model=models.modelId");
         while(rs.next()){
-            carData = carData +"<option value='"+rs.getString("id")+"'>"+rs.getString("number")+"</option>";
+            carData = carData +"<option value='"+rs.getString("id")+"'>"+rs.getString("number")+"("+rs.getString("modelName")+")</option>";
         }
         return carData;
     }
@@ -193,13 +195,14 @@ public class CarSQL {
                 + "WHERE `id` in (SELECT carId FROM drivers WHERE driver_id= "+driverId+")");
         if(carentCarRes.next())
             currentCarId=carentCarRes.getInt("id");
-        ResultSet rs = st.executeQuery("SELECT * FROM `cars` WHERE `id` not in (SELECT `carId` FROM `drivers` WHERE `driver_deleted`=0) or  "
-                + " `id` in (SELECT `carId` FROM `drivers` WHERE `driver_id`="+driverId+")");//"SELECT *  FROM `cars` WHERE `driverId`= 0 OR `driverId`="+driverId
+        ResultSet rs = st.executeQuery("SELECT zap1.*, models.* FROM models \n" +
+                            "INNER JOIN (SELECT * FROM `cars` WHERE `id` not in (SELECT `carId` FROM `drivers` WHERE `driver_deleted`=0) or `id` in (SELECT `carId` FROM `drivers` WHERE `driver_id`="+driverId+") ORDER BY number) zap1 " +
+                            "ON zap1.model=models.modelId");
         while(rs.next()){
             String selected = "";
             if(rs.getInt("id")==currentCarId)
                 selected="selected";
-            carData = carData +"<option value='"+rs.getString("id")+"' "+selected+">"+rs.getString("model")+"("+rs.getString("number")+")</option>";
+            carData = carData +"<option value='"+rs.getString("id")+"' "+selected+">"+rs.getString("number")+"("+rs.getString("modelName")+")</option>";
         }
         return carData;
     }

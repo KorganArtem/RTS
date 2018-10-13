@@ -406,7 +406,7 @@ public class DriverSQL {
     public String listDriverForSelect() throws SQLException{
         String driverList = "";
         Statement listDriverSt = con.createStatement();
-        ResultSet listDriverRs = listDriverSt.executeQuery("SELECT * FROM drivers");
+        ResultSet listDriverRs = listDriverSt.executeQuery("SELECT * FROM `drivers` ORDER BY `driver_lastname`");
         while(listDriverRs.next()){
             driverList = driverList +"<option value='"+
                     listDriverRs.getString("driver_id")+"'>"
