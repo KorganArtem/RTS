@@ -208,7 +208,12 @@
                 <input type='text' name="driverId" id='driverId' value='<%= dataDriver.get("driver_id") %>' />
                 <input type='text' name="changeSchedule" id='changeCar' value="0"/>
             </div> 
-	</form>	
+	</form>
+                <div>
+                     <div onclick="downloadDogowor(<%= request.getParameter("driverId") %>)">Договор</div>
+                     <div onclick="downloadAktvidachi(<%= request.getParameter("driverId") %>)">Акт выдачи</div>
+                     <div onclick="downloadAktpriema(<%= request.getParameter("driverId") %>)">Акт приема</div>
+                </div>
     </div>
     </div>
     <img id="bottom" src="bottom.png" alt="">
