@@ -79,7 +79,7 @@ function takePay(driverId){
         type: 'POST',
         url: 'takePay.jsp',
         success: function(data){
-            $('#modal_form').html(data);
+            $('#modalConteiner').html(data);
             $('#typePay').val('1');
             $('#takePayDriverId').val(driverId);
             $('#takePayDriverName').val($('#listDriverFirstName'+driverId).html()
@@ -125,7 +125,7 @@ function editDriver(driverId){
         url: 'editDriverNew.jsp',
         data: 'driverId='+driverId,
         success: function(data){
-            $('#modal_form').html(data);
+            $('#modalConteiner').html(data);
             openModWind(470, 500);
         }
     });
@@ -227,7 +227,7 @@ function addDeposit(driverId){
         type: 'POST',
         url: 'takePay.jsp',
         success: function(data){
-            $('#modal_form').html(data);
+            $('#modalConteiner').html(data);
             $('#typePay').val('3');
             $('#takePayDriverId').val(driverId);
             $('#takePayDriverName').val($('#listDriverFirstName'+driverId).html()
@@ -417,6 +417,7 @@ function editFineShow(bill_id){
         url: 'fineEdit.jsp',
         data: 'bill_id='+bill_id,
         success: function(data){
+            $('#modalConteiner').html('');
             $('#modalConteiner').html(data);
             openModWind(470, 400);
         }
@@ -445,7 +446,7 @@ function addCar(){
         type: 'POST',
         url: 'carAddForm.jsp',
         success: function(data){
-            $('#modal_form').html(data);
+            $('#modalConteiner').html(data);
             openModWind();
         },
         error:function (msg){
@@ -463,7 +464,7 @@ function editShow(carId){ // лoвим клик пo ссылки с id="go"
         url: 'CarData.jsp',
         data: 'id='+carId,
         success: function(data){
-            $('#modal_form').html(data);
+            $('#modalConteiner').html(data);
             openModWind();
         },
         error:function (msg){
@@ -506,7 +507,7 @@ function showAddDriverForm(){
         type: 'POST',
         url: 'addDriverNew.jsp',
         success: function(data){
-            $('#modal_form').html(data);
+            $('#modalConteiner').html(data);
             openModWind(470, 500);
         },
         error:function (msg){
