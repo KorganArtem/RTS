@@ -211,8 +211,8 @@
 	</form>
                 <div>
                      <div onclick="downloadDogowor(<%= request.getParameter("driverId") %>)">Договор</div>
-                     <div onclick="downloadAktvidachi(<%= request.getParameter("driverId") %>)">Акт выдачи</div>
-                     <div onclick="downloadAktpriema(<%= request.getParameter("driverId") %>)">Акт приема</div>
+                     <div onclick="downloadAktvidachi(<%= request.getParameter("driverId") %>)">Акт возврата</div>
+                     <div onclick="downloadAktpriema(<%= request.getParameter("driverId") %>)">Акт выдачи</div>
                 </div>
     </div>
     </div>

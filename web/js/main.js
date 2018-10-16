@@ -1,8 +1,4 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 ////////////////////////////////////////////////////////////////////////////////
 /////                    Добавление Водителя                               /////
 ////////////////////////////////////////////////////////////////////////////////
@@ -523,7 +519,8 @@ function docListener(){
     
     $(".docsCol").click(function(e){
 	var driverId = $(this).attr('driverId');/*.dialog("option", optionName, [value])*/
-        $('#menuBox').dialog("open");
+        wayBillWindow(driverId);
+        /*$('#menuBox').dialog("open");
         $('#menuBox').dialog("option", "position", 'top');
         console.log('Showed'+driverId);
         $(".menuItem").click(function(){
@@ -539,10 +536,38 @@ function docListener(){
             if($(this).attr('data')==="putevoilist"){
                 downloadPutevoilist(driverId);
             }
-        });
+        });*/
     });
     $("#closeMenu").click(function(){
         $('#menuBox').hide();
+    });
+}
+function wayBillWindow(driverIdForDog){
+    $.ajax({
+        type: 'POST',
+        url: 'docs/wayBill.jsp',
+        data: 'driverId='+driverIdForDog,
+        success: function(data){
+            $('#modalConteiner').html(data);
+            openModWind(340, 200);
+        },
+        error:function (msg){
+            alert('Error in geting dogovor!'+msg);
+        }
+    });
+}
+function downloadWayBill(msg){
+    console.log(msg);
+    $.ajax({
+        type: 'POST',
+        url: 'WB',
+        data: msg,
+        success: function(data){
+            window.open(data);
+        },
+        error:function (msg){
+            alert('Error in geting dogovor!'+msg);
+        }
     });
 }
 function downloadDogowor(driverIdForDog){
