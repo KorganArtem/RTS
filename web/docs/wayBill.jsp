@@ -30,7 +30,7 @@
     String endDate =sdt.format(new Date().getTime()+(60*60*24*7*1000));
 %>
 <div id="wayBillPrintForm">
-    <form id="prinWayBill" class="appnitro"  method="post" >
+    <form id="prinWayBill" class="appnitro"  action="docs/wayBillPrint.jsp" method="post" target="_blank">
         <ul>
             <li>
                 <span>
@@ -60,11 +60,12 @@
                 </select>
             </li>
             <li>
-                <input type="button" value="Распечатать" style="width: 260px;" onclick="getFormWayBill()"/>
+                <input type="submit" value="Распечатать" style="width: 260px;" />
             </li>
         </ul>
     </form>
 </div>
+                <!-- onclick="getFormWayBill()" -->
 <script>
     function getFormWayBill(){
         var msg   = $('#prinWayBill').serialize();

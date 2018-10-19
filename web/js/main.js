@@ -563,7 +563,7 @@ function downloadWayBill(msg){
         url: 'WB',
         data: msg,
         success: function(data){
-            window.open(data);
+            window.open("docs/wayBillPrint.jsp?companyId=");
         },
         error:function (msg){
             alert('Error in geting dogovor!'+msg);

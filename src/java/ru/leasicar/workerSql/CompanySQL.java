@@ -53,4 +53,18 @@ public class CompanySQL {
         st.close();
         return forRet;
     }
+    public Map<String, String> getCompanyData(int companyId) throws SQLException{
+        Map<String, String> companyData = new HashMap<String, String>();
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT * FROM companies WHERE companyId="+companyId);
+        if(rs.next()){
+            companyData.put("inn", rs.getString("inn"));
+            companyData.put("kpp", rs.getString("kpp"));
+            companyData.put("name", rs.getString("name"));
+            companyData.put("address", rs.getString("address"));
+        }
+        rs.close();
+        st.close();
+        return companyData;
+    }
 }

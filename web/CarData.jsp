@@ -29,10 +29,10 @@ else{
     return;
 } 
 String mkpp = "";
-if(carData.get("transmission")=="1")
+if(carData.get("transmission").equals("1"))
     mkpp="selected";
 String akpp = "";
-if(carData.get("transmission")=="1")
+if(carData.get("transmission").equals("2"))
     akpp="selected";
 %>
     <div class="carEditForm">
