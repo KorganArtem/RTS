@@ -210,11 +210,11 @@
             </div> 
 	</form>
                 <div>
-                     <div onclick="downloadDogowor(<%= request.getParameter("driverId") %>)">Договор</div>
-                     <div onclick="downloadAktvidachi(<%= request.getParameter("driverId") %>)">Акт возврата</div>
-                     <div onclick="downloadAktpriema(<%= request.getParameter("driverId") %>)">Акт выдачи</div>
+                    <input type="button" onclick="downloadDogowor(<%= request.getParameter("driverId") %>)" value="Договор"/>
+                     <input type="button" onclick="downloadAktvidachi(<%= request.getParameter("driverId") %>)" value="Акт возврата"/>
+                     <input type="button" onclick="downloadAktpriema(<%= request.getParameter("driverId") %>)" value="Акт выдачи"/>
                 </div>
-    </div>
+        </div>
     </div>
     <img id="bottom" src="bottom.png" alt="">
     <script>

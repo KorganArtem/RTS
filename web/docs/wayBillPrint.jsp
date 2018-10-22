@@ -17,37 +17,51 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
+        <script src='https://code.jquery.com/jquery-1.12.4.js'></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE></TITLE>
 	<STYLE TYPE="text/css">
+            @media print {
+                @page { margin: 0; }
+                body { margin: 1.6cm; }
+              }
 	<!--
-		@page { margin-right: 0.59in; margin-top: 0.37in; margin-bottom: 0.5in }
+		/*@page {margin-right: 0.59in; margin-top: 0.37in; margin-bottom: 0.5in }*/
 		P { margin-top: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
 		P.western { font-family: "Times New Roman", serif; font-size: 14pt; so-language: ru-RU }
 		P.cjk { font-family: "Times New Roman", serif; font-size: 14pt }
 		P.ctl { font-family: "Times New Roman", serif; font-size: 10pt; so-language: ar-SA }
+                
 	-->
 	</STYLE>
 </HEAD>
 <BODY LANG="en-US" TEXT="#000000" DIR="LTR">
     <%
         
-    Map<String, String> draverData;
+    Map<String, String> driverData;
     Map<String, String> carData ;
     Map<String, String> compData;
     int cmpanyId = Integer.parseInt(request.getParameter("companyId"));
     int driverId = Integer.parseInt(request.getParameter("driverId"));
     int carId = Integer.parseInt(request.getParameter("carId"));
     DriverSQL dsql = new DriverSQL();
-    draverData = dsql.getAllDataDriver(driverId);
+    driverData = dsql.getAllDataDriver(driverId);
     CarSQL csql = new CarSQL();
     carData = csql.getCarDataForAct(carId);
     CompanySQL compSQL = new CompanySQL();
     compData = compSQL.getCompanyData(cmpanyId);
-    String fullName = draverData.get("driver_lastname")+" "+draverData.get("driver_firstname")+" "+draverData.get("driver_midName");
+    String fullName = driverData.get("driver_lastname")+" "+driverData.get("driver_firstname")+" "+driverData.get("driver_midName");
     DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = format.parse(request.getParameter("startDate"));
     Date endDate = format.parse(request.getParameter("endDate"));
+    String driverLicNum = "";
+    String[] comment = driverData.get("comment").split("/");
+    if(comment.length>1){
+        driverLicNum = comment[0];
+    }
+    else
+        driverLicNum=driverData.get("comment");
     for(long i=startDate.getTime(); i<=endDate.getTime(); i=i+(60*60*24*1000)){
         Date date = new Date(i);
         String docNum = date.getTime()/100000+"";
@@ -57,7 +71,7 @@
     %>
     
     
-    
+    <div STYLE="page-break-before: always">
 <TABLE WIDTH=694 CELLPADDING=2 CELLSPACING=0 STYLE="page-break-before: always">
 	<TR>
 		<TD ROWSPAN=2 COLSPAN=3 WIDTH=109 HEIGHT=20 STYLE="border: none; padding: 0in">
@@ -76,8 +90,7 @@
 	</TR>
 	<TR>
 		<TD COLSPAN=17 WIDTH=282 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>легкового
-			такси</B></FONT></FONT></P>
+			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>легкового такси</B></FONT></FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -135,24 +148,16 @@
 	</TR>
 	<TR>
 		<TD COLSPAN=3 WIDTH=109 HEIGHT=15 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P >
-			</P>
 		</TD>
-		<TD COLSPAN=17 WIDTH=282 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">наименование,
-			адрес, номер телефона</FONT></FONT></P>
+		<TD COLSPAN=17 ALIGN=CENTER WIDTH=282 VALIGN=TOP STYLE="border: none; padding: 0in">
+                    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">наименование, адрес, номер телефона</FONT></FONT>
 		</TD>
-		<TD COLSPAN=9 WIDTH=141 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P  ALIGN=RIGHT><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">Колонна
-			(отряд)</FONT></FONT></P>
+		<TD ALIGN=RIGHT COLSPAN=9 WIDTH=141 VALIGN=TOP STYLE="border: none; padding: 0in">
+                    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">Колонна (отряд)</FONT></FONT>
 		</TD>
 		<TD WIDTH=6 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P >
-			</P>
 		</TD>
 		<TD COLSPAN=5 WIDTH=136 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.02in">
-			<P  ALIGN=CENTER>
-			</P>
 		</TD>
 	</TR>
 	<TR>
@@ -174,7 +179,7 @@
 		</TD>
 		<TD COLSPAN=23 WIDTH=391 VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
 			<P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=2>
-                            <%= compData.get("name") %>
+                            <%= carData.get("modelName") %>
                         </FONT></FONT></P>
 		</TD>
 		<TD WIDTH=6 VALIGN=TOP STYLE="border: none; padding: 0in">
@@ -187,13 +192,12 @@
 		</TD>
 	</TR>
 	<TR>
-		<TD COLSPAN=9 WIDTH=209 HEIGHT=15 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P ><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">Государственный
-			номерной знак</FONT></FONT></P>
+		<TD COLSPAN=12 WIDTH=259 HEIGHT=15 VALIGN=TOP STYLE="border: none; padding: 0in">
+			<P ><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">Государственный номерной знак</FONT></FONT></P>
 		</TD>
-		<TD COLSPAN=8 WIDTH=105 VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
+		<TD COLSPAN=5 WIDTH=55 VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
 			<P><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">
-                            <%= compData.get("name") %>
+                            <%= carData.get("number") %>
                         </FONT></FONT></P>
 		</TD>
 		<TD COLSPAN=6 WIDTH=117 VALIGN=TOP STYLE="border: none; padding: 0in">
@@ -201,7 +205,7 @@
 			номер</FONT></FONT></P>
 		</TD>
 		<TD COLSPAN=6 WIDTH=97 VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
-			<P ><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">055</FONT></FONT></P>
+			<P ><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><%= carData.get("id") %></FONT></FONT></P>
 		</TD>
 		<TD WIDTH=6 VALIGN=TOP STYLE="border: none; padding: 0in">
 			<P >
@@ -235,8 +239,8 @@
 		<TD WIDTH=82 HEIGHT=12 STYLE="border: none; padding: 0in">
 			 
 		</TD>
-		<TD COLSPAN=20 WIDTH=326 STYLE="border: none; padding: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">фамилия, имя, отчество</FONT></FONT></P>
+		<TD ALIGN=CENTER COLSPAN=20 WIDTH=326 STYLE="border: none; padding: 0in">
+                    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">фамилия, имя, отчество</FONT></FONT>
 		</TD>
 		<TD COLSPAN=8 WIDTH=125 STYLE="border: none; padding: 0in">
 		</TD>
@@ -254,7 +258,7 @@
             </TD>
             <TD WIDTH=80 VALIGN=BOTTOM  ALIGN=CENTER STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
                 <FONT SIZE=1>
-                    <%= carData.get("sts") %>
+                    <%= driverLicNum %>
                 </FONT>
             </TD>
             <TD WIDTH=20 STYLE="border: none; padding: 0in">
@@ -282,7 +286,7 @@
 		</TD>
 		<TD STYLE="border: none; padding: 0in">
 		</TD>
-		<TD CSTYLE="border: none; padding: 0in">
+		<TD STYLE="border: none; padding: 0in">
 		</TD>
 		<TD STYLE="border: none; padding: 0in">
 		</TD>
@@ -299,71 +303,71 @@
     <TABLE>
            <TR>
                <TD>
-                   <TABLE WIDTH=298>
-                        <TR>
-                            <TD COLSPAN=4  HEIGHT=15 VALIGN=TOP STYLE="border-top: 2.25pt solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                   <TABLE WIDTH=298 cellspacing="0" STYLE="border: 2.25pt solid #000000;">
+                        <TR STYLE="border-bottom: 1px solid #000000;">
+                            <TD COLSPAN=4  HEIGHT=15 VALIGN=TOP STYLE="border-bottom: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                 <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">Время</FONT></FONT></P>
                             </TD>
                         </TR>
-                        <TR>
-                        <TD COLSPAN=2 WIDTH=155 HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                            <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">выезда
-                            на линию</FONT></FONT></P>
-                        </TD>
-                        <TD COLSPAN=2 WIDTH=139 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">возвращения
-			в парк</FONT></FONT></P>
-                        </TD>
+                        <TR STYLE="">
+                            <TD COLSPAN=2 WIDTH=155 HEIGHT=15 STYLE="border-bottom: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">выезда
+                                на линию</FONT></FONT></P>
+                            </TD>
+                            <TD COLSPAN=2 WIDTH=139 STYLE="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">возвращения
+                            в парк</FONT></FONT></P>
+                            </TD>
                         </TR>
                         <TR>
-                            <TD  WIDTH=82 HEIGHT=31 STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  WIDTH=82 HEIGHT=31 STYLE="border-bottom: 1px solid #000000; border-top: none; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                     <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">по
                                     графику</FONT></FONT></P>
                             </TD>
-                            <TD  WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  WIDTH=69 STYLE="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                 <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">фактически</FONT></FONT></P>
                             </TD>
-                            <TD  WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  WIDTH=69 STYLE="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                 <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">по
                                     графику</FONT></FONT></P>
                             </TD>
-                            <TD  WIDTH=66 STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  WIDTH=66 STYLE="border-bottom: 1px solid #000000; border-top: none; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                     <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">фактически</FONT></FONT></P>
                             </TD>
                         </TR>
                         <TR>
-                            <TD HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD HEIGHT=15 STYLE=" border-bottom: 1px solid #000000;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                             </TD>
-                            <TD STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD STYLE=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                             </TD>
-                            <TD  STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  STYLE=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                             </TD>
-                            <TD STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD STYLE=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                             </TD>
                         </TR>
                         <TR>
-                            <TD HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD HEIGHT=15 STYLE="border-bottom: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                             </TD>
-                            <TD  STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  STYLE=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                             </TD>
-                            <TD  STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  STYLE=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
 			
                             </TD>
-                            <TD  STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD  STYLE=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
 
                             </TD>
                         </TR>
                         <TR>
-                                <TD HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1>{%date1%}</FONT></FONT></P>
+                                <TD HEIGHT=15 STYLE=" border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %> </FONT></FONT></P>
                                 </TD>
-                                <TD STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1>{%date1%}</FONT></FONT></P>
+                                <TD STYLE="border-left: 1px solid #000000;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %> </FONT></FONT></P>
                                 </TD>
-                                <TD STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1>{%date2%}</FONT></FONT></P>
+                                <TD STYLE="border-left: 1px solid #000000;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date2 %> </FONT></FONT></P>
                                 </TD>
-                                <TD STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                <TD STYLE="border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                         <P  ALIGN=CENTER><BR>
                                         </P>
                                 </TD>
@@ -373,232 +377,91 @@
                <TD>
                    <TABLE>
                         <TR>
-                            <TD ROWSPAN=2 COLSPAN=20 WIDTH=388 VALIGN=BOTTOM STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                            <TD COLSPAN="4" WIDTH=388 VALIGN=BOTTOM STYLE="border-top: none; border-bottom: none;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                 <P  ALIGN=RIGHT STYLE="margin-bottom: 0in">       
-                                <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1 STYLE="font-size: 6pt"><B>Регистрационный
-                                № __________     Серия _________ № ________</B></FONT></FONT></FONT></P>
-                                <P  STYLE="margin-bottom: 0in">    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1><B>Автомобиль
-                                исправен.</B></FONT></FONT></FONT></P>
-                                <P >    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1><B>Автомобиль
-                                прошел профилактическое обслуживание
-                                согласно графику.</B></FONT></FONT></FONT></P>
+                                    <FONT FACE="Arial, sans-serif">
+                                        <FONT SIZE=1 STYLE="font-size: 8pt">
+                                                <FONT SIZE=1 STYLE="font-size: 6pt">
+                                                        <B>Регистрационный № __________     Серия _________ № ________</B>
+                                                </FONT>
+                                        </FONT>
+                                    </FONT>
+                                </P>
                             </TD>
                         </TR>
                         <TR>
-                            <TD COLSPAN=12 WIDTH=226 VALIGN=TOP STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                    <P >     <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1><B>Выезд
-                                    разрешен. МЕХАНИК</B></FONT></FONT></FONT></P>
-                            </TD>
-                            <TD COLSPAN=5 WIDTH=53 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
-
-                            </TD>
-                            <TD WIDTH=3 STYLE="border: none; padding: 0in">
-                            </TD>
-                            <TD COLSPAN=2 WIDTH=94 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
-
+                            <TD colspan="4">
+                                <P  STYLE="margin-bottom: 0in">    
+                                    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1>
+                                        <B>Автомобиль исправен.</B>
+                                    </FONT></FONT></FONT>
+                                </P>
                             </TD>
                         </TR>
                         <TR>
-                                <TD ROWSPAN=2 COLSPAN=12 WIDTH=226 VALIGN=TOP STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-
-                                </TD>
-                                <TD ROWSPAN=2 COLSPAN=5 WIDTH=53 VALIGN=TOP STYLE="border: none; padding: 0in">
-                                        <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">подпись</FONT></FONT></P>
-                                </TD>
-                                <TD ROWSPAN=2 COLSPAN=3 WIDTH=101 VALIGN=TOP STYLE="border: none; padding: 0in">
-                                        <P  ALIGN=RIGHT><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">расшифровка
-                                        подписи</FONT></FONT></P>
-                                </TD>
+                            <TD colspan="4">
+                                <P >    
+                                    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1>
+                                                <B>Автомобиль прошел профилактическое обслуживание согласно графику.</B>
+                                    </FONT></FONT></FONT>
+                                </P>
+                            </TD>
                         </TR>
-	<TR>
-		<TD WIDTH=82 HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER>
-			</P>
-		</TD>
-		<TD COLSPAN=6 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">00:00</FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=4 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER>
-			</P>
-		</TD>
-		<TD COLSPAN=4 WIDTH=66 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER>
-			</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=82 HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD COLSPAN=6 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD COLSPAN=4 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD COLSPAN=4 WIDTH=66 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=20 WIDTH=388 VALIGN=TOP STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=LEFT STYLE="margin-bottom: 0in">   
-				<FONT FACE="Arial, sans-serif">
-					<FONT SIZE=1 STYLE="font-size: 6pt">
-						<B>Автомобиль принял в исправном состоянии.</B>
-					</FONT>
+                        <TR>
+                            <TD  WIDTH=150 VALIGN=TOP STYLE="border: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                    <P >     
+                                        <FONT FACE="Arial, sans-serif">
+                                            <FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1><B>Выезд разрешен. МЕХАНИК</B></FONT></FONT>
+                                        </FONT>
+                                    </P>
+                            </TD>
+                            <TD  WIDTH=70 STYLE="border-bottom: 1pt solid #000000;">
+                            </TD>
+                            <TD WIDTH=15>
+                            </TD>
+                            <TD ALIGN=CENTER STYLE="border-bottom: 1pt solid #000000;">
+                                Микаилов
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD>
+                            </TD>
+                            <TD ALIGN=CENTER VALIGN=TOP STYLE="border: none; padding: 0in">
+                                <FONT FACE="Arial, sans-serif" SIZE=1 STYLE="font-size: 5pt">подпись</FONT>
+                            </TD>
+                            <TD>
+                            </TD>
+                            <TD   ALIGN=CENTER VALIGN=TOP STYLE="border: none; padding: 0in">
+                                <FONT FACE="Arial, sans-serif" SIZE=1 STYLE="font-size: 5pt">расшифровка подписи</FONT>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD  ALIGN=LEFT COLSPAN=4 WIDTH=66 STYLE=" border: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                <FONT FACE="Arial, sans-serif" SIZE=1 ><B>Автомобиль принял в исправном состоянии.</B></FONT>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD COLSPAN=4 WIDTH=388 VALIGN=TOP STYLE=" border: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
+                                <FONT FACE="Arial, sans-serif" SIZE=1>
+                                    <B>Часы заведены. При обнаружении неисправности оборудования на линии ОБЯЗУЮСЬ немедленно вернуться в парк.</B>
 				</FONT>
-			</P>
-			<P  ALIGN=LEFT STYLE="margin-bottom: 0in">    
-				<FONT FACE="Arial, sans-serif">
-					<FONT SIZE=1 >
-						<B>Часы заведены. При обнаружении неисправности оборудования на линии ОБЯЗУЮСЬ немедленно вернуться в парк.</B>
-					</FONT>
-				</FONT>
-			</P>
-		</TD>
-	</TR>
-	
-</TABLE>
+                            </TD>
+                        </TR>
+                   </TABLE>
                </TD>
            </TR>
     </TABLE>
-        <TABLE>
-	<TR>
-		<TD COLSPAN=15 WIDTH=298 HEIGHT=15 VALIGN=TOP STYLE="border-top: 2.25pt solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">Время</FONT></FONT></P>
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=20 WIDTH=388 VALIGN=BOTTOM STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=RIGHT STYLE="margin-bottom: 0in">       
-			<FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1 STYLE="font-size: 6pt"><B>Регистрационный
-			№ __________     Серия _________ № ________</B></FONT></FONT></FONT></P>
-			<P  STYLE="margin-bottom: 0in">    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1><B>Автомобиль
-			исправен.</B></FONT></FONT></FONT></P>
-			<P >    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1><B>Автомобиль
-			прошел профилактическое обслуживание
-			согласно графику.</B></FONT></FONT></FONT></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD COLSPAN=7 WIDTH=155 HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">выезда
-			на линию</FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=8 WIDTH=139 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">возвращения
-			в парк</FONT></FONT></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD ROWSPAN=2 WIDTH=82 HEIGHT=31 STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">по
-			графику</FONT></FONT></P>
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=6 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">фактически</FONT></FONT></P>
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=4 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">по
-			графику</FONT></FONT></P>
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=4 WIDTH=66 STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">фактически</FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=12 WIDTH=226 VALIGN=TOP STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P >     <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=1><B>Выезд
-			разрешен. МЕХАНИК</B></FONT></FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=5 WIDTH=53 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
-			
-		</TD>
-		<TD WIDTH=3 STYLE="border: none; padding: 0in">
-		</TD>
-		<TD COLSPAN=2 WIDTH=94 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
-			
-		</TD>
-	</TR>
-	<TR>
-		<TD ROWSPAN=2 COLSPAN=12 WIDTH=226 VALIGN=TOP STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=5 WIDTH=53 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">подпись</FONT></FONT></P>
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=3 WIDTH=101 VALIGN=TOP STYLE="border: none; padding: 0in">
-			<P  ALIGN=RIGHT><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">расшифровка
-			подписи</FONT></FONT></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=82 HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER>
-			</P>
-		</TD>
-		<TD COLSPAN=6 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">00:00</FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=4 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER>
-			</P>
-		</TD>
-		<TD COLSPAN=4 WIDTH=66 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER>
-			</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=82 HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD COLSPAN=6 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD COLSPAN=4 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD COLSPAN=4 WIDTH=66 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			
-		</TD>
-		<TD ROWSPAN=2 COLSPAN=20 WIDTH=388 VALIGN=TOP STYLE="border-top: none; border-bottom: none; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=LEFT STYLE="margin-bottom: 0in">   
-				<FONT FACE="Arial, sans-serif">
-					<FONT SIZE=1 STYLE="font-size: 6pt">
-						<B>Автомобиль принял в исправном состоянии.</B>
-					</FONT>
-				</FONT>
-			</P>
-			<P  ALIGN=LEFT STYLE="margin-bottom: 0in">    
-				<FONT FACE="Arial, sans-serif">
-					<FONT SIZE=1 >
-						<B>Часы заведены. При обнаружении неисправности оборудования на линии ОБЯЗУЮСЬ немедленно вернуться в парк.</B>
-					</FONT>
-				</FONT>
-			</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=82 HEIGHT=15 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1>{%date1%}</FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=6 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1>{%date1%}</FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=4 WIDTH=69 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1>{%date2%}</FONT></FONT></P>
-		</TD>
-		<TD COLSPAN=4 WIDTH=66 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-			<P  ALIGN=CENTER><BR>
-			</P>
-		</TD>
-	</TR>
-</TABLE>
-<TABLE>
-	<TR >
-		<TD WIDTH=35 STYLE="border: none; padding: 0in">
-			<P  ALIGN=LEFT>                  
+    <TABLE cellpadding="5">
+        <TR valign="bottom" >
+            <TD height="40" WIDTH=35 STYLE="border: none; padding: 0in">
+                    <P  ALIGN=LEFT>                  
 			<FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt"><FONT SIZE=2>Врач</FONT></FONT></FONT>
-			</P>
+                    </P>
 		</TD>
 		<TD WIDTH=55 STYLE="border-bottom: 1pt solid #000000;; padding: 0in">
+		
+		</TD>
+		<TD WIDTH=10 STYLE="border: none; padding: 0in">
 		
 		</TD>
 		<TD WIDTH=110 STYLE="border-bottom: 1pt solid #000000;  padding: 0in"> 
@@ -609,7 +472,11 @@
 		</TD>
 		<TD WIDTH=55 STYLE="border-bottom: 1pt solid #000000;; padding: 0in"> 
 		</TD>
-		<TD WIDTH=110 STYLE="border-bottom: 1pt solid #000000;; padding: 0in"> 
+		<TD WIDTH=10 STYLE="border: none; padding: 0in">
+		
+		</TD>
+		<TD ALIGN=CENTER WIDTH=110 STYLE="border-bottom: 1pt solid #000000;; padding: 0in"> 
+                    Микаилов
 		</TD>
 		<TD WIDTH=67 STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=2>Водитель</FONT></FONT></P>
@@ -617,8 +484,11 @@
 		<TD WIDTH=55 STYLE="border-bottom: 1pt solid #000000; padding: 0in">
 		
 		</TD>
-		<TD WIDTH=110 STYLE="border-bottom: 1pt solid #000000; padding: 0in">
+		<TD WIDTH=10 STYLE="border: none; padding: 0in">
 		
+		</TD>
+		<TD WIDTH=110 ALIGN=CENTER STYLE="border-bottom: 1pt solid #000000; padding: 0in">
+                    <%= driverData.get("driver_lastname") %>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -628,6 +498,9 @@
 		<TD STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER style="    margin-top: 0in;"><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">подпись</FONT></FONT></P>
 		</TD>
+		<TD WIDTH=10 STYLE="border: none; padding: 0in">
+		
+		</TD>
 		<TD  STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER style="    margin-top: 0in;"><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">расшифровка подписи</FONT></FONT></P>
 		</TD>
@@ -636,6 +509,9 @@
 		</TD>
 		<TD STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER style="    margin-top: 0in;">    <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">подпись</FONT></FONT></P>
+		</TD> 
+		<TD WIDTH=10 STYLE="border: none; padding: 0in">
+		
 		</TD>
 		<TD STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER style="    margin-top: 0in;"><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">расшифровка подписи</FONT></FONT></P>
@@ -644,6 +520,9 @@
 		</TD>
 		<TD   STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER style="    margin-top: 0in;"> <FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">подпись</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=10 STYLE="border: none; padding: 0in">
+		
 		</TD>
 		<TD  STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER style="    margin-top: 0in;"><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 5pt">расшифровка подписи</FONT></FONT></P>
@@ -766,7 +645,8 @@
 					<TD WIDTH=70 style="border-bottom: 1pt solid #000000;"></TD>
 					<TD WIDTH=5></TD>
 					<TD style="border-bottom: 1pt solid #000000;">
-						<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><SPAN LANG="en-US">{%driverLastName%}</SPAN></FONT></FONT></P>
+						<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><SPAN LANG="en-US">
+                    <%= driverData.get("driver_lastname") %></SPAN></FONT></FONT></P>
 					</TD>
 				</TR>
 				<TR VALIGN=TOP> 
@@ -826,8 +706,15 @@
 		</TD>
 	</TR>
 </TABLE>
+    </DIV>
 <%
     }
 %>
+<SCRIPT>
+    $(document).ready(function() {
+        window.print();
+    });
+</SCRIPT>
 </BODY>
+
 </HTML>
