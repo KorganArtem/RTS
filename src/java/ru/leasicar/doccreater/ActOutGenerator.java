@@ -53,6 +53,17 @@ public class ActOutGenerator {
         String fileName = "actOutFor_"+numberDog+".doc";
         CarSQL csql = new CarSQL();
         Map<String, String> carData = csql.getCarDataForAct(Integer.parseInt(draverData.get("carId")));
+        String transmission = "";
+        if(carData.get("transmission")!=null){
+            switch(carData.get("transmission").toString()){
+                case "1": 
+                    transmission="<td>МКПП</td>";
+                    break;
+                case "2": 
+                    transmission="<td>АКПП</td>";
+                    break;
+            }
+        }
         try {
             POIFSFileSystem pfs = new POIFSFileSystem(new FileInputStream("/table/doc_tmp/act_out_tmp.doc"));
             HWPFDocument doc = new HWPFDocument(pfs);
@@ -65,7 +76,7 @@ public class ActOutGenerator {
             range.replaceText("{%carVIN%}", carData.get("VIN"));
             range.replaceText("{%carYear%}", carData.get("year"));
             range.replaceText("{%carColor%}", carData.get("transmission"));
-            range.replaceText("{%carTransmission%}", carData.get("transmission"));
+            range.replaceText("{%carTransmission%}", transmission);
             range.replaceText("{%carSTS%}", carData.get("sts"));
             range.replaceText("{%carTTO%}", carData.get("ttoNumber"));
             range.replaceText("{%carOSAGO%}", carData.get("insuranceNamber"));

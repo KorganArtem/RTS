@@ -24,7 +24,7 @@
 	<STYLE TYPE="text/css">
             @media print {
                 @page { margin: 0; }
-                body { margin: 1.6cm; }
+                div { margin: 1.6cm; }
               }
 	<!--
 		/*@page {margin-right: 0.59in; margin-top: 0.37in; margin-bottom: 0.5in }*/
@@ -72,7 +72,7 @@
     
     
     <div STYLE="page-break-before: always">
-<TABLE WIDTH=694 CELLPADDING=2 CELLSPACING=0 STYLE="page-break-before: always">
+    <TABLE WIDTH=694 CELLPADDING=2 CELLSPACING=0 STYLE="page-break-before: always">
 	<TR>
 		<TD ROWSPAN=2 COLSPAN=3 WIDTH=109 HEIGHT=20 STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">Место
@@ -491,7 +491,7 @@
                     <%= driverData.get("driver_lastname") %>
 		</TD>
 	</TR>
-	<TR VALIGN=TOP>
+	<TR VALIGN=TOP height="40">
 		<TD WIDTH=35 STYLE="border: none; padding: 0in">
 		
 		</TD>
@@ -705,7 +705,7 @@
 			</TABLE>
 		</TD>
 	</TR>
-</TABLE>
+    </TABLE>
     </DIV>
 <%
     }

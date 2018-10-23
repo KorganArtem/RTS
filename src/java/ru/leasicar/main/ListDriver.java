@@ -50,13 +50,17 @@ public class ListDriver extends HttpServlet {
                 if(delete)
                     colDel="<td></td>";
                 ///////////////////////////////////////////////////////////////
+                boolean showBalance = ac.checkPermission(ac.getUserId(request.getSession().getId()), "showBalance");
+                String colsBalance="";
+                if(showBalance)
+                    colsBalance="<td>Лимит</td><td>Баланс</td><td>Депозит</td><td class='noPrint'> </td>";   
                 int showDeleted = Integer.parseInt(request.getParameter("deleted"));
                 DriverSQL wsql = new DriverSQL();
                 Map listDriver = wsql.listDriver(showDeleted);
                 Iterator<Map.Entry<String, Map>> entries = listDriver.entrySet().iterator();
                 out.println("<div class='scrollingBlock'>");
-                out.println("<thead><tr><td>Фамилия</td><td>Имя</td><td>Номер</td><td>Телефон</td><td>Лимит</td>"
-                        + "<td>Баланс</td><td>Депозит</td><td class='noPrint'> </td><td class='noPrint'></td><td class='noPrint'></td>"+colDel+"<td class='noPrint'></td></tr></thead>");
+                out.println("<thead><tr><td>Фамилия</td><td>Имя</td><td>Номер</td><td>Телефон</td>");
+                out.println(colsBalance+"<td class='noPrint'></td><td class='noPrint'></td>"+colDel+"<td class='noPrint'></td></tr></thead>");
                 while (entries.hasNext()) {
                     Map.Entry<String, Map> entry = entries.next();
                     Map draverData = entry.getValue();
@@ -73,16 +77,20 @@ public class ListDriver extends HttpServlet {
                     String delButton = "";
                     if(delete)
                         delButton="<td onClick='delDriver("+entry.getKey()+")'>Уволить</td>";
+                    if(showBalance)
+                        colsBalance="<td>"+draverData.get("driver_limit")+"</td>"
+                            + "<td>"+draverData.get("driver_current_debt")+"</td>"
+                            + "<td>"+draverData.get("driver_deposit")+"<img onClick='addDeposit("+entry.getKey()+")' src='img/add.png'/></td>"
+                            + "<td class='takeMoney noPrint' onClick='takePay("+entry.getKey()+")')><img src='img/takeMoney.png'/></td>";
+                    else
+                        colsBalance="";
                     out.println("<tr class="+colorRow+">"
                             + "<td ondblclick='editDriver("+entry.getKey()+")' class='clickable' id='listDriverFirstName"+entry.getKey()+"'>"+draverData.get("driver_lastname")+"</td>"
                             + "<td id='listDriverLastName"+entry.getKey()+"'>"+draverData.get("driver_firstname")+"</td>"
                             /*+ "<td id='listDriverCarNamber"+entry.getKey()+"'>"+draverData.get("driver_carnumber")+"</td>"*/
                             + "<td id='listDriverCarNamber"+entry.getKey()+"'>"+draverData.get("id_car")+"</td>"
                             + "<td class='phoneInList'>"+draverData.get("driver_phone_number")+"</td>"
-                            + "<td>"+draverData.get("driver_limit")+"</td>"
-                            + "<td>"+draverData.get("driver_current_debt")+"</td>"
-                            + "<td>"+draverData.get("driver_deposit")+"<img onClick='addDeposit("+entry.getKey()+")' src='img/add.png'/></td>"
-                            + "<td class='takeMoney noPrint' onClick='takePay("+entry.getKey()+")')><img src='img/takeMoney.png'/></td>"
+                            + colsBalance 
                             + delButton        
                             + "<td class='wrkday noPrint'>"+day_off+"</td>"
                             + "<td class='wrkday noPrint' onClick='getReport("+entry.getKey()+")'>отчет</td>"
