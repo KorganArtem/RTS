@@ -62,6 +62,7 @@ public class CompanySQL {
             companyData.put("kpp", rs.getString("kpp"));
             companyData.put("name", rs.getString("name"));
             companyData.put("address", rs.getString("address"));
+            companyData.put("phone", rs.getString("phone"));
         }
         rs.close();
         st.close();

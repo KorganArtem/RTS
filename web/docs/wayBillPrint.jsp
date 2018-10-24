@@ -4,6 +4,7 @@
     Author     : korgan
 --%>
 
+<%@page import="ru.leasicar.workerSql.WayBillSQL"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.text.DateFormat"%>
@@ -62,12 +63,14 @@
     }
     else
         driverLicNum=driverData.get("comment");
+    WayBillSQL wbsql = new WayBillSQL();
     for(long i=startDate.getTime(); i<=endDate.getTime(); i=i+(60*60*24*1000)){
         Date date = new Date(i);
         String docNum = date.getTime()/100000+"";
         DateFormat formatOut = new SimpleDateFormat("dd.MM.yyyy");
         String date1 = formatOut.format(date.getTime());
         String date2 = formatOut.format(date.getTime()+(60*60*24*1000));
+        int wayBillId = wbsql.writeWayBill(driverId, carId, cmpanyId, date1, docNum);
     %>
     
     
@@ -80,7 +83,7 @@
 		</TD>
 		<TD COLSPAN=17 WIDTH=282 VALIGN=BOTTOM STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=2 STYLE="font-size: 9pt"><B>ПУТЕВОЙ
-			ЛИСТ № ТМ </B></FONT><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN LANG="en-US"><B><%= docNum %></B></SPAN></FONT></FONT></FONT></P>
+			ЛИСТ № ТМ </B></FONT><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN LANG="en-US"><B><%= docNum+wayBillId %></B></SPAN></FONT></FONT></FONT></P>
 		</TD>
 		<TD ROWSPAN=2 COLSPAN=15 WIDTH=291 VALIGN=TOP STYLE="border: none; padding: 0in">
 			<P  ALIGN=RIGHT><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt"><I>Типовая
@@ -607,7 +610,7 @@
 
 <P  CLASS="western" STYLE="margin-bottom: 0in">
 	<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Разные отметки и замечания в работе на линии <BR>
-	Телефоны организации: 8-495-508-63-64</FONT></FONT></P>
+	Телефоны организации: <%= compData.get("phone") %></FONT></FONT></P>
 	
 <TABLE>
 	<TR ><TD WIDTH=690 HEIGHT=15 style="border-bottom: 1pt solid #000000;"> <TD></TR>
