@@ -91,7 +91,6 @@ if(carData.get("transmission").equals("2"))
                             +'&carOsagoEnd='+carOsagoEnd
                             +'&ttoNumber='+ttoNumber,
                     success: function(){
-                        alert('Изменения сохранены');
                         closeModWind();
                         getCarList();
                     },

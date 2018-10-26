@@ -77,6 +77,7 @@
                             +'&ttoNumber='+ttoNumber,
                     success: function(data){
                         alert('Изменения сохранены'+data);
+                        closeModWind();
                     },
                     error: function(msg){
                         console.log(msg)

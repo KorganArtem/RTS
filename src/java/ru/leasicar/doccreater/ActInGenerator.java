@@ -62,10 +62,10 @@ public class ActInGenerator {
         if(carData.get("transmission")!=null){
             switch(carData.get("transmission").toString()){
                 case "1": 
-                    transmission="<td>МКПП</td>";
+                    transmission="МКПП";
                     break;
                 case "2": 
-                    transmission="<td>АКПП</td>";
+                    transmission="АКПП";
                     break;
             }
         }
@@ -80,8 +80,8 @@ public class ActInGenerator {
             range.replaceText("{%carNumber%}", carData.get("number"));
             range.replaceText("{%carVIN%}", carData.get("VIN"));
             range.replaceText("{%carYear%}", carData.get("year"));
-            range.replaceText("{%carColor%}", transmission);
-            range.replaceText("{%carTransmission%}", carData.get("transmission"));
+            range.replaceText("{%carColor%}",  carData.get("transmission"));
+            range.replaceText("{%carTransmission%}", transmission);
             range.replaceText("{%carSTS%}", carData.get("sts"));
             range.replaceText("{%carTTO%}", carData.get("ttoNumber"));
             range.replaceText("{%carOSAGO%}", carData.get("insuranceNamber"));

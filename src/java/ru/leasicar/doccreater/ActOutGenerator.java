@@ -57,10 +57,10 @@ public class ActOutGenerator {
         if(carData.get("transmission")!=null){
             switch(carData.get("transmission").toString()){
                 case "1": 
-                    transmission="<td>МКПП</td>";
+                    transmission="МКПП";
                     break;
                 case "2": 
-                    transmission="<td>АКПП</td>";
+                    transmission="АКПП";
                     break;
             }
         }
