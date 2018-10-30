@@ -57,6 +57,8 @@ public class WayBillSQL {
             if(rs.next()){
                 id = rs.getInt(1);
             }
+            rs.close();
+            ps.close();
             return id;
     }
 }
