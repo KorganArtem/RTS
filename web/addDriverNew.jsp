@@ -178,7 +178,7 @@
                     </span> 
 		</li>		
                 <li id="li_4" >
-                    <label class="description" for="element_4">Paragraph </label>
+                    <label class="description" for="element_4">Комментарий </label>
                     <div>
 			<textarea id="element_4" name="comment" class="element textarea medium"></textarea> 
                     </div> 

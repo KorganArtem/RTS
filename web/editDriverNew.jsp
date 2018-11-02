@@ -35,7 +35,7 @@
     <div id="form_container">
         <form id="addDriverFormN" class="appnitro"  method="post" >
             <div class="form_description">
-                <h2>Добавление водителя</h2>
+                <h2>Редактирование водителя</h2>
             </div>	
             <ul >
                 <li id="li_1" >
