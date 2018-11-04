@@ -175,6 +175,8 @@ public class DriverSQL {
                 rowDriver.put("driver_current_debt", rs.getString("driver_current_debt"));
                 rowDriver.put("driver_deposit", rs.getString("driver_deposit"));
                 rowDriver.put("driver_day_rent", rs.getString("driver_day_rent"));
+                rowDriver.put("driver_deleted", rs.getString("driver_deleted"));
+                rowDriver.put("driverEndDate", rs.getString("driverEndDate"));
                 rowDriver.put("driver_limit", rs.getString("driver_limit"));
                 rowDriver.put("driver_phone_number", rs.getString("driver_phone_number"));
                 rowDriver.put("driver_addPhone_number", rs.getString("driver_addPhone_number"));
@@ -414,5 +416,10 @@ public class DriverSQL {
         
         }
         return driverList;
+    }
+    public void driverRecovery(String driverId) throws SQLException{
+        Statement st = con.createStatement();
+        st.execute("UPDATE drivers SET `driver_deleted`=0, `driverEndDate`='0000-00-00' WHERE `driver_id`="+driverId);
+        st.close();
     }
 }

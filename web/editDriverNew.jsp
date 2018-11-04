@@ -200,6 +200,12 @@
 		</li>
                 <li class="buttons">
                     <input id="saveForm" class="button_text" type="button" onClick="editDriverSendNew()" name="submit" value="Сохранить" />
+                    <% 
+                        if(dataDriver.get("driver_deleted").equals("1")){ %>
+                        <input id="saveForm" class="button_text" type="button" onClick="driverRecovery(<%= dataDriver.get("driver_id") %>)" name="submit" value="Восстановить" />
+                    <% 
+                        } 
+                        %>
                     <input id="saveForm" class="button_text" type="button" onClick="closeModWind()" name="submit" value="Отмена" />
 		</li>
             </ul>  
@@ -234,4 +240,14 @@
             else
                 $('#changeSchedule').val(0);
         });
+        function driverRecovery(driverId){
+            $.ajax({
+                type: 'POST',
+                url: 'DriverRecover',
+                data: 'driverId='+driverId,
+                success: function(data){
+                    closeModWind();
+                }
+            });
+        }
     </script>
