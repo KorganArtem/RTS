@@ -78,7 +78,7 @@ public class PaySQL {
 
     public String paySourceSelect() throws SQLException{
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM `paySource`");
+        ResultSet rs = st.executeQuery("SELECT * FROM `paySource` WHERE `active`=1");
         String forRet = "";
         while(rs.next()){
             forRet = forRet+"<option value='" + rs.getString("payId")+"'>" + rs.getString("payName") + "</option>";

@@ -63,18 +63,7 @@ public class CarList extends HttpServlet {
                                 carData.get("number")+"</td>");
                         
                         ////////////////////////// Model ///////////////////////
-                        if(carData.get("model")!=null){
-                            switch(carData.get("model").toString()){
-                                case "1": 
-                                    out.println("<td>Kio Rio</td>");
-                                    break;
-                                case "2": 
-                                    out.println("<td>Kio Optima</td>");
-                                    break;
-                            }
-                        }
-                        else 
-                            out.println("<td>Not</td>");
+                        out.println("<td>"+carData.get("modelName")+"</td>");
                         out.println("<td>"+carData.get("VIN")+"</td>"+
                                         "<td>"+carData.get("year")+"</td>");
                         ////////////////////////////////////////////////////////

@@ -219,7 +219,8 @@ public class DriverSQL {
             stGetAddAddress.close();
         }
         catch(Exception ex){
-            System.out.println(ex.getMessage());
+            System.out.println("Error in this block "+ex.getMessage());
+            ex.printStackTrace();
         }
         return rowDriver;
     }
@@ -419,7 +420,7 @@ public class DriverSQL {
     }
     public void driverRecovery(String driverId) throws SQLException{
         Statement st = con.createStatement();
-        st.execute("UPDATE drivers SET `driver_deleted`=0, `driverEndDate`='0000-00-00' WHERE `driver_id`="+driverId);
+        st.execute("UPDATE drivers SET `driver_deleted`=0, `driverEndDate`=NULL WHERE `driver_id`="+driverId);
         st.close();
     }
 }

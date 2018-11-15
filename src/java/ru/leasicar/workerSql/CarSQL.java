@@ -44,13 +44,14 @@ public class CarSQL {
     }
     public Map carList() throws SQLException {
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT *  FROM `cars`");
+        ResultSet rs = st.executeQuery("SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId`");
         Map listDriver = new HashMap<String, HashMap>();
         while(rs.next()){
             Map rowDriver = new HashMap<String, HashMap>();
             rowDriver.put("id", rs.getString("id"));
             rowDriver.put("number", rs.getString("number"));
             rowDriver.put("model", rs.getString("model"));
+            rowDriver.put("modelName", rs.getString("modelName"));
             rowDriver.put("VIN", rs.getString("VIN"));
             rowDriver.put("transmission", rs.getString("transmission"));
             rowDriver.put("year", rs.getString("year"));
@@ -132,28 +133,25 @@ public class CarSQL {
                                             ", `ttoNumber`= '"+ ttoNumber+"'"+
                                             " WHERE `id`="+carId);
     }
-    public String modelLisc(int currentIds){
-        Map<Integer, String> carData = new HashMap();
-        carData.put(1, "Kia Rio");
-        carData.put(2, "Kia Optima");
+    public String modelLisc(int currentIds) throws SQLException{
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT * FROM `models`");
         String forRet="";
-        for (Map.Entry<Integer, String> entry : carData.entrySet()) {
-            forRet =forRet+"<option value='"+entry.getKey()+"' ";
-            if(entry.getKey()== currentIds)
+        while(rs.next()) {
+            forRet =forRet+"<option value='"+rs.getInt("modelId")+"' ";
+            if(rs.getInt("modelId")== currentIds)
                 forRet = forRet+" selected "; 
-            forRet =forRet+ ">" + entry.getValue()+"</option>";           
+            forRet =forRet+ ">" + rs.getString("modelName")+"</option>";           
         }
         return forRet;
     }
-    
-    public String modelLisc(){
-        Map<Integer, String> carData = new HashMap();
-        carData.put(1, "Kia Rio");
-        carData.put(2, "Kia Optima");
+    public String modelLisc() throws SQLException{
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT * FROM `models`");
         String forRet="";
-        for (Map.Entry<Integer, String> entry : carData.entrySet()) {
-            forRet =forRet+"<option value='"+entry.getKey()+"' ";
-            forRet =forRet+ ">" + entry.getValue()+"</option>";           
+        while(rs.next()) {
+            forRet =forRet+"<option value='"+rs.getInt("modelId")+"' ";
+            forRet =forRet+ ">" + rs.getString("modelName")+"</option>";           
         }
         return forRet;
     }
