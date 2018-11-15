@@ -46,7 +46,7 @@ public class ReportSQL {
         System.out.println(begin + "  " +end);
         Statement stPayList = con.createStatement();
         ResultSet rsPayList = stPayList.executeQuery("SELECT zap1.`date_f`, zap1.`id`, zap1.`payName`, zap1.`user`, payType.payTypeName, zap1.`sum`, zap1.`balance` FROM payType " +
-                                "INNER JOIN (SELECT DATE_FORMAT(`date`, '%Y-%m-%d') as date_f, `pay`.*, `paySource`.`payName` FROM `pay` " +
+                                "INNER JOIN (SELECT DATE_FORMAT(`date`, '%Y-%m-%d %H:%i') as date_f, `pay`.*, `paySource`.`payName` FROM `pay` " +
                                 "LEFT join `paySource` " +
                                 "ON `paySource`.`payId`=`pay`.`source`) as zap1 " +
                                 "ON zap1.`type`=payType.payTapeId\n" +

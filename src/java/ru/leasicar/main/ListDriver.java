@@ -70,9 +70,9 @@ public class ListDriver extends HttpServlet {
                     else
                         day_off="<img src='img/wrk.png'/>";
                     String colorRow = "white";
-                    if(Integer.parseInt((String) draverData.get("driver_current_debt"))<0)
+                    if(Double.parseDouble((String) draverData.get("driver_current_debt"))<0.0)
                         colorRow="yellow";
-                    if(Integer.parseInt((String) draverData.get("driver_current_debt"))<Integer.parseInt((String) draverData.get("driver_limit"))*-1)
+                    if(Double.parseDouble((String) draverData.get("driver_current_debt"))<Integer.parseInt((String) draverData.get("driver_limit"))*-1)
                         colorRow="red";
                     String delButton = "";
                     if(delete)

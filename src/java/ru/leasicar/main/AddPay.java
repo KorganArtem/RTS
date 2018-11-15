@@ -44,7 +44,7 @@ public class AddPay extends HttpServlet {
                 /* TODO output your page here. You may use following sample code. */
                 try{
                     int driverId = Integer.parseInt(request.getParameter("driverId"));
-                    int sum = Integer.parseInt(request.getParameter("sum"));
+                    Double sum = Double.parseDouble(request.getParameter("sum"));    ///parseInt();
                     int source = Integer.parseInt(request.getParameter("source"));
                     int typePay = Integer.parseInt(request.getParameter("typePay"));
                     PaySQL wsql = new PaySQL();
