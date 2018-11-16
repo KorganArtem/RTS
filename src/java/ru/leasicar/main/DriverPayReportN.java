@@ -26,10 +26,10 @@ import ru.leasicar.workerSql.ReportSQL;
 
 /**
  *
- * @author korgan
+ * @author Artem
  */
-@WebServlet(name = "DriverPayReport", urlPatterns = {"/DriverPayReport1"})
-public class DriverPayReport extends HttpServlet {
+@WebServlet(name = "DriverPayReportN", urlPatterns = {"/DriverPayReport"})
+public class DriverPayReportN extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,7 +41,7 @@ public class DriverPayReport extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
         AccessControl ac = new AccessControl();
         if(ac.isLogIn(request.getSession().getId())){
@@ -105,10 +105,10 @@ public class DriverPayReport extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DriverPayReport.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(DriverPayReport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DriverPayReportN.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DriverPayReportN.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -125,10 +125,10 @@ public class DriverPayReport extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DriverPayReport.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(DriverPayReport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DriverPayReportN.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DriverPayReportN.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
