@@ -63,7 +63,7 @@ public class ListDriver extends HttpServlet {
                 out.println(colsBalance+"<td class='noPrint'></td>"+colDel+"<td class='noPrint'></td></tr></thead>");
                 while (entries.hasNext()) {
                     Map.Entry<String, Map> entry = entries.next();
-                    Map draverData = entry.getValue();
+                    Map<String, String> draverData = entry.getValue();
                     String day_off="";
                     if(draverData.get("dayOff")==null || draverData.get("dayOff").equals("1"))
                         day_off="<img src='img/day_off.png'/>";
@@ -97,7 +97,11 @@ public class ListDriver extends HttpServlet {
                             + delButton        
                             + "<td class='wrkday noPrint'>"+day_off+"</td>"
                             + report
-                                    + "<td class='docsCol'  driverId='"+entry.getKey()+"'><img src='img/docs.png'/></td></tr>");
+                                    + "<td class='docsCol'  driverId='"+entry.getKey()+"'>");
+                    //if(draverData.get("haveBill").equals("1"))
+                        out.println("<img src='img/docs.png'/></td></tr>");
+                   // else
+                       // out.println("<img src='img/doc1.png'/></td></tr>");
                 }
                 out.println("</table></div>");
                 if(showBalance)

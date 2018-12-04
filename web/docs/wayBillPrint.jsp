@@ -70,7 +70,7 @@
         DateFormat formatOut = new SimpleDateFormat("dd.MM.yyyy");
         String date1 = formatOut.format(date.getTime());
         String date2 = formatOut.format(date.getTime()+(60*60*24*1000));
-        int wayBillId = wbsql.writeWayBill(driverId, carId, cmpanyId, date1, docNum);
+        int wayBillId = wbsql.writeWayBill(driverId, carId, cmpanyId, date, docNum);
     %>
     
     

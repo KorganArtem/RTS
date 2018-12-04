@@ -11,6 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -41,8 +44,11 @@ public class WayBillSQL {
             System.out.println("Mysql ERROR: "+ex.getMessage());
         }
     }
-    public int writeWayBill(int driverId, int carId, int companyId, String date, String docNum) throws SQLException{
-        String query = "INSERT INTO `waybills` SET `waybillsDate`='"+date+"', "
+    public int writeWayBill(int driverId, int carId, int companyId, Date date, String docNum) throws SQLException{
+        DateFormat formatOut = new SimpleDateFormat("yyyy-MM-dd");
+        String date1 = formatOut.format(date.getTime());
+        System.out.println(date1);
+        String query = "INSERT INTO `waybills` SET `waybillsDate`='"+date1+"', "
                 + "driverId="+driverId+", "
                 + "carId="+carId+", "
                 + "docNum="+docNum+", "

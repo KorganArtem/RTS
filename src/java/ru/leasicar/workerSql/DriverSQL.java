@@ -134,6 +134,12 @@ public class DriverSQL {
                                         "LEFT JOIN `cars`\n" +
                                         "ON `cars`.`id`=`drivers`.`carId` \n" +
                                         "WHERE `drivers`.`driver_deleted`="+showDeleted);
+//    "SELECT zap2.*, cars.number FROM cars " +
+//                                    "INNER JOIN " +
+//                                    "(SELECT drivers.*, zap1.* FROM drivers " +
+//                                    "LEFT JOIN (SELECT max(waybillsDate) as lastBill, waybills.driverId FROM lc.waybills WHERE waybillsDate>current_date() GROUP BY driverId) zap1 " +
+//                                    "ON drivers.driver_id=zap1.driverId WHERE driver_deleted="+showDeleted+") as zap2 " +
+//                                    "ON zap2.driver_id=cars.driverId"
         Map listDriver = new HashMap<String, HashMap>();
         while(rs.next()){
             Map<String, String> rowDriver = new HashMap();
@@ -147,6 +153,13 @@ public class DriverSQL {
             rowDriver.put("driver_phone_number", rs.getString("driver_phone_number"));
             rowDriver.put("driver_deposit", rs.getString("driver_deposit"));
             rowDriver.put("dayOff", rs.getString("driverDayOff"));
+            //rowDriver.put("lastBill", rs.getString("lastBill"));
+//            if(!rs.wasNull()){
+//                rowDriver.put("haveBill", "1");
+//            }
+//            else{
+//                rowDriver.put("haveBill", "0");
+//            }
             listDriver.put(rs.getString("driver_id"), rowDriver);
         }
         return listDriver;
