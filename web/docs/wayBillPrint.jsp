@@ -56,17 +56,18 @@
     DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate = format.parse(request.getParameter("startDate"));
     Date endDate = format.parse(request.getParameter("endDate"));
-    String driverLicNum = "";
-    String[] comment = driverData.get("comment").split("/");
+    String driverLicNum = driverData.get("vyNumber");
+    /*String[] comment = driverData.get("comment").split("/");
     if(comment.length>1){
         driverLicNum = comment[0];
     }
     else
-        driverLicNum=driverData.get("comment");
+        driverLicNum=driverData.get("comment");*/
     WayBillSQL wbsql = new WayBillSQL();
     for(long i=startDate.getTime(); i<=endDate.getTime(); i=i+(60*60*24*1000)){
         Date date = new Date(i);
-        String docNum = date.getTime()/100000+"";
+        String docNum = date.getTime()/1000+"";
+        docNum = docNum.substring(2, 10);
         DateFormat formatOut = new SimpleDateFormat("dd.MM.yyyy");
         String date1 = formatOut.format(date.getTime());
         String date2 = formatOut.format(date.getTime()+(60*60*24*1000));

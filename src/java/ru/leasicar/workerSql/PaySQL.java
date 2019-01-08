@@ -42,7 +42,7 @@ public class PaySQL {
         }
     }
     
-    public void addPayDriver(int driverId, double sum, int source, int userId) throws SQLException{
+    public void addPayDriver(int driverId, double sum, int source, int userId, String comment) throws SQLException{
         double balanceDriver = 0;
         if(source!=6){
             Statement stGetBalance = con.createStatement();
@@ -52,8 +52,8 @@ public class PaySQL {
                 balanceDriver=rsGetBalance.getDouble("driver_current_debt")+sum;
         }
         Statement st = con.createStatement();
-        st.execute("INSERT INTO `pay` (`type`, `date`, `source`, `sum`, `driverId`, `user`, `balance`) "
-                + "VALUES ('1', NOW(), '"+source+"', '"+sum+"', '"+driverId+"', '"+userId+"', '"+balanceDriver+"')");
+        st.execute("INSERT INTO `pay` (`type`, `date`, `source`, `sum`, `driverId`, `user`, `balance`, `comment`) "
+                + "VALUES ('1', NOW(), '"+source+"', '"+sum+"', '"+driverId+"', '"+userId+"', '"+balanceDriver+"', '"+comment+"')");
         st.close();
         if(source==6){
            Statement stUpdateCurrentDebt = con.createStatement();

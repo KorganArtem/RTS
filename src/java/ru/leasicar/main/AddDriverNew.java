@@ -74,6 +74,9 @@ public class AddDriverNew extends HttpServlet {
             driverData.put("addBuilding", request.getParameter("addBuilding"));
             driverData.put("addFlat", request.getParameter("addFlat"));
             driverData.put("addPostCode", request.getParameter("addPostCode"));
+            driverData.put("vyNumber", request.getParameter("vyNumber"));
+            driverData.put("vyDate", request.getParameter("vyDate"));
+            driverData.put("vyFrom", request.getParameter("vyFrom"));
             System.out.println(request.toString());
             dsql.writeDriver(driverData);
         }

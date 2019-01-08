@@ -45,7 +45,7 @@ public class ReportSQL {
     public Map getPayList(int driverId, String begin, String end) throws SQLException{
         System.out.println(begin + "  " +end);
         Statement stPayList = con.createStatement();
-        ResultSet rsPayList = stPayList.executeQuery("SELECT zap1.`date_f`, zap1.`id`, zap1.`payName`, zap1.`user`, payType.payTypeName, zap1.`sum`, zap1.`balance` FROM payType " +
+        ResultSet rsPayList = stPayList.executeQuery("SELECT zap1.`date_f`, zap1.`id`, zap1.`payName`, zap1.`user`, payType.payTypeName, zap1.`sum`, zap1.`balance`, zap1.`comment` FROM payType " +
                                 "INNER JOIN (SELECT DATE_FORMAT(`date`, '%Y-%m-%d %H:%i') as date_f, `pay`.*, `paySource`.`payName` FROM `pay` " +
                                 "LEFT join `paySource` " +
                                 "ON `paySource`.`payId`=`pay`.`source`) as zap1 " +
@@ -59,6 +59,7 @@ public class ReportSQL {
             payRaw.put("sum", rsPayList.getString("sum"));
             payRaw.put("balance", rsPayList.getString("balance"));
             payRaw.put("date", rsPayList.getString("date_f"));
+            payRaw.put("comment", rsPayList.getString("comment"));
             payList.put(rsPayList.getString("id"), payRaw);
         }
         return payList;

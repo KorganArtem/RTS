@@ -19,6 +19,7 @@ import ru.leasicar.workerSql.DriverSQL;
 import com.ibm.icu.text.*;
 import java.util.Calendar;
 import java.util.HashMap;
+import ru.leasicar.workerSql.CarSQL;
 /**
  *
  * @author korgan
@@ -46,6 +47,19 @@ public class DogovorGenerator {
         Map<String, String> draverData = dsql.getAllDataDriver(DriverId);
         Calendar calendar = Calendar.getInstance();
         String dataDog = calendar.get(Calendar.DAY_OF_MONTH)+" "+mounths.get(calendar.get(Calendar.MONTH)+1)+" "+calendar.get(Calendar.YEAR);
+        CarSQL csql = new CarSQL();
+        Map<String, String> carData = csql.getCarDataForAct(Integer.parseInt(draverData.get("carId")));
+        String transmission = "";
+        if(carData.get("transmission")!=null){
+            switch(carData.get("transmission").toString()){
+                case "1": 
+                    transmission="МКПП";
+                    break;
+                case "2": 
+                    transmission="АКПП";
+                    break;
+            }
+        }
         try {
             String fullName = draverData.get("driver_lastname")+" "+draverData.get("driver_firstname")+" "+draverData.get("driver_midName");
             POIFSFileSystem pfs = new POIFSFileSystem(new FileInputStream("/table/doc_tmp/dogovor_tmp.doc"));
@@ -59,6 +73,7 @@ public class DogovorGenerator {
             range.replaceText("{%passportNumber%}", draverData.get("passportNumber"));
             range.replaceText("{%passportFrom%}", draverData.get("passportFrom"));
             range.replaceText("{%passportDate%}", draverData.get("passportDate"));
+            range.replaceText("{%carTransmission%}", transmission);
             ////////////////////////////////////////////////////////////////////////
             String address = draverData.get("postCode") +", "+draverData.get("country");
             if(draverData.get("province").length()>1)

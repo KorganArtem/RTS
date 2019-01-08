@@ -7,14 +7,14 @@
 <%@page import="ru.leasicar.workerSql.CarSQL"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="en" class=" js "><head>
-    <meta charset="utf-8">
-    <title>GettPartner: Добавить новый ID</title>
+<!--html lang="en" class=" js "><head>
+    <meta charset="utf-8"-->
+    <!--title>GettPartner: Добавить новый ID</title>
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
         <script src='https://code.jquery.com/jquery-1.12.4.js'></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <link rel='stylesheet' type='text/css'  href='../css/main.css'/>
-        <link rel="stylesheet" type="text/css" href="../css/view.css" media="all">
+        <link rel="stylesheet" type="text/css" href="../css/view.css" media="all"-->
     <style>
         div{
             overflow: hidden;
@@ -268,5 +268,5 @@
             }
           });
     </script>
-</body>
-</html>
+<!--/body>
+</html-->

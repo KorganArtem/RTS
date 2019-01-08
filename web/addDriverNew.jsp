@@ -78,7 +78,22 @@
                         <input id="element_1_2" name= "passportFrom" class="element text" size="14" value=""/>
                         <label>Выдан</label>
                     </span> 
-		</li>			
+		</li>	
+                <li id="li_1" >
+                    <label class="description" for="element_3">Водительское удостоверение </label>
+                    <span>
+			<input id="element_1_1" name= "vyNumber" class="element text"  size="14" value=""/>
+			<label>Серия номер</label>
+                    </span>
+                    <span>
+                        <input type="date" id="element_1_2" name= "vyDate" class="element text" size="14" value="2000-01-01"/>
+                        <label>Дата выдачи</label>
+                    </span> 
+                    <span>
+                        <input id="element_1_2" name= "vyFrom" class="element text" size="14" value=""/>
+                        <label>Кем выдано</label>
+                    </span> 
+		</li>		
                 <li id="li_3" >
                     
                     <div id="address">

@@ -57,6 +57,9 @@ public class DriverSQL {
                         + "`driver_current_debt`=0, "
                         + "`driverStartDate`='"+ driverData.get("addDate") +"', "
                         + "`driverDayOffPeriod`='"+ driverData.get("shedule") +"', "
+                        + "`vyNumber`='"+ driverData.get("vyNumber") +"', "
+                        + "`vyDate`='"+ driverData.get("vyDate") +"', "
+                        + "`vyFrom`='"+ driverData.get("vyFrom") +"', "
                         + "`comment`='"+ driverData.get("comment") +"'";
         st.execute(insertQuery);
         Map<String, String> address =new HashMap<>();
@@ -130,16 +133,16 @@ public class DriverSQL {
 
     public Map listDriver(int showDeleted) throws SQLException{
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT `drivers`.*, `cars`.`number`   FROM `drivers`  \n" +
+        ResultSet rs = st.executeQuery(/*"SELECT `drivers`.*, `cars`.`number`   FROM `drivers`  \n" +
                                         "LEFT JOIN `cars`\n" +
                                         "ON `cars`.`id`=`drivers`.`carId` \n" +
-                                        "WHERE `drivers`.`driver_deleted`="+showDeleted);
-//    "SELECT zap2.*, cars.number FROM cars " +
-//                                    "INNER JOIN " +
-//                                    "(SELECT drivers.*, zap1.* FROM drivers " +
-//                                    "LEFT JOIN (SELECT max(waybillsDate) as lastBill, waybills.driverId FROM lc.waybills WHERE waybillsDate>current_date() GROUP BY driverId) zap1 " +
-//                                    "ON drivers.driver_id=zap1.driverId WHERE driver_deleted="+showDeleted+") as zap2 " +
-//                                    "ON zap2.driver_id=cars.driverId"
+                                        "WHERE `drivers`.`driver_deleted`="+showDeleted);*/
+                            "SELECT zap2.*, cars.number FROM cars " +
+                                    "INNER JOIN " +
+                                    "(SELECT drivers.*, zap1.* FROM drivers " +
+                                    "LEFT JOIN (SELECT max(waybillsDate) as lastBill, waybills.driverId FROM waybills WHERE waybillsDate>current_date() GROUP BY driverId) zap1 " +
+                                    "ON drivers.driver_id=zap1.driverId WHERE driver_deleted="+showDeleted+") as zap2 " +
+                                    "ON zap2.carId=cars.id");
         Map listDriver = new HashMap<String, HashMap>();
         while(rs.next()){
             Map<String, String> rowDriver = new HashMap();
@@ -153,13 +156,13 @@ public class DriverSQL {
             rowDriver.put("driver_phone_number", rs.getString("driver_phone_number"));
             rowDriver.put("driver_deposit", rs.getString("driver_deposit"));
             rowDriver.put("dayOff", rs.getString("driverDayOff"));
-            //rowDriver.put("lastBill", rs.getString("lastBill"));
-//            if(!rs.wasNull()){
-//                rowDriver.put("haveBill", "1");
-//            }
-//            else{
-//                rowDriver.put("haveBill", "0");
-//            }
+            rowDriver.put("lastBill", rs.getString("lastBill"));
+            if(!rs.wasNull()){
+                rowDriver.put("haveBill", "1");
+            }
+            else{
+                rowDriver.put("haveBill", "0");
+            }
             listDriver.put(rs.getString("driver_id"), rowDriver);
         }
         return listDriver;
@@ -213,6 +216,9 @@ public class DriverSQL {
                 rowDriver.put("dogovorNumber", rs.getString("dogovorNumber"));
                 rowDriver.put("dogovorDate", rs.getString("dogovorDate"));
                 rowDriver.put("carId", rs.getString("carId"));
+                rowDriver.put("vyNumber", rs.getString("vyNumber"));
+                rowDriver.put("vyDate", rs.getString("vyDate"));
+                rowDriver.put("vyFrom", rs.getString("vyFrom"));
             }
             Statement stGetAddAddress = con.createStatement();
             String getAddAddressQuery ="SELECT * FROM driverAddress WHERE driverId="+driverId
@@ -282,6 +288,9 @@ public class DriverSQL {
         changeCar(0, carId, 3);
         stDelDriver.execute("UPDATE drivers SET `driver_deleted`=1, `driverEndDate`=CURRENT_DATE() WHERE `driver_id`="+driverId);
         stDelDriver.close();
+        Statement stDelWayBill = con.createStatement();
+        stDelWayBill.execute("DELETE FROM waybills WHERE driverId='"+driverId+"' AND waybillsDate>current_date()");
+        stDelWayBill.close();
     }
     private int getCarId(String  driverId) throws SQLException{
         Statement st = con.createStatement();
@@ -334,6 +343,9 @@ public class DriverSQL {
                         + "`driverStartDate`='"+ driverData.get("addDate") +"', "
                         + "`driverDayOffPeriod`='"+ driverData.get("shedule") +"', "
                         + "`yaId`='"+ driverData.get("yaId") +"', "
+                        + "`vyNumber`='"+ driverData.get("vyNumber") +"', "
+                        + "`vyDate`='"+ driverData.get("vyDate") +"', "
+                        + "`vyFrom`='"+ driverData.get("vyFrom") +"', "
                         + "`comment`='"+ driverData.get("comment") +"'  WHERE driver_id="+driverId;
         st.execute(updateQuery);
         if(carChanged)

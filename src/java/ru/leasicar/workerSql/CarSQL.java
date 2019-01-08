@@ -75,6 +75,7 @@ public class CarSQL {
                 carData.put("year", rs.getString("year"));
                 carData.put("cost", rs.getString("cost"));
                 carData.put("glanasId", rs.getString("glanasId"));
+                carData.put("color", rs.getString("carColor"));
                 carData.put("sts", rs.getString("sts"));
                 carData.put("insuranceNamber", rs.getString("insuranceNamber"));
                 carData.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
@@ -103,6 +104,7 @@ public class CarSQL {
                 carData.put("year", rs.getString("year"));
                 carData.put("cost", rs.getString("cost"));
                 carData.put("glanasId", rs.getString("glanasId"));
+                carData.put("color", rs.getString("carColor"));
                 carData.put("sts", rs.getString("sts"));
                 carData.put("insuranceNamber", rs.getString("insuranceNamber"));
                 carData.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));

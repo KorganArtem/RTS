@@ -80,7 +80,7 @@ function takePay(driverId){
             $('#takePayDriverId').val(driverId);
             $('#takePayDriverName').val($('#listDriverFirstName'+driverId).html()
                 +' '+$('#listDriverLastName'+driverId).html());
-            openModWind(200, 200);
+            openModWind(200, 250);
         },
         error: function(msg){
             alert(msg);
@@ -95,16 +95,18 @@ function takePaySend(){
     var driverId=$('#takePayDriverId').val();
     var sum=$('#takePayDriverSum').val();
     var sourcePay=$('#takePayDriverType').val();
+    var comment=$('#takePayDriverComment').val();
     $.ajax({
         type: 'POST',
         url: 'AddPay',
-        data: 'driverId='+driverId+'&sum='+sum+'&source='+sourcePay+'&typePay='+typePay,
+        data: 'driverId='+driverId+'&sum='+sum+'&source='+sourcePay+'&typePay='+typePay+'&comment='+comment,
         success: function(data){
             if(data=='OK'){
                 $('#takePay').css('display', 'none')
                 $('#takePayDriverId').val('');
                 $('#takePayDriverSum').val('');
                 $('#takePayDriverType').val('');
+                $('#takePayDriverComment').val('');
                 listDriverShow();
                 closeModWind();
             }
@@ -444,6 +446,19 @@ function addCar(){
         success: function(data){
             $('#modalConteiner').html(data);
             openModWind();
+        },
+        error:function (msg){
+            alert('Error in geting car list!'+msg);
+        }
+    });
+}
+function addCarNew(){
+    $.ajax({
+        type: 'POST',
+        url: 'car/carForm.jsp',
+        success: function(data){
+            $('#modalConteiner').html(data);
+            openModWind(600, 500);
         },
         error:function (msg){
             alert('Error in geting car list!'+msg);

@@ -67,4 +67,9 @@ public class WayBillSQL {
             ps.close();
             return id;
     }
+    public Map<String, Map> getWayBillTabel(String dateStrt, String dateEnd) throws SQLException{
+        Statement st = con.createStatement();
+        ResultSet rsGetWayBil  = st.executeQuery("SELECT * FROM wayBills");
+        return null;
+    }
 }

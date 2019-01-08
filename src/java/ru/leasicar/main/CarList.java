@@ -44,6 +44,7 @@ public class CarList extends HttpServlet {
             AccessControl ac = new AccessControl();
             if(ac.isLogIn(request.getSession().getId())){
                     out.println("<input type='button' value='Add Car' onClick='addCar()'/>");
+                    out.println("<input type='button' value='Add Car Test' onClick='addCarNew()'/>");
                     out.println("<table id='carListTabel' class='listDriver'>");
                     ///////////////////////////////////////////////////////////////
                     boolean delete = ac.checkPermission(ac.getUserId(request.getSession().getId()), "deletDriver");

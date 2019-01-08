@@ -76,6 +76,9 @@ public class EditDriverSendN extends HttpServlet {
             driverData.put("addBuilding", request.getParameter("addBuilding"));
             driverData.put("addFlat", request.getParameter("addFlat"));
             driverData.put("addPostCode", request.getParameter("addPostCode"));
+            driverData.put("vyNumber", request.getParameter("vyNumber"));
+            driverData.put("vyDate", request.getParameter("vyDate"));
+            driverData.put("vyFrom", request.getParameter("vyFrom"));
             driverData.put("changeSchedule",	request.getParameter("changeSchedule")); 
             int driverId = Integer.parseInt(request.getParameter("driverId")); 
             int changeSchedule = Integer.parseInt(request.getParameter("changeSchedule"));

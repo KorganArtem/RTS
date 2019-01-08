@@ -94,6 +94,21 @@
                         <input id="element_1_2" name= "passportFrom" class="element text" maxlength="255" size="14" value="<%= dataDriver.get("passportFrom") %>"/>
                         <label>Выдан</label>
                     </span> 
+		</li>	
+                <li id="li_1" >
+                    <label class="description" for="element_3">Водительское удостоверение </label>
+                    <span>
+			<input id="element_1_1" name= "vyNumber" class="element text"  size="14" value="<%= dataDriver.get("vyNumber") %>"/>
+			<label>Серия номер</label>
+                    </span>
+                    <span>
+                        <input type="date" id="element_1_2" name= "vyDate" class="element text" size="14" value="<%= dataDriver.get("vyDate") %>"/>
+                        <label>Дата выдачи</label>
+                    </span> 
+                    <span>
+                        <input id="element_1_2" name= "vyFrom" class="element text" size="14" value="<%= dataDriver.get("vyFrom") %>"/>
+                        <label>Кем выдано</label>
+                    </span> 
 		</li>		
                 <li id="li_3" >
                     <div id="address"><div class="left">

@@ -80,7 +80,7 @@ public class ListDriver extends HttpServlet {
                     if(showBalance)
                         colsBalance="<td>"+draverData.get("driver_limit")+"</td>"
                             + "<td>"+draverData.get("driver_current_debt")+"</td>"
-                            + "<td>"+draverData.get("driver_deposit")+"<img onClick='addDeposit("+entry.getKey()+")' src='img/add.png'/></td>"
+                            + "<td>"+draverData.get("driver_deposit")+"</td>"
                             + "<td class='takeMoney noPrint' onClick='takePay("+entry.getKey()+")')><img src='img/takeMoney.png'/></td>";
                     else
                         colsBalance="";
@@ -98,10 +98,10 @@ public class ListDriver extends HttpServlet {
                             + "<td class='wrkday noPrint'>"+day_off+"</td>"
                             + report
                                     + "<td class='docsCol'  driverId='"+entry.getKey()+"'>");
-                    //if(draverData.get("haveBill").equals("1"))
+                    if(draverData.get("haveBill").equals("1"))
                         out.println("<img src='img/docs.png'/></td></tr>");
-                   // else
-                       // out.println("<img src='img/doc1.png'/></td></tr>");
+                    else
+                        out.println("<img src='img/doc1.png'/></td></tr>");
                 }
                 out.println("</table></div>");
                 if(showBalance)

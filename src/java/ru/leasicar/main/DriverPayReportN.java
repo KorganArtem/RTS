@@ -64,14 +64,14 @@ public class DriverPayReportN extends HttpServlet {
                 ReportSQL rsql = new ReportSQL();
                 Map payList = new TreeMap<>(rsql.getPayList(driverId, begin, end));
                 out.println("<table id='driverReport' class='report'>");
-                out.println("<thead><tr><td>Дата</td><td>Тип</td><td>Источник</td><td>Сумма</td><td>Баланс</td></tr></thead>");
+                out.println("<thead><tr><td>Дата</td><td>Тип</td><td>Источник</td><td>Сумма</td><td>Баланс</td><td>Коментарий</td></tr></thead>");
                 Iterator<Map.Entry<String, Map>> entries = payList.entrySet().iterator();
                 while (entries.hasNext()) {
                     Map.Entry<String, Map> entry = entries.next();
                     Map payRaw = entry.getValue();
                     out.println("<tr><td>"+payRaw.get("date")+"</td><td>"+payRaw.get("payTypeName")
                             +"</td><td>"+payRaw.get("payName")+"</td><td>"+payRaw.get("sum")
-                            +"</td><td>"+payRaw.get("balance")+"</td></tr>");
+                            +"</td><td>"+payRaw.get("balance")+"</td><td>"+payRaw.get("comment")+"</td></tr>");
                 }
                 out.println("</table><div>");
                 Map<String, HashMap> payGroup = rsql.getGroupPay(driverId, begin, end);

@@ -47,9 +47,10 @@ public class AddPay extends HttpServlet {
                     Double sum = Double.parseDouble(request.getParameter("sum"));    ///parseInt();
                     int source = Integer.parseInt(request.getParameter("source"));
                     int typePay = Integer.parseInt(request.getParameter("typePay"));
+                    String payComment = request.getParameter("comment");
                     PaySQL wsql = new PaySQL();
                     if(typePay==1)
-                        wsql.addPayDriver(driverId, sum, source, userId);
+                        wsql.addPayDriver(driverId, sum, source, userId, payComment);
                     if(typePay==3)
                         wsql.addPayDeposit(driverId, sum, source, userId);
                     //wsql.addAccrual();
