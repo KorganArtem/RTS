@@ -4,6 +4,7 @@
     Author     : korgan
 --%>
 
+<%@page import="ru.leasicar.healthCheck.HealthDataGenerator"%>
 <%@page import="ru.leasicar.workerSql.WayBillSQL"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -64,14 +65,24 @@
     else
         driverLicNum=driverData.get("comment");*/
     WayBillSQL wbsql = new WayBillSQL();
+    int years = Integer.parseInt(driverData.get("driver_age"));
     for(long i=startDate.getTime(); i<=endDate.getTime(); i=i+(60*60*24*1000)){
         Date date = new Date(i);
-        String docNum = date.getTime()/1000+"";
-        docNum = docNum.substring(2, 10);
+        System.out.println(years);
+        //String docNum = date.getTime()/1000+"";
+        //docNum = docNum.substring(2, 10);
         DateFormat formatOut = new SimpleDateFormat("dd.MM.yyyy");
+        DateFormat formatDocNum = new SimpleDateFormat("yyMMdd");
+        String docNum = carId+1000+"";
+        docNum = formatDocNum.format(date)+docNum.substring(1);
         String date1 = formatOut.format(date.getTime());
         String date2 = formatOut.format(date.getTime()+(60*60*24*1000));
-        int wayBillId = wbsql.writeWayBill(driverId, carId, cmpanyId, date, docNum);
+        HealthDataGenerator hdg = new HealthDataGenerator();
+        double bodyTemp = hdg.getBodyTem();
+        System.out.println(bodyTemp);
+        String bloodPressure = hdg.getBloodPressure(years);
+        int pulse = hdg.getPulse(years);
+        int wayBillId = wbsql.writeWayBill(driverId, carId, cmpanyId, date, docNum, bodyTemp, bloodPressure, pulse);
     %>
     
     

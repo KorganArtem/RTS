@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -44,7 +45,8 @@ public class WayBillSQL {
             System.out.println("Mysql ERROR: "+ex.getMessage());
         }
     }
-    public int writeWayBill(int driverId, int carId, int companyId, Date date, String docNum) throws SQLException{
+    public int writeWayBill(int driverId, int carId, int companyId, Date date, String docNum, 
+            double bodyTemp, String bloodPressure, int pulse) throws SQLException{
         DateFormat formatOut = new SimpleDateFormat("yyyy-MM-dd");
         String date1 = formatOut.format(date.getTime());
         System.out.println(date1);
@@ -52,7 +54,10 @@ public class WayBillSQL {
                 + "driverId="+driverId+", "
                 + "carId="+carId+", "
                 + "docNum="+docNum+", "
-                + "companyId="+companyId;
+                + "companyId="+companyId+", "
+                + "temperature="+bodyTemp+", "
+                + "bloodPressure='"+bloodPressure+"', "
+                + "pulse="+pulse;
         int id = 0;
         PreparedStatement ps = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         //ps.setString(1,"Neeraj");
@@ -67,9 +72,37 @@ public class WayBillSQL {
             ps.close();
             return id;
     }
-    public Map<String, Map> getWayBillTabel(String dateStrt, String dateEnd) throws SQLException{
+    public Map<String, Map> getWayBillTabel(String dateStart, String dateEnd, int companyId) throws SQLException{
         Statement st = con.createStatement();
-        ResultSet rsGetWayBil  = st.executeQuery("SELECT * FROM wayBills");
-        return null;
+        String where = "WHERE companyId="+companyId+" ";
+        if(dateStart!=null)
+            where=where+" AND waybillsDate>'"+dateStart+"' ";
+        if(dateEnd!=null)
+            where=where+" AND waybillsDate<'"+dateEnd+"' ";
+        String query = "SELECT concat(date_format(waybills.waybillsDate, '%y%m%d'), SUBSTRING(waybills.carId+1000, 2, 3)) as docNum, "
+                + "waybills.waybillsDate, waybills.docNum as docNumInBill, drivers.driver_lastname,"
+                + "drivers.driver_firstname, drivers.driver_midName, waybills.driverId, "
+                + "cars.number,  DATE_ADD(waybills.waybillsDate, INTERVAL 1 DAY) as endDate FROM waybills "
+                + "INNER JOIN drivers "
+                + "ON drivers.driver_id=waybills.driverId "
+                + "inner JOIN cars "
+                + "ON cars.id=waybills.carId "+where+" ORDER BY docNum ";
+        System.out.println(query);
+        ResultSet rsGetWayBill  = st.executeQuery(query);
+        Map<String, Map> wayBillsList = new HashMap<String, Map>();
+        while(rsGetWayBill.next()){
+            Map<String, String> wayBillData = new HashMap<String, String>();
+            wayBillData.put("docNum", rsGetWayBill.getString("docNum"));
+            wayBillData.put("docNumInBill", rsGetWayBill.getString("docNumInBill"));
+            wayBillData.put("waybillsDate", rsGetWayBill.getString("waybillsDate"));
+            wayBillData.put("driver_lastname", rsGetWayBill.getString("driver_lastname"));
+            wayBillData.put("driver_firstname", rsGetWayBill.getString("driver_firstname"));
+            wayBillData.put("driver_midName", rsGetWayBill.getString("driver_midName"));
+            wayBillData.put("driverId", rsGetWayBill.getString("driverId"));
+            wayBillData.put("number", rsGetWayBill.getString("number"));
+            wayBillData.put("endDate", rsGetWayBill.getString("endDate"));
+            wayBillsList.put(rsGetWayBill.getString("docNum"), wayBillData);
+        }
+        return wayBillsList;
     }
 }

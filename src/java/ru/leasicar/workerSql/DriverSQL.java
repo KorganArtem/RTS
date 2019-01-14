@@ -133,11 +133,7 @@ public class DriverSQL {
 
     public Map listDriver(int showDeleted) throws SQLException{
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery(/*"SELECT `drivers`.*, `cars`.`number`   FROM `drivers`  \n" +
-                                        "LEFT JOIN `cars`\n" +
-                                        "ON `cars`.`id`=`drivers`.`carId` \n" +
-                                        "WHERE `drivers`.`driver_deleted`="+showDeleted);*/
-                            "SELECT zap2.*, cars.number FROM cars " +
+        ResultSet rs = st.executeQuery("SELECT zap2.*, cars.number FROM cars " +
                                     "INNER JOIN " +
                                     "(SELECT drivers.*, zap1.* FROM drivers " +
                                     "LEFT JOIN (SELECT max(waybillsDate) as lastBill, waybills.driverId FROM waybills WHERE waybillsDate>current_date() GROUP BY driverId) zap1 " +
@@ -179,7 +175,8 @@ public class DriverSQL {
                     + "ON passports.driverId=drivers.driver_id WHERE drivers.driver_id="+ driverId +") as zap "
                     + "ON zap.driver_id=driverAddress.driverId WHERE `driverAddress`.`type`=1";*/
             String query = "SELECT zapDriverAddr.*, passports.* FROM passports "
-                    + "RIGHT JOIN (SELECT zapAddres.*, drivers.* FROM drivers LEFT JOIN (SELECT * FROM driverAddress WHERE `type`=1) as zapAddres "
+                    + "RIGHT JOIN (SELECT zapAddres.*, drivers.*, ((YEAR(CURRENT_DATE) - YEAR(driver_bornDate)) - (DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(driver_bornDate, '%m%d'))) as driver_age " 
+                    + " FROM drivers LEFT JOIN (SELECT * FROM driverAddress WHERE `type`=1) as zapAddres "
                     + "ON zapAddres.driverId=drivers.driver_id WHERE drivers.driver_id="+driverId+") as zapDriverAddr "
                     + "ON zapDriverAddr.driver_id=passports.`driverId`";
             ResultSet rs = st.executeQuery(query);
@@ -198,6 +195,7 @@ public class DriverSQL {
                 rowDriver.put("driver_addPhone_number", rs.getString("driver_addPhone_number"));
                 rowDriver.put("driver_email", rs.getString("driver_email"));
                 rowDriver.put("driver_bornDate", rs.getString("driver_bornDate"));
+                rowDriver.put("driver_age", rs.getString("driver_age")); //
                 rowDriver.put("driverStartDate", rs.getString("driverStartDate"));
                 rowDriver.put("driverDayOffPeriod", rs.getString("driverDayOffPeriod"));
                 rowDriver.put("comment", rs.getString("comment"));
