@@ -79,14 +79,15 @@ public class WayBillSQL {
             where=where+" AND waybillsDate>'"+dateStart+"' ";
         if(dateEnd!=null)
             where=where+" AND waybillsDate<'"+dateEnd+"' ";
-        String query = "SELECT concat(date_format(waybills.waybillsDate, '%y%m%d'), SUBSTRING(waybills.carId+1000, 2, 3)) as docNum, "
+        /*String query = "SELECT concat(date_format(waybills.waybillsDate, '%y%m%d'), SUBSTRING(waybills.carId+1000, 2, 3)) as docNum, "
                 + "waybills.waybillsDate, waybills.docNum as docNumInBill, drivers.driver_lastname,"
                 + "drivers.driver_firstname, drivers.driver_midName, waybills.driverId, "
                 + "cars.number,  DATE_ADD(waybills.waybillsDate, INTERVAL 1 DAY) as endDate FROM waybills "
                 + "INNER JOIN drivers "
                 + "ON drivers.driver_id=waybills.driverId "
                 + "inner JOIN cars "
-                + "ON cars.id=waybills.carId "+where+" ORDER BY docNum ";
+                + "ON cars.id=waybills.carId "+where+" ORDER BY docNum ";*/
+        String query = "SELECT concat(date_format(waybills.waybillsDate, '%y%m%d'), SUBSTRING(waybills.carId+1000, 2, 3)) as docNum,   waybills.waybillsDate, waybills.docNum as docNumInBill, drivers.driver_lastname,  drivers.driver_firstname, drivers.driver_midName, waybills.driverId,   cars.number, TIME_FORMAT(cars.outTime, '%H-%i') as outTime, drivers.driver_bornDate, drivers.sex, waybills.temperature, waybills.bloodPressure, waybills.pulse,  DATE_ADD(waybills.waybillsDate, INTERVAL 1 DAY) as endDate FROM waybills  INNER JOIN drivers   ON drivers.driver_id=waybills.driverId   inner JOIN cars  ON cars.id=waybills.carId "+where+" ORDER BY docNum ";
         System.out.println(query);
         ResultSet rsGetWayBill  = st.executeQuery(query);
         Map<String, Map> wayBillsList = new HashMap<String, Map>();
@@ -100,7 +101,13 @@ public class WayBillSQL {
             wayBillData.put("driver_midName", rsGetWayBill.getString("driver_midName"));
             wayBillData.put("driverId", rsGetWayBill.getString("driverId"));
             wayBillData.put("number", rsGetWayBill.getString("number"));
+            wayBillData.put("driver_bornDate", rsGetWayBill.getString("driver_bornDate"));
+            wayBillData.put("sex", rsGetWayBill.getString("sex"));
+            wayBillData.put("temperature", rsGetWayBill.getString("temperature"));
+            wayBillData.put("bloodPressure", rsGetWayBill.getString("bloodPressure"));
+            wayBillData.put("pulse", rsGetWayBill.getString("pulse"));
             wayBillData.put("endDate", rsGetWayBill.getString("endDate"));
+            wayBillData.put("outTime", rsGetWayBill.getString("outTime"));
             wayBillsList.put(rsGetWayBill.getString("docNum"), wayBillData);
         }
         return wayBillsList;

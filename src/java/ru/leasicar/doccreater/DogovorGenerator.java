@@ -67,6 +67,7 @@ public class DogovorGenerator {
             String fileName = "dogFor_"+numberDog+".doc";
             Range range = doc.getRange(); 
             range.replaceText("{%dogNumber%}", numberDog+"");
+            range.replaceText("{%numberDog%}", numberDog+"");
             range.replaceText("{%date%}", dataDog);
             range.replaceText("{%fulName%}", fullName);
             ////////////////////////////////////////////////////////////////////////
@@ -74,6 +75,16 @@ public class DogovorGenerator {
             range.replaceText("{%passportFrom%}", draverData.get("passportFrom"));
             range.replaceText("{%passportDate%}", draverData.get("passportDate"));
             range.replaceText("{%carTransmission%}", transmission);
+            range.replaceText("{%currentDogDate%}", dataDog);
+            range.replaceText("{%carModel%}", carData.get("modelName"));
+            range.replaceText("{%carNumber%}", carData.get("number"));
+            range.replaceText("{%carVIN%}", carData.get("VIN"));
+            range.replaceText("{%carYear%}", carData.get("year"));
+            range.replaceText("{%carColor%}", carData.get("color"));
+            range.replaceText("{%carTransmission%}", transmission);
+            range.replaceText("{%carSTS%}", carData.get("sts"));
+            range.replaceText("{%carTTO%}", carData.get("ttoNumber"));
+            range.replaceText("{%carOSAGO%}", carData.get("insuranceNamber"));
             ////////////////////////////////////////////////////////////////////////
             String address = draverData.get("postCode") +", "+draverData.get("country");
             if(draverData.get("province").length()>1)
