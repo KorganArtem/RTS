@@ -7,6 +7,10 @@ and open the template in the editor.
     Created on : 04.08.2017, 14:04:25
     Author     : korgan
 */
+.groupPay td{
+    padding-left: 10px;
+}
+
 .closeModButt{
     position: absolute;
     display: block;

@@ -57,7 +57,7 @@ String selectSourcePay = psql.paySourceSelect();
             function getReport(begin, end, operators, paySource){
                 $.ajax({
                     type: 'POST',
-                    url: '../AllPayReport',
+                    url: '../AllPaysReport',
                     data: 'begin='+begin+'&end='+end+'&operatorId='+operators+'&paySource='+paySource,
                     success: function(data){
                         $("#reportPlace").html(data);

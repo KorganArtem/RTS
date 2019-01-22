@@ -134,14 +134,20 @@ public class ReportSQL {
         return payList;
     }
     public Map getGroupPayByOperator(int operatorId, String begin, String end) throws SQLException{
+        String where= "`user`>="+operatorId+" AND";
+        if(operatorId>0) 
+            where= "`user`="+operatorId+" AND";
         Statement stPayList = con.createStatement();
-        ResultSet rsPayList = stPayList.executeQuery("SELECT `payGroup`.*, `paySource`.`payName` FROM `paySource` " +
-                    "INNER JOIN (SELECT `source`, SUM(`sum`) as `sum` FROM `pay` WHERE `driverId`="+operatorId+" AND `date` > '"+begin+"' AND `date` < '"+end+"' GROUP BY `source`) as `payGroup` " +
-                    "ON `paySource`.`payId`=`payGroup`.`source`");
+        String query = "SELECT `payGroup`.*, `paySource`.`payName` FROM `paySource` " +
+                    "INNER JOIN (SELECT `source`, SUM(`sum`) as `sum` FROM `pay` WHERE "+where+" `date` > '"+begin+"' AND `date` < '"+end+"' GROUP BY `source`) as `payGroup` " +
+                    "ON `paySource`.`payId`=`payGroup`.`source`";
+        System.out.println(query);
+        ResultSet rsPayList = stPayList.executeQuery(query);
         Map payList = new HashMap<String, HashMap>();
         int indRep = 0;
+        System.out.println("I get group");
         while(rsPayList.next()){
-            Map payRaw = new HashMap<String, String>();
+            Map<String, String> payRaw = new HashMap<String, String>();
             payRaw.put("payName", rsPayList.getString("payName"));
             payRaw.put("sum", rsPayList.getString("sum"));
             payList.put(rsPayList.getString("source"), payRaw);
