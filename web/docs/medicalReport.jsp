@@ -33,6 +33,10 @@
             td{
                 border: solid #000 1px;
             }
+            .alLeft{
+                text-align: left;
+            }
+
             @media print {
                 @page {
                     size: 297mm 210mm; /* landscape */
@@ -104,8 +108,8 @@
                         + "<td>" + row.get("pulse") + "</td>"
                         + "<td>0,00</td>"
                         + "<td>Допуск</td>"
-                        + "<td>" + row.get("waybillsDate") + "</td>"
-                        + "<td>" + row.get("driverId") + "</td></tr>";
+                        + "<td class='alLeft'>Захарова Г.Н. </td>"   //" + row.get("waybillsDate") + "
+                        + "<td></td></tr>";  //" + row.get("driverId") + "
                 
                 
                 if(rowCounter==18){ 
