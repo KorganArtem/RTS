@@ -45,7 +45,7 @@ public class CarSQL {
     public Map carList() throws SQLException {
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId`");
-        Map listDriver = new HashMap<String, HashMap>();
+        Map<String, Map> listDriver = new HashMap<>();
         while(rs.next()){
             Map rowDriver = new HashMap<String, HashMap>();
             rowDriver.put("id", rs.getString("id"));
@@ -62,7 +62,7 @@ public class CarSQL {
         return listDriver;
     }
     public Map getCarData(int id) throws SQLException{
-        Map carData = new HashMap<String, String>();
+        Map<String, String> carData = new HashMap<>();
         try{
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT *  FROM `cars` WHERE `id`="+id);
@@ -175,6 +175,35 @@ public class CarSQL {
                                             " '"+ carOsagoNumber+"', "+
                                             " '"+ carOsagoEnd+"', "+
                                             " '"+ ttoNumber+"')");
+    }
+    public void addCar(Map carData) throws SQLException {
+        System.out.println("Попытка внести изменения в информации о машине()");
+        Statement st = con.createStatement();
+        st.execute("INSERT INTO `cars` SET "
+                + "`number`='"+carData.get("gosNum")+"', "
+                + "`regGosNumber`='"+carData.get("numReg")+"', "
+                + "`VIN`='"+carData.get("carVIN")+"', " 
+                + "`transmission`='"+carData.get("carTransmission")+"', "
+                + "`year`='"+carData.get("carYear")+"', "
+                + "`cost`='"+carData.get("carRent")+"', "
+                + "`sts`='"+carData.get("carSTS")+"', "
+                + "`insuranceNamber`='"+carData.get("carOSAGONumber")+"', "
+                + "`insuranceDateEnd`='"+carData.get("carOSAGODate")+"', "
+                + "`insuranceCompany`='"+carData.get("insuranceCompany")+"', "
+                + "`ttoNumber`='"+carData.get("carDCNumber")+"', "
+                + "`ttoEndDate`='"+carData.get("carDCDate")+"', "
+                + "`glanasId`='"+carData.get("carGlanasID")+"', "
+                + "`carOwner`='"+carData.get("carOwner")+"', "
+                + "`model`='"+carData.get("carModel")+"', "
+                + "`carColor`='"+carData.get("CarColorMain")+"', "
+                + "`carSchem`='"+carData.get("carSchem")+"', "
+                + "`carMileage`='"+carData.get("carMileage")+"', "
+                + "`lastService`='"+carData.get("carLastTOM")+"', "
+                + "`lastServiceDate`='"+carData.get("carLastTOD")+"', "
+                + "`state`='"+carData.get("carState")+"', "
+                + "`licNumber`='"+carData.get("carLicNumber")+"', "
+                + "`licEndDate`='"+carData.get("carLicDate")+"', "
+                + "`outTime`='"+carData.get("outTime")+"'"); 
     }
     public String getFreeCarList() throws SQLException{
         String carData = "<option value='0'>Выбрать</option>";

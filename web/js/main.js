@@ -19,11 +19,11 @@ function addDriver(){
                 +'&carId='+carId+'&limit='+limit+'&phone='+phone
                 +'&dayRent='+dayRent+'&schedule='+schedule+'&driverComment='+driverComment,
         success: function(data){
-            listDriverShow();
+            listDriverShow(0);
             closeModWind();
         }
     });
-    listDriverShow();
+    listDriverShow(0);
 }
 function addDriverN(){   
     var msg   = $('#addDriverFormN').serialize();
@@ -42,14 +42,14 @@ function addDriverN(){
 /////                    Вывод списка водителей                            /////
 ////////////////////////////////////////////////////////////////////////////////
 $(document).ready(function() {
-    listDriverShow();
+    listDriverShow(0);
 });
 var showDeleted = 0;
-function listDriverShow(){
+function listDriverShow(deleted){
         $.ajax({
         type: 'POST',
         url: 'LD',
-        data: 'deleted='+showDeleted,
+        data: 'deleted='+deleted,
         success: function(data){
             $('#listDriver').html(data);
             $('#listDriverTabel').DataTable( {
@@ -282,7 +282,14 @@ $('#carListButton').click(function(){
 /////                             Show Driver list                         /////
 ////////////////////////////////////////////////////////////////////////////////
 $('#driverListButton').click(function (){
-    listDriverShow();
+    listDriverShow(0);
+    $('.itemDisplay').css('display', 'none');
+    $('.itemMenu').attr('disabled', false);
+    $('#driverListButton').attr('disabled', true);
+    $('#listDriverBox').css('display', 'block');
+});
+$('#driversListDeleted').click(function (){
+    listDriverShow(1);
     $('.itemDisplay').css('display', 'none');
     $('.itemMenu').attr('disabled', false);
     $('#driverListButton').attr('disabled', true);

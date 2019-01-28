@@ -44,7 +44,18 @@
         <div id="leftMenu">
             <ul id="menu">
                 <li>
-                  <div id='driverListButton'>Водители</div>
+                  <div >Водители</div>
+                  <ul>
+                    <li>
+                      <div id='driverListButton'>Работающие</div>
+                    </li>
+                    <li>
+                      <div id="driversListDeleted">Уволенные</div>   
+                    </li>
+                    <li>
+                      <a href='sryadrvr.jsp'>Водители Яндекс</a>
+                    </li>
+                  </ul>
                 </li>
                 <li>
                   <div id='carListButton'>Автомобили</div>
@@ -77,8 +88,6 @@
         <div id='mainContainer'>
             <div id='listDriverBox' class='itemDisplay'>
                 <input type='button' value='Добавить водителя' onclick='showAddDriverForm()'/>
-                <a href='sryadrvr.jsp'><input type='button' value='Водители Яндекс'/></a>
-                <input type='checkbox' id='deletedDriver'/><label>Удаленные</label>
                 <div id='listDriver'>
                 </div>
             </div>

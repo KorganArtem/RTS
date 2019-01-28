@@ -8,6 +8,8 @@ package ru.leasicar.main;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -42,32 +44,19 @@ public class CarAddSend extends HttpServlet {
             return;
         int userId = ac.getUserId(request.getSession().getId());
         try (PrintWriter out = response.getWriter()) {
-            String carNumber = request.getParameter("carNumber");
-            String carModel = request.getParameter("carModel");
-            String carVIN = request.getParameter("carVIN");
-            String carTransmission = request.getParameter("carTransmission");
-            String carYear = request.getParameter("carYear");
-            String carCost = request.getParameter("carCost");
-            String carGlanasId = request.getParameter("carGlanasId");
-            String carStsNumber = request.getParameter("carStsNumber");
-            String carOsagoNumber = request.getParameter("carOsagoNumber");
-            String carOsagoEnd = request.getParameter("carOsagoEnd");
-            String ttoNumber = request.getParameter("ttoNumber");
+            Map<String, String[]> param = new HashMap<>();
+            param = request.getParameterMap();
+            Map<String, String> mapToSQL = new HashMap<>();
+            for (Map.Entry<String, String[]> entry : param.entrySet()) {
+                mapToSQL.put(entry.getKey(), entry.getValue()[0]);
+            } 
             CarSQL wrk = new CarSQL();
-            wrk.addCar(carNumber, carVIN,  carModel,  carTransmission,
-            carYear, carCost, carGlanasId, carStsNumber,carOsagoNumber, carOsagoEnd, ttoNumber);
-            System.out.println("INFO: Car added bu user "+userId+" ("
-                    +" carNumber="+carNumber
-                    +" carModel="+carModel
-                    +" carVIN="+carVIN
-                    +" carTransmission="+carTransmission
-                    +" carYear="+carYear
-                    +" carCost="+carCost
-                    +" carGlanasId="+carGlanasId);
-            
+            wrk.addCar(mapToSQL);
+            System.out.println(request.getParameterMap());
+            out.print(0);
         }
         catch(Exception ex){
-            System.out.println("Error"+ex.getMessage());
+            System.out.println(ex);
         }
     }
 

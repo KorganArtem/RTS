@@ -6,17 +6,9 @@
 
 <%@page import="ru.leasicar.workerSql.CarSQL"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<!--html lang="en" class=" js "><head>
-    <meta charset="utf-8"-->
-    <!--title>GettPartner: Добавить новый ID</title>
-        <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-        <script src='https://code.jquery.com/jquery-1.12.4.js'></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <link rel='stylesheet' type='text/css'  href='../css/main.css'/>
-        <link rel="stylesheet" type="text/css" href="../css/view.css" media="all"-->
+
     <style>
-        div{
+        .containerForm{
             overflow: hidden;
         }
         .containerForm{
@@ -36,7 +28,7 @@
         .containerForm label{
             display: block;
         }
-        select, input{
+        .editable select, .editable select input{
             text-transform:uppercase;
             color: #555;   
             box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
@@ -53,7 +45,7 @@
             background-color: white;
             padding: 0px 0px 0px 0px;
         }
-        select{
+        .editable select{
             height: 31px;
         }
         .carLic input{
@@ -62,6 +54,12 @@
             text-align: center;
             border: none;
             border-bottom: 1px solid #56698f;
+        }
+        #carVIN{
+            width: 130px;
+        }
+        #carSTS{
+            width: 80px;
         }
         .gosNum input{
             width: auto;                
@@ -78,28 +76,28 @@
     %>
 <body style="">
     <div class="containerForm">
-        <form  id="CreateDriver" enctype="multipart/form-data" method="post">
+        <form  id="createCar" enctype="multipart/form-data" method="post">
             <div>
                 <div class="rowInForm">
                     <h3> Основная информация </h3>
                     <div class="itemInRow gosNum  ">
                         <label for="gosNum">Гос номер</label>
-                        <input type="text" id="gosNum" name="gosNum" size="6"  placeholder="А111АА">
-                        <input type="text" id="numReg" name="numReg" size="3"  placeholder="777" >
+                        <input type="text" id="gosNum" name="gosNum" size="6"  placeholder="А111АА" class="editable">
+                        <input type="text" id="numReg" name="numReg" size="3"  placeholder="777" class="editable">
                     </div>
                     <div class="itemInRow">
                         <label for="carSTS">Номер СТС</label>
-                        <input type="text" id="carSTS" name="carSTS" size="10" pattern="\d{10}" placeholder="7712345678" >
+                        <input type="text" id="carSTS" name="carSTS" size="10" class="form-control editable" pattern="\d{10}" placeholder="7712345678" maxlength="10">
                     </div>
                     <div class="itemInRow">
                         <label for="carVIN">VIN</label>
-                        <input type="text" id="carVIN" name="carVIN" class="form-control" size="18" pattern="[0-9A-Z]{17}" placeholder="12345678901234567">
+                        <input type="text" id="carVIN" name="carVIN" class="form-control editable" size="18" pattern="[0-9A-Z]{17}" placeholder="12345678901234567" maxlength="17">
                     </div>
                     <div class="itemInRow">
                         <label for="CarOwner">Собственник</label>
-                        <select name="car_color_rus" class="CarColor form-control" id="CarOwner">
-                            <option value="Бежевый">Рай тур</option>
-                            <option value="Белый">Сетавиа</option>
+                        <select name="carOwner" class="CarColor form-control editable" id="CarOwner">
+                            <option value="1">Рай тур</option>
+                            <option value="2">Сетавиа</option>
                         </select>
                     </div>
                 </div>
@@ -107,20 +105,24 @@
                     <h3> Техническая информация </h3>
                     <div class="itemInRow">
                         <label for="carState">Статус</label>
-                        <select id="carState" name="carState" class="CarModel form-control" >
-                            <option value="2014">ДТП</option>
-                            <option value="2015">РЕМОНТ</option>
+                        <select id="carState" name="carState" class="CarModel form-control editable" >
+                            <option value="1">ГОТОВА К ВЫДАЧЕ</option>
+                            <option value="2">НА ЛИНИИ</option>
+                            <option value="3">РЕМОНТ</option>
+                            <option value="4">ДТП</option>
+                            <option value="5">ДТП ПО ВИНЕ ВОДИТЕЛЯ</option>
+                            <option value="6">ЗАБЛОКИРОВАННА</option>
                         </select>
                     </div>
                     <div class="itemInRow">
                         <label for="carModel">Модель авто</label>
-                        <select id="carModel" name="carModel" class="CarModel form-control" >
+                        <select id="carModel" name="carModel" class="CarModel form-control editable" >
                             <%= modelList %>
                         </select>
                     </div>
                     <div class="itemInRow ">
                         <label for="carYear">Год выпуска</label>
-                        <select id="carYear" name="carYear" class="CarYear form-control">
+                        <select id="carYear" name="carYear" class="CarYear form-control editable">
                             <option value="2014">2014</option>
                             <option value="2015">2015</option>
                             <option value="2016">2016</option>
@@ -130,7 +132,7 @@
                     </div>
                     <div class="itemInRow">
                         <label for="CarColorMain">Цвет а/м</label>
-                        <select id="CarColorMain" name="CarColorMain" class="CarColor form-control" >
+                        <select id="CarColorMain" name="CarColorMain" class="CarColor form-control editable" >
                             <option value="Белый">Белый</option>
                             <option value="Бежевый">Бежевый</option>
                             <option value="Бордовый">Бордовый</option>
@@ -149,36 +151,47 @@
                             <option value="Фиолетовый">Фиолетовый</option>
                             <option value="Черный">Черный</option>
                         </select>
+                    </div><div class="itemInRow">
+                        <label for="CarColorMain">Цветовая схема</label>
+                        <select id="carSchem" name="carSchem" class="CarColor form-control editable" >
+                            <option value="1">Яндекс</option>
+                            <option value="2">Ситимобил</option>
+                            <option value="3">Get</option>
+                        </select>
                     </div>
                     <div class="itemInRow ">
-                        <label for="carTransmission">Год выпуска</label>
-                        <select id="carTransmission" name="carTransmission" class="CarYear form-control">
+                        <label for="carTransmission">Трансмиссия</label>
+                        <select id="carTransmission" name="carTransmission" class="form-control editable">
                             <option value="1">МКПП</option>
                             <option value="2">АКПП</option>
                         </select>
+                    </div>
+                    <div class="itemInRow ">
+                        <label for="carTransmission">Время выхода на линию</label>
+                        <input type="time" id="outTime" name="outTime" min="9:00" max="18:00" value="10:00" class="form-control editable" required>
                     </div>
                 </div>
                         <br>
                 <div class="rowInForm">
                     <div class="itemInRow">
                         <label for="carRent">Аренда</label>
-                        <input id="carRent" name="carRent" size="5" type="text" class="form-control"  placeholder="12345678">
+                        <input id="carRent" name="carRent" size="5" type="text" class="form-control editable"  placeholder="12345678">
                     </div>
                     <div class="itemInRow">
                         <label for="carMileage">Пробег</label>
-                        <input id="carMileage" name="carMileage" size="6" type="text" class="form-control"  placeholder="12345678">
+                        <input id="carMileage" name="carMileage" size="6" type="text" class="form-control editable"  placeholder="12345678">
                     </div>
                     <div class="itemInRow">
                         <label for="carLastTOM">Последнее ТО</label>
-                        <input id="carLastTOM" name="carLastTOM" size="6" type="text" class="form-control"  >
+                        <input id="carLastTOM" name="carLastTOM" size="6" type="text" class="form-control editable"  >
                     </div>
                     <div class="itemInRow">
                         <label for="carLastTOD">Дата </label>
-                        <input id="carLastTOD" name="carLastTOD" type="date" class="form-control"/>
+                        <input id="carLastTOD" name="carLastTOD" type="date" class="form-control editable"/>
                     </div>
                     <div class="itemInRow">
                         <label for="carGlanasID">ID ГЛОНАС</label>
-                        <input id="carGlanasID" name="carGlanasID" size="10" type="text" class="form-control"  placeholder="12345678">
+                        <input id="carGlanasID" name="carGlanasID" size="10" type="text" class="form-control editable"  placeholder="12345678">
                     </div>
                 </div>
                 <div class="rowInForm">
@@ -186,58 +199,63 @@
                     <div class="itemInRow">
                         <div>   
                             <label for="carOSAGONumber">Полиса ОСАГО</label>
-                            <input id="carOSAGONumber" name="carOSAGONumber" type="text" class="form-control"  placeholder="  ААА5003573870">
+                            <input id="carOSAGONumber" name="carOSAGONumber" type="text" class="form-control editable"  placeholder="  ААА5003573870">
                         </div>
                         <div>
                             <label for="carOSAGODate">Срок действия</label>
-                            <input id="carOSAGODate" name="carOSAGODate" type="date" class="form-control">
+                            <input id="carOSAGODate" name="carOSAGODate" type="date" class="form-control editable">
+                        </div>
+                        <div>
+                            <label for="carOSAGODate">Срок действия</label>
+                            <select id="carOSAGODate" name="insuranceCompany" class="form-control editable">
+                                <option value="1">РосгосСтрах</option>
+                            </select>
                         </div>
                     </div>
                     <div class="itemInRow">
                         <div class="carLic">
                             <label for="carLicNumber">Номер лицензии </label>
-                            <input id="carLicNumber" name="carLicNumber" type="text" size="4" class="form-control" pattern="8\d{10}" placeholder="" >
-                            <input id="carLicNumber" name="carLicNumber" type="text" size="2" class="form-control" pattern="8\d{10}" placeholder="" >
-                            <input id="carLicNumber" name="carLicNumber" type="text" size="4" class="form-control" pattern="8\d{10}" placeholder="" >
+                            <input id="carLicNumber" name="carLicNumber" type="text" size="4" class="form-control editable" pattern="8\d{10}" placeholder="" >
+                            <input id="carLicNumber" name="carLicNumber" type="text" size="2" class="form-control editable" pattern="8\d{10}" placeholder="" >
+                            <input id="carLicNumber" name="carLicNumber" type="text" size="4" class="form-control editable" pattern="8\d{10}" placeholder="" >
                         </div>
                         <div>
                             <label for="carLicDate">Срок действия</label>
-                            <input id="carLicDate" name="carLicDate"  type="date" class="form-control">
+                            <input id="carLicDate" name="carLicDate" type="date" class="form-control editable">
                         </div>
                     </div>
                     <div class="itemInRow">
                         <div>
                             <label for="carDCNumber">Номер ДК</label>
-                            <input id="carDCNumber" name="carDCNumber" type="text" class="form-control" pattern="8\d{10}" placeholder="89851112233">
+                            <input id="carDCNumber" name="carDCNumber" type="text" class="form-control editable" pattern="8\d{10}" placeholder="89851112233">
                         </div>
                         <div>
                             <label for="carDCDate">Срок действия</label>
-                            <input id="carDCDate" name="carDCDate"  type="date" class="form-control">
+                            <input id="carDCDate" name="carDCDate" type="date" class="form-control editable">
                         </div>
                     </div>
                 </div>
             </div>
         </form>
         <input id="editor" type="button" value="Редактировать"/>
+        <input id="sendCarForm" type="button" value="Сохранить"/>
     </div>
     <script>
         $(document).ready(function(){
-            $( "input" ).prop( "disabled", true );
-            $( "select" ).prop( "disabled", true );
+            $( ".editable" ).prop( "disabled", true );
             $( "#editor" ).prop( "disabled", false );
+                $( "#sendCarForm" ).prop( "disabled", false );
         });
-        $("#editor").click(function(){
-            alert();
-            if($( "input" ).prop( "disabled")){
-                $( "select" ).prop( "disabled", false );
-                $( "input" ).prop( "disabled", false );
+        $("#editor").click(function(){  
+            if($( ".editable" ).prop( "disabled")){
+                $( ".editable" ).prop( "disabled", false );
             }
             else{
-                $( "select" ).prop( "disabled", true );
-                $( "input" ).prop( "disabled", true );
+                $( "editable" ).prop( "disabled", true );
                 $( "#editor" ).prop( "disabled", false );
+                $( "#sendCarForm" ).prop( "disabled", false );
             }
-        })
+        });
         $( "#gosNum" ).keyup(function(e) {
             var num = $( "#gosNum" ).val() ;
             var regexp = /[а-яё0-9]/i;
@@ -267,6 +285,16 @@
                 $( "#numReg" ).focus();
             }
           });
+          $("#sendCarForm").click(function(){
+              var msg   = $('#createCar').serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: 'CAS',
+                    data: msg,
+                    success: function(data){
+                        
+                    }
+                });
+          });
+          
     </script>
-<!--/body>
-</html-->
