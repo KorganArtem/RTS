@@ -18,30 +18,39 @@
     </body>
     
     <script>
-        $.ajax({
-            type: 'POST',
-            url: 'https://taximeter.yandex.rostaxi.org/api/driver/balance',
-            data: 'apikey=b53db491026b445bbe2bc05880f26152',
-            /*data: 'apikey=8203496c7a52479ab5035650b910fef3',*/
-            success: function(data){
-                for(var row in data){
-                    getAllData(row);
-                }
-            } ,
-            error: function(msg){
-                console.log(msg);
-            }
+        $(document).ready(function() {
+            getYa('b53db491026b445bbe2bc05880f26152');
+            getYa('8203496c7a52479ab5035650b910fef3');
+            getAllData('61f532420df640fd8741d3aacf732307', '8203496c7a52479ab5035650b910fef3');
+           // getAllData('61f532420df640fd8741d3aacf732307', 'b53db491026b445bbe2bc05880f26152');
         });
-        function getAllData(yaId){
+        function getYa(token){
+            $.ajax({
+                type: 'POST',
+                url: 'https://taximeter.yandex.rostaxi.org/api/driver/balance',
+                data: 'apikey='+token,
+                success: function(data){
+                    console.log(data);
+                    for(var row in data){
+                        console.log(row);
+                        getAllData(row, token);
+                    }
+                } ,
+                error: function(msg){
+                    console.log(msg);
+                }
+            });
+        }
+        function getAllData(yaId, token){
             $.ajax({
                 type: 'POST',
                 url: 'https://taximeter.yandex.rostaxi.org/api/driver/get',
-                data: 'apikey=b53db491026b445bbe2bc05880f26152&id='+yaId,
-                /*data: 'apikey=8203496c7a52479ab5035650b910fef3&id='+yaId,*/
+                data: 'apikey='+token+'&id='+yaId,
+                /*data: 'apikey=8203496c7a52479ab5035650b910fef3&id='+yaId,          */
                 success: function(data){
-                    console.log(data['driver']['LastName']);
+                    console.log(data['driver']);
                     $('#box').after('<tr><td>'+yaId+'</td><td>' + data['driver']['LastName']+'</td>'
-                                    +'<td>' + data['driver']['FirstName']+'</td>'+'<td>' + data['driver']['Phones']+'</td>'
+                                    +'<td>'+ data['driver']['FirstName']    +'</td>'+'<td>' + data['driver']['Phones']+'</td>'
                                     +'<td>' + parseInt(data['balance'])+'</td></tr>');;
                     
                 } ,
