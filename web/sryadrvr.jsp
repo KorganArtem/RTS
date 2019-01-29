@@ -29,6 +29,7 @@
                 type: 'POST',
                 url: 'https://taximeter.yandex.rostaxi.org/api/driver/balance',
                 data: 'apikey='+token,
+                async: true,
                 success: function(data){
                     console.log(data);
                     for(var row in data){
@@ -46,6 +47,7 @@
                 type: 'POST',
                 url: 'https://taximeter.yandex.rostaxi.org/api/driver/get',
                 data: 'apikey='+token+'&id='+yaId,
+                async: true,
                 /*data: 'apikey=8203496c7a52479ab5035650b910fef3&id='+yaId,          */
                 success: function(data){
                     console.log(data['driver']);
