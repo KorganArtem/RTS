@@ -42,12 +42,15 @@ public class CompanySQL {
             System.out.println("Mysql ERROR: "+ex.getMessage());
         }
     }
-    public String getCompanyListSelect() throws SQLException{
+    public String getCompanyListSelect(int companyId) throws SQLException{
         String forRet = "";
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM companies");
+        String selected = "";
         while(rs.next()){
-            forRet = forRet + "<option value='"+rs.getString("companyId")+"'>"+rs.getString("name")+"</option>";
+            if(companyId==rs.getInt("companyId"))
+                selected="selected";
+            forRet = forRet + "<option "+selected+" value='"+rs.getString("companyId")+"'>"+rs.getString("name")+"</option>";
         }
         rs.close();
         st.close();

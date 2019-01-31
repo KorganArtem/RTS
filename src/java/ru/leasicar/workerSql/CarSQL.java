@@ -77,6 +77,7 @@ public class CarSQL {
                 carData.put("glanasId", rs.getString("glanasId"));
                 carData.put("color", rs.getString("carColor"));
                 carData.put("sts", rs.getString("sts"));
+                carData.put("state", rs.getString("state"));
                 carData.put("insuranceNamber", rs.getString("insuranceNamber"));
                 carData.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
                 carData.put("ttoNumber", rs.getString("ttoNumber"));
@@ -146,6 +147,24 @@ public class CarSQL {
             forRet =forRet+ ">" + rs.getString("modelName")+"</option>";           
         }
         return forRet;
+    }
+    public String stateList(int currentIds) throws SQLException{
+        try{
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM `carState`");
+            String forRet="";
+            while(rs.next()) {
+                forRet =forRet+"<option value='"+rs.getInt("carStateId")+"' ";
+                if(rs.getInt("carStateId")== currentIds)
+                    forRet = forRet+" selected "; 
+                forRet =forRet+ ">" + rs.getString("carStateName")+"</option>";           
+            }
+            return forRet;
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return null;
     }
     public String modelLisc() throws SQLException{
         Statement st = con.createStatement();

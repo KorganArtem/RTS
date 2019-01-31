@@ -4,6 +4,7 @@
     Author     : korgan
 --%>
 
+<%@page import="java.util.Map"%>
 <%@page import="ru.leasicar.workerSql.CompanySQL"%>
 <%@page import="ru.leasicar.workerSql.CarSQL"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -76,8 +77,16 @@
     CarSQL wsql = new CarSQL();
     String modelList = wsql.modelLisc();
     CompanySQL compSQL = new CompanySQL();
+    Map carData = wsql.getCarData(Integer.parseInt(request.getParameter("id")));
     String companySelect = compSQL.getCompanyListSelect(0);
-    String stateList = wsql.stateList(0);
+    modelList = wsql.modelLisc(Integer.parseInt(carData.get("model").toString()));
+    String mkpp = "";
+    if(carData.get("transmission").equals("1"))
+        mkpp="selected";
+    String akpp = "";
+    if(carData.get("transmission").equals("2"))
+        akpp="selected";
+    String stateList = wsql.stateList(Integer.parseInt(carData.get("state").toString()));
     %>
 <body style="">
     <div class="containerForm">
@@ -87,16 +96,16 @@
                     <h3> Основная информация </h3>
                     <div class="itemInRow gosNum  ">
                         <label for="gosNum">Гос номер</label>
-                        <input type="text" id="gosNum" name="gosNum" size="6"  placeholder="А111АА" class="editable">
-                        <input type="text" id="numReg" name="numReg" size="3"  placeholder="777" class="editable">
+                        <input type="text" id="gosNum" name="gosNum" size="6" value="<%= carData.get("number") %>" placeholder="А111АА" class="editable">
+                        <input type="text" id="numReg" name="numReg" size="3" value="<%= carData.get("number") %>" placeholder="777" class="editable">
                     </div>
                     <div class="itemInRow">
                         <label for="carSTS">Номер СТС</label>
-                        <input type="text" id="carSTS" name="carSTS" size="10" class="form-control editable" pattern="\d{10}" placeholder="7712345678" maxlength="10">
+                        <input type="text" id="carSTS" name="carSTS" size="10" value="<%= carData.get("number") %>" class="form-control editable" pattern="\d{10}" placeholder="7712345678" maxlength="10">
                     </div>
                     <div class="itemInRow">
                         <label for="carVIN">VIN</label>
-                        <input type="text" id="carVIN" name="carVIN" class="form-control editable" size="18" pattern="[0-9A-Z]{17}" placeholder="12345678901234567" maxlength="17">
+                        <input type="text" id="carVIN" name="carVIN" size="18" value="<%= carData.get("number") %>" pattern="[0-9A-Z]{17}" placeholder="12345678901234567" maxlength="17" class="form-control editable">
                     </div>
                     <div class="itemInRow">
                         <label for="CarOwner">Собственник</label>
@@ -128,6 +137,7 @@
                             <option value="2016">2016</option>
                             <option value="2017">2017</option>
                             <option value="2018">2018</option>
+                            <option value="2018">2019</option>
                         </select>
                     </div>
                     <div class="itemInRow">
@@ -162,8 +172,7 @@
                     <div class="itemInRow ">
                         <label for="carTransmission">Трансмиссия</label>
                         <select id="carTransmission" name="carTransmission" class="form-control editable">
-                            <option value="1">МКПП</option>
-                            <option value="2">АКПП</option>
+                            
                         </select>
                     </div>
                     <div class="itemInRow ">

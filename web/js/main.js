@@ -465,7 +465,7 @@ function addCarNew(){
         url: 'car/carForm.jsp',
         success: function(data){
             $('#modalConteiner').html(data);
-            openModWind(600, 500);
+            openModWind(780, 500);
         },
         error:function (msg){
             alert('Error in geting car list!'+msg);
@@ -479,7 +479,7 @@ function editShow(carId){ // лoвим клик пo ссылки с id="go"
     //event.preventDefault(); // выключaем стaндaртную рoль элементa
     $.ajax({
         type: 'POST',
-        url: 'CarData.jsp',
+        url: 'car/carEditForm.jsp',
         data: 'id='+carId,
         success: function(data){
             $('#modalConteiner').html(data);
