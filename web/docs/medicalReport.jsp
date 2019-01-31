@@ -54,20 +54,27 @@
                        height: 9mm;
                    }
                   .leftPage{
-                      margin-right: 40mm;
-                      margin-bottom: 10mm;
+                      margin-left: 7mm;
+                      margin-right: 13mm;
+                      margin-bottom: 13mm;
+                      margin-top: 13mm;
                   }
                   .rightPage{
-                      margin-left: 40mm;
-                      margin-bottom: 10mm;
+                      margin-left: 13mm;
+                      margin-right: 7mm;
+                      margin-bottom: 13mm;
+                      margin-top: 13mm;
                   }
                 .more{
                     page-break-after: always;
                 } 
-            } 
+            }  
         </style>
     </head>
     <body>
+        <div>
+            
+        </div>
         <% 
             String table1 = "";
             int rowCounter = 0;
@@ -103,11 +110,11 @@
                         + "<td>" + row.get("driver_bornDate") + "</td>"
                         + "<td>нет</td>"
                         + "<td>Норм.</td>"
-                        + "<td>" + row.get("temperature") + "</td>"
-                        + "<td>" + row.get("bloodPressure") + "</td>"
-                        + "<td>" + row.get("pulse") + "</td>"
-                        + "<td>0,00</td>"
-                        + "<td>Допуск</td>"
+                        + "<td></td>"
+                        + "<td></td>"
+                        + "<td></td>"
+                        + "<td></td>"
+                        + "<td></td>"
                         + "<td class='alLeft'>Захарова Г.Н. </td>"   //" + row.get("waybillsDate") + "
                         + "<td></td></tr>";  //" + row.get("driverId") + "
                 

@@ -49,13 +49,17 @@
                    tr{
                        height: 9mm;
                    }
-                  .leftPage{
-                      margin-right: 20mm;
-                      margin-bottom: 10mm;
+                   .leftPage{
+                      margin-left: 7mm;
+                      margin-right: 13mm;
+                      margin-bottom: 13mm;
+                      margin-top: 13mm;
                   }
                   .rightPage{
-                      margin-left: 20mm;
-                      margin-bottom: 10mm;
+                      margin-left: 13mm;
+                      margin-right: 7mm;
+                      margin-bottom: 13mm;
+                      margin-top: 13mm;
                   }
                 .more{
                     page-break-after: always;

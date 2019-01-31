@@ -68,4 +68,16 @@ public class CompanySQL {
         st.close();
         return companyData;
     }
+    public String getCompanyName(int companyId) throws SQLException{
+        Map<String, String> companyData = new HashMap<String, String>();
+        String companyName = "";
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT * FROM companies WHERE companyId="+companyId);
+        if(rs.next()){
+           companyName = rs.getString("name");
+        }
+        rs.close();
+        st.close();
+        return companyName;
+    }
 }

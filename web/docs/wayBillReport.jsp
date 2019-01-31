@@ -4,6 +4,7 @@
     Author     : Artem
 --%>
 
+<%@page import="ru.leasicar.workerSql.CompanySQL"%>
 <%@page import="java.util.TreeSet"%>
 <%@page import="java.util.SortedSet"%>
 <%@page import="java.util.Map.Entry"%>
@@ -12,6 +13,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
+    String[] mounths = {"Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"};
     WayBillSQL wsql = new WayBillSQL();
     String dateStart = null;
     if(request.getParameter("dateStart")!=null){
@@ -22,8 +24,13 @@
         dateEnd = request.getParameter("dateStart");
     }
     int companyId = Integer.parseInt(request.getParameter("companyId"));
+    CompanySQL cSQL = new CompanySQL();
+    String companyName = cSQL.getCompanyName(companyId);
     Map<String, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
-    
+    String dayStart = dateStart.split("-")[2];
+    int mounth = Integer.parseInt(dateStart.split("-")[1]);
+    String mounthStart = mounths[mounth];
+    String yerStart = dateStart.split("-")[0];
 %>
 <html>
     <head>
@@ -37,6 +44,24 @@
                }
             td{
                 border: solid #000 1px;
+            }
+            .titlePage{
+                width: 210mm;
+                height: 290mm;  
+            }
+            .headerTitle{
+                margin-left: 80mm;
+                margin-top: 100mm;
+                text-align: center;
+                width: 50mm;
+            }
+            .dateTitle{
+                margin-left: 130mm;
+                margin-top: 100mm;
+                text-align: right;
+            }
+            .companyTitle{
+                text-align: center;
             }
             @media print {
                 @page {
@@ -54,12 +79,16 @@
                        height: 9mm;
                    }
                   .leftPage{
-                      margin-right: 40mm;
-                      margin-bottom: 10mm;
+                      margin-left: 12mm;
+                      margin-right: 22mm;
+                      margin-bottom: 18mm;
+                      margin-top: 15mm;
                   }
                   .rightPage{
-                      margin-left: 40mm;
-                      margin-bottom: 10mm;
+                      margin-left: 22mm;
+                      margin-right: 12mm;
+                      margin-bottom: 18mm;
+                      margin-top: 15mm;
                   }
                 .more{
                  page-break-after: always;
@@ -68,6 +97,20 @@
         </style>
     </head>
     <body>
+        <div class="titlePage more">
+            <div class="headerTitle">
+                <font style="font-size: 36px"><b>ЖУРНАЛ</b> </font>
+                <font style="font-size: 30px">учета путевых листов</font><br>
+                <font style="font-size: 30px">за 2019 год	</font>
+            </div>
+            <div class="companyTitle">
+                <p style="font-size: 26px"><b><%= companyName %></b></p>	
+            </div>
+            <div class="dateTitle">
+                Начат	"<%= dayStart %>" <%= mounthStart %> <%= yerStart %><br>
+                Окончен	"<%= dayStart %>" <%= mounthStart %> <%= yerStart %>
+            </div>
+        </div>
         <% 
             String table1 = "";
             String table2 = "";
@@ -100,7 +143,7 @@
                         + "<td>" + row.get("endDate") + "</td>"
                         + "<td></td></tr>";
                 
-                if(rowCounter==30){ 
+                if(rowCounter==26){ 
                     table1=table1+"</table><p class='more'></p>";
                     table2=table2+"</table><p class='more'></p>";
         %>

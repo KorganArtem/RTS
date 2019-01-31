@@ -435,7 +435,7 @@
                             <TD WIDTH=15>
                             </TD>
                             <TD ALIGN=CENTER STYLE="border-bottom: 1pt solid #000000;">
-                                Микаилов
+                                Микаилов А.Н.
                             </TD>
                         </TR>
                         <TR>

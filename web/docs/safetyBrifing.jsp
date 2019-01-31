@@ -59,12 +59,16 @@
                        height: 10mm;
                    }
                   .leftPage{
+                      margin-left: 10mm;
                       margin-right: 20mm;
-                      margin-bottom: 10mm;
+                      margin-bottom: 20mm;
+                      margin-top: 15mm;
                   }
                   .rightPage{
                       margin-left: 20mm;
+                      margin-right: 10mm;
                       margin-bottom: 10mm;
+                      margin-top: 15mm;
                   }
                 .more{
                  page-break-after: always;
