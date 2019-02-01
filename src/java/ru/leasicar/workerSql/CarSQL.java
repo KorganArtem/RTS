@@ -69,18 +69,28 @@ public class CarSQL {
             if(rs.next()){
                 carData.put("id", rs.getString("id"));
                 carData.put("number", rs.getString("number"));
-                carData.put("model", rs.getString("model"));
-                carData.put("VIN", rs.getString("VIN"));
-                carData.put("transmission", rs.getString("transmission"));
-                carData.put("year", rs.getString("year"));
-                carData.put("cost", rs.getString("cost"));
-                carData.put("glanasId", rs.getString("glanasId"));
-                carData.put("color", rs.getString("carColor"));
+                carData.put("regGosNumber", rs.getString("regGosNumber"));
                 carData.put("sts", rs.getString("sts"));
+                carData.put("VIN", rs.getString("VIN"));
+                carData.put("carOwner", rs.getString("carOwner"));
+                carData.put("model", rs.getString("model"));
+                carData.put("year", rs.getString("year"));
+                carData.put("carColor", rs.getString("carColor"));
+                carData.put("transmission", rs.getString("transmission"));
+                carData.put("cost", rs.getString("cost"));
+                carData.put("carMileage", rs.getString("carMileage"));
+                carData.put("lastService", rs.getString("lastService"));
+                carData.put("lastServiceDate", rs.getString("lastServiceDate"));
+                carData.put("glanasId", rs.getString("glanasId"));
                 carData.put("state", rs.getString("state"));
+                carData.put("ttoNumber", rs.getString("ttoNumber"));
                 carData.put("insuranceNamber", rs.getString("insuranceNamber"));
                 carData.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
-                carData.put("ttoNumber", rs.getString("ttoNumber"));
+                carData.put("licNumber", rs.getString("licNumber"));
+                carData.put("licEndDate", rs.getString("licEndDate"));
+                carData.put("insuranceCompany", rs.getString("insuranceCompany"));
+                carData.put("ttoEndDate", rs.getString("ttoEndDate"));
+                carData.put("outTime", rs.getString("outTime"));
             }
         }
         catch(Exception ex){
@@ -145,6 +155,18 @@ public class CarSQL {
             if(rs.getInt("modelId")== currentIds)
                 forRet = forRet+" selected "; 
             forRet =forRet+ ">" + rs.getString("modelName")+"</option>";           
+        }
+        return forRet;
+    }
+    public String insCompList(int currentIds) throws SQLException{
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT * FROM `insuranceCompany`");
+        String forRet="";
+        while(rs.next()) {
+            forRet =forRet+"<option value='"+rs.getInt("idinsuranceCompanyId")+"' ";
+            if(rs.getInt("idinsuranceCompanyId")== currentIds)
+                forRet = forRet+" selected "; 
+            forRet =forRet+ ">" + rs.getString("insuranceCompanyName")+"</option>";           
         }
         return forRet;
     }
