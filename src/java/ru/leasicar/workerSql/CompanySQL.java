@@ -51,7 +51,9 @@ public class CompanySQL {
             if(companyId==rs.getInt("companyId"))
                 selected="selected";
             forRet = forRet + "<option "+selected+" value='"+rs.getString("companyId")+"'>"+rs.getString("name")+"</option>";
+            selected="";
         }
+        System.out.println(forRet);
         rs.close();
         st.close();
         return forRet;

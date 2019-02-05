@@ -4,7 +4,6 @@
     Author     : korgan
 --%>
 
-<%@page import="java.util.Map"%>
 <%@page import="ru.leasicar.workerSql.CompanySQL"%>
 <%@page import="ru.leasicar.workerSql.CarSQL"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -77,11 +76,8 @@
     CarSQL wsql = new CarSQL();
     String modelList = wsql.modelLisc();
     CompanySQL compSQL = new CompanySQL();
-    //Map<String, String> carData = wsql.getCarData(Integer.parseInt(request.getParameter("id")));
     String companySelect = compSQL.getCompanyListSelect(0);
-    modelList = wsql.modelLisc(0);
     String stateList = wsql.stateList(0);
-    String insList = wsql.insCompList(0);
     %>
 <body style="">
     <div class="containerForm">
@@ -91,23 +87,23 @@
                     <h3> Основная информация </h3>
                     <div class="itemInRow gosNum  ">
                         <label for="gosNum">Гос номер</label>
-                        <input required type="text" id="gosNum" name="gosNum" size="6" value="" placeholder="А111АА" class="editable">
-                        <input required type="text" id="numReg" name="numReg" size="3" value="" placeholder="777" pattern="\d{3}" class="editable">
+                        <input type="text" id="gosNum" name="gosNum" size="6"  placeholder="А111АА" class="editable">
+                        <input type="text" id="numReg" name="numReg" size="3"  placeholder="777" class="editable">
                     </div>
                     <div class="itemInRow">
                         <label for="carSTS">Номер СТС</label>
-                        <input required type="text" id="carSTS" name="carSTS" size="10" value="" class="form-control editable" pattern="\d{10}" placeholder="7712345678" maxlength="10">
+                        <input type="text" id="carSTS" name="carSTS" size="10" class="form-control editable" pattern="\d{10}" placeholder="7712345678" maxlength="10">
                     </div>
                     <div class="itemInRow">
                         <label for="carVIN">VIN</label>
-                        <input required type="text" id="carVIN" name="carVIN" size="18" value="" pattern="[0-9A-Z]{17}" placeholder="12345678901234567" maxlength="17" class="form-control editable">
+                        <input type="text" id="carVIN" name="carVIN" class="form-control editable" size="18" pattern="[0-9A-Z]{17}" placeholder="12345678901234567" maxlength="17">
                     </div>
                     <div class="itemInRow">
                         <label for="CarOwner">Собственник</label>
                         <select name="carOwner" class="CarColor form-control editable" id="CarOwner">
                             <%= companySelect %>
                         </select>
-                    </div> 
+                    </div>
                     <div class="itemInRow">
                         <label for="carState">Статус</label>
                         <select id="carState" name="carState" class="CarModel form-control editable" >
@@ -127,11 +123,11 @@
                     <div class="itemInRow ">
                         <label for="carYear">Год выпуска</label>
                         <select id="carYear" name="carYear" class="CarYear form-control editable">
+                            <option value="2014">2014</option>
                             <option value="2015">2015</option>
                             <option value="2016">2016</option>
                             <option value="2017">2017</option>
                             <option value="2018">2018</option>
-                            <option value="2019">2019</option>
                         </select>
                     </div>
                     <div class="itemInRow">
@@ -160,8 +156,7 @@
                         <select id="carSchem" name="carSchem" class="CarColor form-control editable" >
                             <option value="1">Яндекс</option>
                             <option value="2">Ситимобил</option>
-                            <option value="3">Get</option>\
-                            <option value="4">Без брэнда</option>
+                            <option value="3">Get</option>
                         </select>
                     </div>
                     <div class="itemInRow ">
@@ -173,30 +168,30 @@
                     </div>
                     <div class="itemInRow ">
                         <label for="carTransmission">Время выхода на линию</label>
-                        <input required type="time" id="outTime" name="outTime" min="7:00" max="21:00" value="" class="form-control editable" required>
+                        <input type="time" id="outTime" name="outTime" min="9:00" max="18:00" value="10:00" class="form-control editable" required>
                     </div>
                 </div>
                         <br>
                 <div class="rowInForm">
                     <div class="itemInRow">
                         <label for="carRent">Аренда</label>
-                        <input required id="carRent" name="carRent" size="5" value=""  type="text" class="form-control editable" pattern="\d{1-5}" placeholder="12345678">
+                        <input id="carRent" name="carRent" size="5" type="text" class="form-control editable"  placeholder="12345678">
                     </div>
                     <div class="itemInRow">
                         <label for="carMileage">Пробег</label>
-                        <input required id="carMileage" name="carMileage" size="6" value=""  type="text" pattern="[0-9]{1-6}" class="form-control editable"  placeholder="12345678">
+                        <input id="carMileage" name="carMileage" size="6" type="text" class="form-control editable"  placeholder="12345678">
                     </div>
                     <div class="itemInRow">
                         <label for="carLastTOM">Последнее ТО</label>
-                        <input required id="carLastTOM" name="carLastTOM" size="6" value=""  type="text" pattern="\d{1-6}" class="form-control editable"  >
+                        <input id="carLastTOM" name="carLastTOM" size="6" type="text" class="form-control editable"  >
                     </div>
                     <div class="itemInRow">
                         <label for="carLastTOD">Дата </label>
-                        <input required id="carLastTOD" name="carLastTOD" type="date" value=""  class="form-control editable"/>
+                        <input id="carLastTOD" name="carLastTOD" type="date" class="form-control editable"/>
                     </div>
                     <div class="itemInRow">
                         <label for="carGlanasID">ID ГЛОНАС</label>
-                        <input required id="carGlanasID" name="carGlanasID" size="10" value=""  type="text" class="form-control editable"  placeholder="12345678">
+                        <input id="carGlanasID" name="carGlanasID" size="10" type="text" class="form-control editable"  placeholder="12345678">
                     </div>
                 </div>
                 <div class="rowInForm">
@@ -204,68 +199,52 @@
                     <div class="itemInRow">
                         <div>   
                             <label for="carOSAGONumber">Полиса ОСАГО</label>
-                            <input required id="carOSAGONumber" name="carOSAGONumber" value=""  type="text" class="form-control editable"  placeholder="  ААА5003573870">
+                            <input id="carOSAGONumber" name="carOSAGONumber" type="text" class="form-control editable"  placeholder="  ААА5003573870">
                         </div>
                         <div>
                             <label for="carOSAGODate">Срок действия</label>
-                            <input required id="carOSAGODate" name="carOSAGODate" type="date" value=""  class="form-control editable">
+                            <input id="carOSAGODate" name="carOSAGODate" type="date" class="form-control editable">
                         </div>
                         <div>
-                            <label for="carOSAGOCompany">Страховая Компания</label>
+                            <label for="carOSAGOCompany">Срок действия</label>
                             <select id="carOSAGOCompany" name="insuranceCompany" class="form-control editable">
-                                <%= insList %>
+                                <option value="1">РосгосСтрах</option>
                             </select>
                         </div>
                     </div>
                     <div class="itemInRow">
                         <div class="carLic">
                             <label for="carLicNumber">Номер лицензии </label>
-                            <input required id="carLicNumber" name="carLicNumber" type="text" size="12" value=""  class="form-control editable" placeholder="" >
+                            <input id="carLicNumber" name="carLicNumber" type="text" size="4" class="form-control editable" pattern="8\d{10}" placeholder="" >
+                            <input id="carLicNumber" name="carLicNumber" type="text" size="2" class="form-control editable" pattern="8\d{10}" placeholder="" >
+                            <input id="carLicNumber" name="carLicNumber" type="text" size="4" class="form-control editable" pattern="8\d{10}" placeholder="" >
                         </div>
                         <div>
                             <label for="carLicDate">Срок действия</label>
-                            <input required id="carLicDate" name="carLicDate" type="date" value=""  class="form-control editable">
+                            <input id="carLicDate" name="carLicDate" type="date" class="form-control editable">
                         </div>
                     </div>
                     <div class="itemInRow">
                         <div>
                             <label for="carDCNumber">Номер ДК</label>
-                            <input required id="carDCNumber" name="carDCNumber" type="text" value=""  class="form-control editable" pattern="\d{15}" placeholder="">
+                            <input id="carDCNumber" name="carDCNumber" type="text" class="form-control editable" pattern="8\d{10}" placeholder="89851112233">
                         </div>
                         <div>
                             <label for="carDCDate">Срок действия</label>
-                            <input required id="carDCDate" name="carDCDate" type="date" value=""  class="form-control editable">
+                            <input id="carDCDate" name="carDCDate" type="date" class="form-control editable">
                         </div>
                     </div>
                 </div>
             </div>
-            <div style="display: none">
-                <input type="text" name="carId" value="0"/>
-                <input type="text" name="oldState" value=""/>
-            </div>
-            
-        <input id="editor" type="button" value="Редактировать"/>
-        <input id="sendCarForm1" type="submit" value="Сохранить"/>
-        
         </form>
+        <input id="editor" type="button" value="Редактировать"/>
+        <input id="sendCarForm" type="button" value="Сохранить"/>
     </div>
     <script>
         $(document).ready(function(){
             $( ".editable" ).prop( "disabled", true );
             $( "#editor" ).prop( "disabled", false );
                 $( "#sendCarForm" ).prop( "disabled", false );
-        });
-        $("#createCar").submit(function(){
-            var msg   = $('#createCar').serialize();
-                $.ajax({
-                    type: 'POST',
-                    url: 'CAS',
-                    data: msg,
-                    success: function(data){
-                        closeModWind();
-                    }
-                });
-            return false;
         });
         $("#editor").click(function(){  
             if($( ".editable" ).prop( "disabled")){

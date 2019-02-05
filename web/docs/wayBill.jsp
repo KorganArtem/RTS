@@ -56,7 +56,7 @@
             </li>
             <li>
                 <select id="companyName" name="companyId" style="width: 260px;">
-                    <%= compSQL.getCompanyListSelect() %>
+                    <%= compSQL.getCompanyListSelect(1) %>
                 </select>
             </li>
             <li>

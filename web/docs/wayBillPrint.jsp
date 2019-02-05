@@ -491,7 +491,7 @@
 		
 		</TD>
 		<TD ALIGN=CENTER WIDTH=110 STYLE="border-bottom: 1pt solid #000000;; padding: 0in"> 
-                    Микаилов
+                    Микаилов А.Н.
 		</TD>
 		<TD WIDTH=67 STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=2>Водитель</FONT></FONT></P>

@@ -50,9 +50,25 @@ public class CarAddSend extends HttpServlet {
             for (Map.Entry<String, String[]> entry : param.entrySet()) {
                 mapToSQL.put(entry.getKey(), entry.getValue()[0]);
             } 
+            
             CarSQL wrk = new CarSQL();
-            wrk.addCar(mapToSQL);
-            System.out.println(request.getParameterMap());
+            int carId=0;
+            try{
+                carId = Integer.parseInt(request.getParameter("carId"));
+            }
+            catch(Exception ex){
+                System.out.println("Car ID is not Integer!");
+            }
+            if(carId!=0){
+                wrk.writeCarData(mapToSQL);
+            }
+            else{
+                wrk.addCar(mapToSQL);
+                return;
+            }
+            if(!request.getParameter("carState").equals(request.getParameter("oldState")))
+                System.out.println("State was changed!");
+                wrk.changeCarState(0, carId, Integer.parseInt(request.getParameter("carState")));
             out.print(0);
         }
         catch(Exception ex){

@@ -44,7 +44,10 @@ public class CarSQL {
     }
     public Map carList() throws SQLException {
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId`");
+        ResultSet rs = st.executeQuery("SELECT carsZap.*, carState.* FROM carState " +
+        "INNER JOIN (SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId` ) as carsZap " +
+        "ON carsZap.state=carState.carStateId " +
+        "WHERE `carsZap`.`state`>0");
         Map<String, Map> listDriver = new HashMap<>();
         while(rs.next()){
             Map rowDriver = new HashMap<String, HashMap>();
@@ -56,7 +59,9 @@ public class CarSQL {
             rowDriver.put("transmission", rs.getString("transmission"));
             rowDriver.put("year", rs.getString("year"));
             rowDriver.put("cost", rs.getString("cost"));
+            rowDriver.put("sts", rs.getString("sts"));
             rowDriver.put("glanasId", rs.getString("glanasId"));
+            rowDriver.put("carStateName", rs.getString("carStateName"));
             listDriver.put(rs.getString("id"), rowDriver);
         }
         return listDriver;
@@ -145,6 +150,37 @@ public class CarSQL {
                                             ", `insuranceDateEnd`= '"+ carOsagoEnd+"'"+
                                             ", `ttoNumber`= '"+ ttoNumber+"'"+
                                             " WHERE `id`="+carId);
+    }
+    public void writeCarData(Map carData) throws SQLException {
+        System.out.println("Попытка внести изменения в информации о машине()");
+        Statement st = con.createStatement();
+        st.execute("UPDATE `cars` SET "
+                + "`number`='"+carData.get("gosNum")+"', "
+                + "`regGosNumber`='"+carData.get("numReg")+"', "
+                + "`VIN`='"+carData.get("carVIN")+"', " 
+                + "`transmission`='"+carData.get("carTransmission")+"', "
+                + "`year`='"+carData.get("carYear")+"', "
+                + "`cost`='"+carData.get("carRent")+"', "
+                + "`sts`='"+carData.get("carSTS")+"', "
+                + "`insuranceNamber`='"+carData.get("carOSAGONumber")+"', "
+                + "`insuranceDateEnd`='"+carData.get("carOSAGODate")+"', "
+                + "`insuranceCompany`='"+carData.get("insuranceCompany")+"', "
+                + "`ttoNumber`='"+carData.get("carDCNumber")+"', "
+                + "`ttoEndDate`='"+carData.get("carDCDate")+"', "
+                + "`glanasId`='"+carData.get("carGlanasID")+"', "
+                + "`carOwner`='"+carData.get("carOwner")+"', "
+                + "`model`='"+carData.get("carModel")+"', "
+                + "`carColor`='"+carData.get("CarColorMain")+"', "
+                + "`carSchem`='"+carData.get("carSchem")+"', "
+                + "`carMileage`='"+carData.get("carMileage")+"', "
+                + "`lastService`='"+carData.get("carLastTOM")+"', "
+                + "`lastServiceDate`='"+carData.get("carLastTOD")+"', "
+                + "`state`='"+carData.get("carState")+"', "
+                + "`licNumber`='"+carData.get("carLicNumber")+"', "
+                + "`licEndDate`='"+carData.get("carLicDate")+"', "
+                + "`outTime`='"+carData.get("outTime")+"' "
+                        + "WHERE `id`="+carData.get("carId")); 
+        st.close();
     }
     public String modelLisc(int currentIds) throws SQLException{
         Statement st = con.createStatement();
@@ -275,5 +311,10 @@ public class CarSQL {
             carData = carData +"<option value='"+rs.getString("id")+"' "+selected+">"+rs.getString("number")+"("+rs.getString("modelName")+")</option>";
         }
         return carData;
+    }
+    public void changeCarState(int driverId, int carId, int state) throws SQLException{
+        Statement st = con.createStatement();
+        st.execute("INSERT INTO `carsChangeLog` SET `carId`="+carId+",  `driverId`="+driverId+", `changeType`="+state+", `changeDate`=NOW()");
+        st.close();
     }
 }

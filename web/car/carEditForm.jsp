@@ -80,8 +80,8 @@
     Map<String, String> carData = wsql.getCarData(Integer.parseInt(request.getParameter("id")));
     String companySelect = compSQL.getCompanyListSelect(Integer.parseInt(carData.get("carOwner")));
     modelList = wsql.modelLisc(Integer.parseInt(carData.get("model")));
-    String stateList = wsql.stateList(Integer.parseInt(carData.get("state").toString()));
-    String insList = wsql.insCompList(Integer.parseInt(carData.get("insuranceCompany").toString()));
+    String stateList = wsql.stateList(Integer.parseInt(carData.get("state")));
+    String insList = wsql.insCompList(Integer.parseInt(carData.get("insuranceCompany")));
     %>
 <body style="">
     <div class="containerForm">
@@ -91,16 +91,16 @@
                     <h3> Основная информация </h3>
                     <div class="itemInRow gosNum  ">
                         <label for="gosNum">Гос номер</label>
-                        <input type="text" id="gosNum" name="gosNum" size="6" value="<%= carData.get("number") %>" placeholder="А111АА" class="editable">
-                        <input type="text" id="numReg" name="numReg" size="3" value="<%= carData.get("regGosNumber") %>" placeholder="777" class="editable">
+                        <input required type="text" id="gosNum" name="gosNum" size="6" value="<%= carData.get("number") %>" placeholder="А111АА" class="editable">
+                        <input required type="text" id="numReg" name="numReg" size="3" value="<%= carData.get("regGosNumber") %>" placeholder="777" pattern="\d{3}" class="editable">
                     </div>
                     <div class="itemInRow">
                         <label for="carSTS">Номер СТС</label>
-                        <input type="text" id="carSTS" name="carSTS" size="10" value="<%= carData.get("sts") %>" class="form-control editable" pattern="\d{10}" placeholder="7712345678" maxlength="10">
+                        <input required type="text" id="carSTS" name="carSTS" size="10" value="<%= carData.get("sts") %>" class="form-control editable" pattern="\d{10}" placeholder="7712345678" maxlength="10">
                     </div>
                     <div class="itemInRow">
                         <label for="carVIN">VIN</label>
-                        <input type="text" id="carVIN" name="carVIN" size="18" value="<%= carData.get("VIN") %>" pattern="[0-9A-Z]{17}" placeholder="12345678901234567" maxlength="17" class="form-control editable">
+                        <input required type="text" id="carVIN" name="carVIN" size="18" value="<%= carData.get("VIN") %>" pattern="[0-9A-Z]{17}" placeholder="12345678901234567" maxlength="17" class="form-control editable">
                     </div>
                     <div class="itemInRow">
                         <label for="CarOwner">Собственник</label>
@@ -131,6 +131,7 @@
                             <option value="2016" <% if(carData.get("year").equals("2016")){ %> selected <%}%> >2016</option>
                             <option value="2017" <% if(carData.get("year").equals("2017")){ %> selected <%}%> >2017</option>
                             <option value="2018" <% if(carData.get("year").equals("2018")){ %> selected <%}%> >2018</option>
+                            <option value="2019" <% if(carData.get("year").equals("2019")){ %> selected <%}%> >2019</option>
                         </select>
                     </div>
                     <div class="itemInRow">
@@ -159,7 +160,8 @@
                         <select id="carSchem" name="carSchem" class="CarColor form-control editable" >
                             <option value="1">Яндекс</option>
                             <option value="2">Ситимобил</option>
-                            <option value="3">Get</option>
+                            <option value="3">Get</option>\
+                            <option value="4">Без брэнда</option>
                         </select>
                     </div>
                     <div class="itemInRow ">
@@ -171,30 +173,30 @@
                     </div>
                     <div class="itemInRow ">
                         <label for="carTransmission">Время выхода на линию</label>
-                        <input type="time" id="outTime" name="outTime" min="9:00" max="18:00" value="<%= carData.get("outTime") %>" class="form-control editable" required>
+                        <input required type="time" id="outTime" name="outTime" min="7:00" max="21:00" value="<%= carData.get("outTime") %>" class="form-control editable" required>
                     </div>
                 </div>
                         <br>
                 <div class="rowInForm">
                     <div class="itemInRow">
                         <label for="carRent">Аренда</label>
-                        <input id="carRent" name="carRent" size="5" value="<%= carData.get("cost") %>"  type="text" class="form-control editable"  placeholder="12345678">
+                        <input required id="carRent" name="carRent" size="5" value="<%= carData.get("cost") %>"  type="text" class="form-control editable" pattern="\d{1-5}" placeholder="12345678">
                     </div>
                     <div class="itemInRow">
                         <label for="carMileage">Пробег</label>
-                        <input id="carMileage" name="carMileage" size="6" value="<%= carData.get("carMileage") %>"  type="text" class="form-control editable"  placeholder="12345678">
+                        <input required id="carMileage" name="carMileage" size="6" value="<%= carData.get("carMileage") %>"  type="text" pattern="[0-9]{1-6}" class="form-control editable"  placeholder="12345678">
                     </div>
                     <div class="itemInRow">
                         <label for="carLastTOM">Последнее ТО</label>
-                        <input id="carLastTOM" name="carLastTOM" size="6" value="<%= carData.get("lastService") %>"  type="text" class="form-control editable"  >
+                        <input required id="carLastTOM" name="carLastTOM" size="6" value="<%= carData.get("lastService") %>"  type="text" pattern="\d{1-6}" class="form-control editable"  >
                     </div>
                     <div class="itemInRow">
                         <label for="carLastTOD">Дата </label>
-                        <input id="carLastTOD" name="carLastTOD" type="date" value="<%= carData.get("lastServiceDate") %>"  class="form-control editable"/>
+                        <input required id="carLastTOD" name="carLastTOD" type="date" value="<%= carData.get("lastServiceDate") %>"  class="form-control editable"/>
                     </div>
                     <div class="itemInRow">
                         <label for="carGlanasID">ID ГЛОНАС</label>
-                        <input id="carGlanasID" name="carGlanasID" size="10" value="<%= carData.get("glanasId") %>"  type="text" class="form-control editable"  placeholder="12345678">
+                        <input required id="carGlanasID" name="carGlanasID" size="10" value="<%= carData.get("glanasId") %>"  type="text" class="form-control editable"  placeholder="12345678">
                     </div>
                 </div>
                 <div class="rowInForm">
@@ -202,11 +204,11 @@
                     <div class="itemInRow">
                         <div>   
                             <label for="carOSAGONumber">Полиса ОСАГО</label>
-                            <input id="carOSAGONumber" name="carOSAGONumber" value="<%= carData.get("insuranceNamber") %>"  type="text" class="form-control editable"  placeholder="  ААА5003573870">
+                            <input required id="carOSAGONumber" name="carOSAGONumber" value="<%= carData.get("insuranceNamber") %>"  type="text" class="form-control editable"  placeholder="  ААА5003573870">
                         </div>
                         <div>
                             <label for="carOSAGODate">Срок действия</label>
-                            <input id="carOSAGODate" name="carOSAGODate" type="date" value="<%= carData.get("insuranceDateEnd") %>"  class="form-control editable">
+                            <input required id="carOSAGODate" name="carOSAGODate" type="date" value="<%= carData.get("insuranceDateEnd") %>"  class="form-control editable">
                         </div>
                         <div>
                             <label for="carOSAGOCompany">Страховая Компания</label>
@@ -218,37 +220,52 @@
                     <div class="itemInRow">
                         <div class="carLic">
                             <label for="carLicNumber">Номер лицензии </label>
-                            <input id="carLicNumber" name="carLicNumber" type="text" size="12" value="<%= carData.get("licNumber") %>"  class="form-control editable" pattern="8\d{10}" placeholder="" >
+                            <input required id="carLicNumber" name="carLicNumber" type="text" size="12" value="<%= carData.get("licNumber") %>"  class="form-control editable" placeholder="" >
                         </div>
                         <div>
                             <label for="carLicDate">Срок действия</label>
-                            <input id="carLicDate" name="carLicDate" type="date" value="<%= carData.get("licEndDate") %>"  class="form-control editable">
+                            <input required id="carLicDate" name="carLicDate" type="date" value="<%= carData.get("licEndDate") %>"  class="form-control editable">
                         </div>
                     </div>
                     <div class="itemInRow">
                         <div>
                             <label for="carDCNumber">Номер ДК</label>
-                            <input id="carDCNumber" name="carDCNumber" type="text" value="<%= carData.get("ttoNumber") %>"  class="form-control editable" pattern="8\d{10}" placeholder="89851112233">
+                            <input required id="carDCNumber" name="carDCNumber" type="text" value="<%= carData.get("ttoNumber") %>"  class="form-control editable" pattern="\d{15}" placeholder="">
                         </div>
                         <div>
                             <label for="carDCDate">Срок действия</label>
-                            <input id="carDCDate" name="carDCDate" type="date" value="<%= carData.get("ttoEndDate") %>"  class="form-control editable">
+                            <input required id="carDCDate" name="carDCDate" type="date" value="<%= carData.get("ttoEndDate") %>"  class="form-control editable">
                         </div>
                     </div>
                 </div>
             </div>
             <div style="display: none">
-                <input type="text" value="<%= carData.get("id") %>"/>
+                <input type="text" name="carId" value="<%= carData.get("id") %>"/>
+                <input type="text" name="oldState" value="<%= carData.get("state") %>"/>
             </div>
-        </form>
+            
         <input id="editor" type="button" value="Редактировать"/>
-        <input id="sendCarForm" type="button" value="Сохранить"/>
+        <input id="sendCarForm1" type="submit" value="Сохранить"/>
+        
+        </form>
     </div>
     <script>
         $(document).ready(function(){
             $( ".editable" ).prop( "disabled", true );
             $( "#editor" ).prop( "disabled", false );
                 $( "#sendCarForm" ).prop( "disabled", false );
+        });
+        $("#createCar").submit(function(){
+            var msg   = $('#createCar').serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: 'CAS',
+                    data: msg,
+                    success: function(data){
+                        closeModWind();
+                    }
+                });
+            return false;
         });
         $("#editor").click(function(){  
             if($( ".editable" ).prop( "disabled")){

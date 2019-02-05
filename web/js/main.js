@@ -32,11 +32,11 @@ function addDriverN(){
         url: 'AddDriverNew',
         data: msg,
         success: function(data){
-            listDriverShow();
+            listDriverShow(0);
             closeModWind();
         }
     });
-    listDriverShow();
+    listDriverShow(0);
 }
 ////////////////////////////////////////////////////////////////////////////////
 /////                    Вывод списка водителей                            /////
@@ -65,7 +65,7 @@ $('#deletedDriver').change(function(){
         showDeleted = 1;
     else
         showDeleted = 0;
-    listDriverShow()
+    listDriverShow(showDeleted)
 });
 ////////////////////////////////////////////////////////////////////////////////
 /////                    Вывод формы оплаты                                /////
@@ -107,7 +107,7 @@ function takePaySend(){
                 $('#takePayDriverSum').val('');
                 $('#takePayDriverType').val('');
                 $('#takePayDriverComment').val('');
-                listDriverShow();
+                listDriverShow(0);
                 closeModWind();
             }
         }
@@ -156,7 +156,7 @@ function editDriverSend(id){
                 location.reload();
         }
     });
-    listDriverShow();
+    listDriverShow(0);
 }
 function editDriverSendRP(id){
     var limit = $('#driver_limit').val();
@@ -189,7 +189,7 @@ function editDriverSendRP(id){
                 location.reload();
         }
     });
-    listDriverShow();
+    listDriverShow(0);
 }
 function editDriverSendNew(){
     var msg   = $('#addDriverFormN').serialize();
@@ -206,7 +206,7 @@ function editDriverSendNew(){
                 closeModWind();
         }
     });
-    listDriverShow();
+    listDriverShow(0);
 }
 function clearEditForm(){
     location.reload();
@@ -299,7 +299,7 @@ $('#driversListDeleted').click(function (){
 /////                             Show prop list                           /////
 ////////////////////////////////////////////////////////////////////////////////
 $('#mainProp').click(function (){
-    listDriverShow();
+    listDriverShow(0);
     $('.itemDisplay').css('display', 'none');
     $('.itemMenu').attr('disabled', false);
     $('#mainProp').attr('disabled', true);
@@ -465,7 +465,7 @@ function addCarNew(){
         url: 'car/carForm.jsp',
         success: function(data){
             $('#modalConteiner').html(data);
-            openModWind(780, 500);
+            openModWind(780, 450);
         },
         error:function (msg){
             alert('Error in geting car list!'+msg);
@@ -483,7 +483,7 @@ function editShow(carId){ // лoвим клик пo ссылки с id="go"
         data: 'id='+carId,
         success: function(data){
             $('#modalConteiner').html(data);
-            openModWind();
+            openModWind(780, 450);
         },
         error:function (msg){
             alert('Error in geting car list!'+msg);

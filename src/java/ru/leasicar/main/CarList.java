@@ -56,7 +56,7 @@ public class CarList extends HttpServlet {
                     Map carList = wsql.carList();
                     Iterator<Map.Entry<String, Map>> entries = carList.entrySet().iterator();
                     out.println("<thead><tr><td>Гос. Номер</td><td>Модель</td><td>VIN</td><td>Год выпуска</td>"
-                            + "<td>КПП</td><td>Стоимость Аренды</td></tr></thead>");
+                            + "<td>КПП</td><td>СТС</td><td>Статус</td></tr></thead>");
                     while (entries.hasNext()) {
                         Map.Entry<String, Map> entry = entries.next();
                         Map carData = entry.getValue();
@@ -83,7 +83,8 @@ public class CarList extends HttpServlet {
                         else 
                             out.println("<td>Not</td>");
                         ////////////////////////////////////////////////////////
-                        out.println("<td>"+carData.get("cost")+"</td></tr>");
+                        out.println("<td>"+carData.get("sts")+"</td>");
+                        out.println("<td>"+carData.get("carStateName")+"</td></tr>");
                     }
                     out.println("</table>");
                     //wsql.addAccrual();
