@@ -283,7 +283,7 @@ public class DriverSQL {
         //запись статуса машины
         int carId = getCarId(driverId);
         changeCar(Integer.parseInt(driverId), 0, 3);
-        changeCar(0, carId, 3);
+        changeCar(0, carId, 1);
         stDelDriver.execute("UPDATE drivers SET `driver_deleted`=1, `driverEndDate`=CURRENT_DATE() WHERE `driver_id`="+driverId);
         stDelDriver.close();
         Statement stDelWayBill = con.createStatement();
@@ -395,6 +395,7 @@ public class DriverSQL {
     public void changeCar(int driverId, int carId, int state) throws SQLException{
         Statement st = con.createStatement();
         st.execute("INSERT INTO `carsChangeLog` SET `carId`="+carId+",  `driverId`="+driverId+", `changeType`="+state+", `changeDate`=NOW()");
+        st.execute("UPDATE cars SET state="+state+" WHERE `id`="+carId);
         st.close();
     }
 

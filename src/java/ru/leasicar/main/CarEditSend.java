@@ -55,9 +55,9 @@ public class CarEditSend extends HttpServlet {
             String carOsagoEnd = request.getParameter("carOsagoEnd");
             String ttoNumber = request.getParameter("ttoNumber");
             CarSQL wrk = new CarSQL();
-            wrk.writeCarData(carNumber, carVIN,  carModel,  carTransmission,
-            carYear, carCost, carGlanasId, carId,
-            carStsNumber, carOsagoNumber, carOsagoEnd, ttoNumber);
+//            wrk.writeCarData(carNumber, carVIN,  carModel,  carTransmission,
+//            carYear, carCost, carGlanasId, carId,
+//            carStsNumber, carOsagoNumber, carOsagoEnd, ttoNumber);
             System.out.println("INFO: Car data chenged bu user "+userId+" (id="+carId
                     +" carNumber="+carNumber
                     +" carModel="+carModel

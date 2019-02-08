@@ -132,25 +132,25 @@ public class CarSQL {
         }
         return carData;
     }
-    public void writeCarData(String carNumber, 
-            String carVIN, String carModel, String carTransmission,
-            String carYear, String carCost, String carGlanasId, String carId,
-            String carStsNumber, String carOsagoNumber, String carOsagoEnd, String ttoNumber) throws SQLException {
-        System.out.println("Попытка внести изменения в информации о машине()");
-        Statement st = con.createStatement();
-        st.execute("UPDATE `cars` SET `number`='" +carNumber+ "'"+
-                                            ", `model`='" + carModel+ "'"+
-                                            ", `VIN`='" + carVIN+"'"+
-                                            ", `transmission`='" + carTransmission+"'"+
-                                            ", `year`='" + carYear+"'"+
-                                            ", `cost`='" + carCost+"'"+
-                                            ", `glanasId`= '"+ carGlanasId+"'"+
-                                            ", `sts`= '"+ carStsNumber+"'"+
-                                            ", `insuranceNamber`= '"+ carOsagoNumber+"'"+
-                                            ", `insuranceDateEnd`= '"+ carOsagoEnd+"'"+
-                                            ", `ttoNumber`= '"+ ttoNumber+"'"+
-                                            " WHERE `id`="+carId);
-    }
+//    public void writeCarData(String carNumber, 
+//            String carVIN, String carModel, String carTransmission,
+//            String carYear, String carCost, String carGlanasId, String carId,
+//            String carStsNumber, String carOsagoNumber, String carOsagoEnd, String ttoNumber) throws SQLException {
+//        System.out.println("Попытка внести изменения в информации о машине()");
+//        Statement st = con.createStatement();
+//        st.execute("UPDATE `cars` SET `number`='" +carNumber+ "'"+
+//                                            ", `model`='" + carModel+ "'"+
+//                                            ", `VIN`='" + carVIN+"'"+
+//                                            ", `transmission`='" + carTransmission+"'"+
+//                                            ", `year`='" + carYear+"'"+
+//                                            ", `cost`='" + carCost+"'"+
+//                                            ", `glanasId`= '"+ carGlanasId+"'"+
+//                                            ", `sts`= '"+ carStsNumber+"'"+
+//                                            ", `insuranceNamber`= '"+ carOsagoNumber+"'"+
+//                                            ", `insuranceDateEnd`= '"+ carOsagoEnd+"'"+
+//                                            ", `ttoNumber`= '"+ ttoNumber+"'"+
+//                                            " WHERE `id`="+carId);
+//    }
     public void writeCarData(Map carData) throws SQLException {
         System.out.println("Попытка внести изменения в информации о машине()");
         Statement st = con.createStatement();
@@ -234,25 +234,25 @@ public class CarSQL {
         }
         return forRet;
     }
-    public void addCar(String carNumber, 
-            String carVIN, String carModel, String carTransmission,
-            String carYear, String carCost, String carGlanasId,
-            String carStsNumber, String carOsagoNumber, String carOsagoEnd, String ttoNumber) throws SQLException {
-        System.out.println("Попытка внести изменения в информации о машине()");
-        Statement st = con.createStatement();
-        st.execute("INSERT INTO `cars` (`number`, `model`, `VIN`, `transmission`, "
-                + "`year`, `cost`, `glanasId`, `sts`, `insuranceNamber`, `insuranceDateEnd`, `ttoNumber`)"
-                + " VALUES ('" +carNumber+ "', '"+carModel+ "', "+
-                                            " '" + carVIN+"', "+
-                                            " '" + carTransmission+"', "+
-                                            " '" + carYear+"', "+
-                                            " '" + carCost+"', "+
-                                            " '"+ carGlanasId+"', "+
-                                            " '"+ carStsNumber+"', "+
-                                            " '"+ carOsagoNumber+"', "+
-                                            " '"+ carOsagoEnd+"', "+
-                                            " '"+ ttoNumber+"')");
-    }
+//    public void addCar(String carNumber, 
+//            String carVIN, String carModel, String carTransmission,
+//            String carYear, String carCost, String carGlanasId,
+//            String carStsNumber, String carOsagoNumber, String carOsagoEnd, String ttoNumber) throws SQLException {
+//        System.out.println("Попытка внести изменения в информации о машине()");
+//        Statement st = con.createStatement();
+//        st.execute("INSERT INTO `cars` (`number`, `model`, `VIN`, `transmission`, "
+//                + "`year`, `cost`, `glanasId`, `sts`, `insuranceNamber`, `insuranceDateEnd`, `ttoNumber`)"
+//                + " VALUES ('" +carNumber+ "', '"+carModel+ "', "+
+//                                            " '" + carVIN+"', "+
+//                                            " '" + carTransmission+"', "+
+//                                            " '" + carYear+"', "+
+//                                            " '" + carCost+"', "+
+//                                            " '"+ carGlanasId+"', "+
+//                                            " '"+ carStsNumber+"', "+
+//                                            " '"+ carOsagoNumber+"', "+
+//                                            " '"+ carOsagoEnd+"', "+
+//                                            " '"+ ttoNumber+"')");
+//    }
     public void addCar(Map carData) throws SQLException {
         System.out.println("Попытка внести изменения в информации о машине()");
         Statement st = con.createStatement();
@@ -286,7 +286,7 @@ public class CarSQL {
         String carData = "<option value='0'>Выбрать</option>";
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT zap1.*, models.* FROM models \n" +
-                            "INNER JOIN (SELECT * FROM `cars` WHERE `id` not in (SELECT `carId` FROM `drivers` WHERE `driver_deleted`=0) ORDER BY number) zap1" +
+                            "INNER JOIN (SELECT * FROM `cars` WHERE `id` not in (SELECT `carId` FROM `drivers` WHERE `driver_deleted`=0) AND `state`=1 ORDER BY number) zap1" +
                             " ON zap1.model=models.modelId");
         while(rs.next()){
             carData = carData +"<option value='"+rs.getString("id")+"'>"+rs.getString("number")+"("+rs.getString("modelName")+")</option>";

@@ -51,19 +51,19 @@
                     border-collapse: collapse; /* Убираем двойные линии между ячейками */
                    }
                    tr{
-                       height: 9mm;
+                       height: 8mm;
                    }
                   .leftPage{
                       margin-left: 7mm;
                       margin-right: 13mm;
-                      margin-bottom: 13mm;
-                      margin-top: 13mm;
+                      margin-bottom: 12mm;
+                      margin-top: 12mm;
                   }
                   .rightPage{
                       margin-left: 13mm;
                       margin-right: 7mm;
-                      margin-bottom: 13mm;
-                      margin-top: 13mm;
+                      margin-bottom: 12mm;
+                      margin-top: 12mm;
                   }
                 .more{
                     page-break-after: always;
@@ -78,6 +78,7 @@
         <% 
             String table1 = "";
             int rowCounter = 0;
+            int pageCounter = 0;
             SortedSet<String> keys = new TreeSet<>(wbList.keySet());
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
             boolean leftPage = true;
@@ -88,7 +89,7 @@
                     pageClass = "rightPage";
                 if(rowCounter==0){
                     table1=null;
-                    table1 = "<table class='firstPage "+pageClass+"' style=' page-break-after: always'>"
+                    table1 = "<div class='firstPage "+pageClass+"' style=' page-break-after: always'><table >"
                             + "<tr><td>Дата время<br> проведения осмотра</td>"
                             + "<td>ФИО </td>"
                             + "<td>Пол </td>"
@@ -119,13 +120,17 @@
                         + "<td></td></tr>";  //" + row.get("driverId") + "
                 
                 
-                if(rowCounter==18){ 
+                if(rowCounter==20){ 
+                    pageCounter++;
                     leftPage= !leftPage;
-                    table1=table1+"</table><p class='more'></p>";
+                    table1=table1+"</table>"
+                            + "<div style='width: 100%; text-align: center; padding=1.5mm;'>"+pageCounter+"</div>"
+                            + "</div><p class='more'></p>";
         %>
                     
                     <%= table1 %>
                     <%  rowCounter = 0;    
+                    if(pageCounter==90) break; 
                 }
               ;
             }

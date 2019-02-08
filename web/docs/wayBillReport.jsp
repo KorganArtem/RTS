@@ -115,6 +115,7 @@
             String table1 = "";
             String table2 = "";
             int rowCounter = 0;
+            int pageCounter = 0;
             SortedSet<String> keys = new TreeSet<>(wbList.keySet());
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
             for (String key : keys) {
@@ -143,14 +144,16 @@
                         + "<td>" + row.get("endDate") + "</td>"
                         + "<td></td></tr>";
                 
-                if(rowCounter==26){ 
+                if(rowCounter==30){ 
+                    pageCounter++;
                     table1=table1+"</table><p class='more'></p>";
                     table2=table2+"</table><p class='more'></p>";
         %>
                     
                     <%= table1 %>
                     <%= table2 %>
-                    <%  rowCounter = 0;    
+                    <%  rowCounter = 0;
+                    if(pageCounter==60) break;     
                 }
               ;
             }

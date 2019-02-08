@@ -40,7 +40,7 @@
                }
             td{
                 border: solid #000 1px;
-                       height: 10mm;
+                       height: 8mm;
             }
             @media print {
                 @page {
@@ -56,7 +56,7 @@
                     border-collapse: collapse; /* Убираем двойные линии между ячейками */
                    }
                    tr{
-                       height: 10mm;
+                       height: 8mm;
                    }
                   .leftPage{
                       margin-left: 10mm;
@@ -81,6 +81,7 @@
             String table1 = "";
             String table2 = "";
             int rowCounter = 0;
+            int pageCounter = 0;
             SortedSet<String> keys = new TreeSet<>(wbList.keySet());
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
             int counterPP = 0;
@@ -111,7 +112,8 @@
                         + "<td></td>"
                         + "<td></td></tr>";
                 
-                if(rowCounter==25){ 
+                if(rowCounter==30){ 
+                    pageCounter++;
                     table1=table1+"</table><p class='more'></p>";
                     table2=table2+"</table><p class='more'></p>";
         %>
@@ -119,6 +121,7 @@
                     <%= table1 %>
                     <%= table2 %>
                     <%  rowCounter = 0;  
+                    if(pageCounter==60) break;  
                     
                 }
               ;
