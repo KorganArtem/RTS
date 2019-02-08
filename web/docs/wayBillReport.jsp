@@ -28,7 +28,7 @@
     String companyName = cSQL.getCompanyName(companyId);
     Map<String, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
     String dayStart = dateStart.split("-")[2];
-    int mounth = Integer.parseInt(dateStart.split("-")[1]);
+    int mounth = Integer.parseInt(dateStart.split("-")[1])+1;
     String mounthStart = mounths[mounth];
     String yerStart = dateStart.split("-")[0];
 %>
@@ -46,8 +46,8 @@
                 border: solid #000 1px;
             }
             .titlePage{
-                width: 210mm;
-                height: 290mm;  
+                /*width: 210mm;
+                height: 290mm;  */
             }
             .headerTitle{
                 margin-left: 80mm;
@@ -76,7 +76,7 @@
                     border-collapse: collapse; /* Убираем двойные линии между ячейками */
                    }
                    tr{
-                       height: 9mm;
+                       height: 8mm;
                    }
                   .leftPage{
                       margin-left: 12mm;
@@ -123,12 +123,12 @@
                 if(rowCounter==0){
                     table1=null;
                     table2=null;
-                    table1 = "<table class='firstPage leftPage' style='float: left; page-break-after: always'>"
+                    table1 = "<div class='firstPage leftPage' style=' page-break-after: always'><table>"
                             + "<tr><td>Номер <br> путевого <br> листа</td>"
                             + "<td>Дата</td>"
                             + "<td>ФИО</td>"
                             + "<td>Табельный номер</td></tr>";
-                    table2 = "<table class='rightPage'>"
+                    table2 = "<div class='firstPage rightPage' style=' page-break-after: always'><table>"
                             + "<tr><td>Гаражный <br> номер <br> а/м</td>"
                             + "<td>Подпись водителя</td>"
                             + "<td>Подпись диспетчера и дата</td>"
@@ -146,8 +146,13 @@
                 
                 if(rowCounter==30){ 
                     pageCounter++;
-                    table1=table1+"</table><p class='more'></p>";
-                    table2=table2+"</table><p class='more'></p>";
+                    table1=table1+"</table>"
+                            + "<div style='width: 100%; text-align: center; padding=1.5mm;'>"+pageCounter+"</div>"
+                            + "</div><p class='more'></p>";
+                    pageCounter++;
+                    table2=table2+"</table>"
+                            + "<div style='width: 100%; text-align: center; padding=1.5mm;'>"+pageCounter+"</div>"
+                            + "</div><p class='more'></p>";
         %>
                     
                     <%= table1 %>
