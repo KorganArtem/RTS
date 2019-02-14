@@ -7,7 +7,6 @@
 <%@page import="ru.leasicar.workerSql.CarSQL"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"%>
 <!DOCTYPE html>
-<!doctype html>
 <%@ page import="ru.leasicar.authorization.*" %>
 <% 
     AccessControl ac = new AccessControl();

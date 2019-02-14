@@ -59,7 +59,7 @@ public class ListDriver extends HttpServlet {
                 Map listDriver = wsql.listDriver(showDeleted);
                 Iterator<Map.Entry<String, Map>> entries = listDriver.entrySet().iterator();
                 out.println("<div class='scrollingBlock'>");
-                out.println("<thead><tr><td>Фамилия</td><td>Имя</td><td>Номер</td><td>Телефон</td>");
+                out.println("<thead><tr><td>Фамилия</td><td>Имя</td><td>Номер</td><td>Марка</td><td>Телефон</td>");
                 out.println(colsBalance+"<td class='noPrint'></td>"+colDel+"<td class='noPrint'></td></tr></thead>");
                 while (entries.hasNext()) {
                     Map.Entry<String, Map> entry = entries.next();
@@ -81,7 +81,7 @@ public class ListDriver extends HttpServlet {
                         colsBalance="<td>"+draverData.get("driver_limit")+"</td>"
                             + "<td>"+draverData.get("driver_current_debt")+"</td>"
                             + "<td>"+draverData.get("driver_deposit")+"</td>"
-                            + "<td class='takeMoney noPrint' onClick='takePay("+entry.getKey()+")')><img src='img/takeMoney.png'/></td>";
+                            + "<td class='takeMoney noPrint' onClick='takePay("+entry.getKey()+")'><img src='img/takeMoney.png'/></td>";
                     else
                         colsBalance="";
                     String report = "";
@@ -92,16 +92,18 @@ public class ListDriver extends HttpServlet {
                             + "<td id='listDriverLastName"+entry.getKey()+"'>"+draverData.get("driver_firstname")+"</td>"
                             /*+ "<td id='listDriverCarNamber"+entry.getKey()+"'>"+draverData.get("driver_carnumber")+"</td>"*/
                             + "<td id='listDriverCarNamber"+entry.getKey()+"'>"+draverData.get("id_car")+"</td>"
+                            + "<td>"+draverData.get("modelName")+"</td>"
                             + "<td class='phoneInList'>"+draverData.get("driver_phone_number")+"</td>"
+                            /*+ "<td>"+draverData.get("modelName")+"</td>"*/
                             + colsBalance 
                             + delButton        
                             + "<td class='wrkday noPrint'>"+day_off+"</td>"
                             + report
-                                    + "<td class='docsCol'  driverId='"+entry.getKey()+"'>");
+                                    + "<td class='docsCol' driverId='"+entry.getKey()+"' >");  //driverId='"+entry.getKey()+"'
                     if(draverData.get("haveBill").equals("1"))
-                        out.println("<img src='img/docs.png'/></td></tr>");
+                        out.println("<img src='img/docs.png' alt=''/></td></tr>");
                     else
-                        out.println("<img src='img/doc1.png'/></td></tr>");
+                        out.println("<img src='img/doc1.png' alt=''/></td></tr>");
                 }
                 out.println("</table></div>");
                 if(showBalance)

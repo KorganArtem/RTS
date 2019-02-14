@@ -212,7 +212,7 @@
 		</TD>
 		<TD COLSPAN=5 WIDTH=55 VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
 			<P><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">
-                            <%= carData.get("number") %>
+                            <%= carData.get("number") %> <%= carData.get("regGosNumber") %>
                         </FONT></FONT></P>
 		</TD>
 		<TD COLSPAN=6 WIDTH=117 VALIGN=TOP STYLE="border: none; padding: 0in">

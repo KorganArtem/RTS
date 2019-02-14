@@ -72,7 +72,7 @@ public class ActOutGenerator {
             range.replaceText("{%numberDog%}", numberDog);
             range.replaceText("{%currentDogDate%}", currenDogDate);
             range.replaceText("{%carModel%}", carData.get("modelName"));
-            range.replaceText("{%carNumber%}", carData.get("number"));
+            range.replaceText("{%carNumber%}", carData.get("number")+carData.get("regGosNumber"));
             range.replaceText("{%carVIN%}", carData.get("VIN"));
             range.replaceText("{%carYear%}", carData.get("year"));
             range.replaceText("{%carColor%}", carData.get("color"));

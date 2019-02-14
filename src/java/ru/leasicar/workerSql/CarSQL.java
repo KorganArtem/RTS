@@ -114,6 +114,7 @@ public class CarSQL {
             if(rs.next()){
                 carData.put("id", rs.getString("id"));
                 carData.put("number", rs.getString("number"));
+                carData.put("regGosNumber", rs.getString("regGosNumber"));
                 carData.put("modelName", rs.getString("modelName"));
                 carData.put("VIN", rs.getString("VIN"));
                 carData.put("transmission", rs.getString("transmission"));

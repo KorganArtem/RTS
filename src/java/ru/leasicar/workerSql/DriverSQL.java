@@ -133,12 +133,20 @@ public class DriverSQL {
 
     public Map listDriver(int showDeleted) throws SQLException{
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT zap2.*, cars.number FROM cars " +
+        ResultSet rs = st.executeQuery("Select carDriver.*, models.* FROM models " +
+                "INNER JOIN (SELECT zap2.*, cars.number, cars.model FROM cars  " +
+                "INNER JOIN (SELECT drivers.*, zap1.* FROM drivers LEFT JOIN (SELECT max(waybillsDate) as lastBill, waybills.driverId FROM waybills WHERE waybillsDate>current_date() GROUP BY driverId) zap1 " +
+                "ON drivers.driver_id=zap1.driverId WHERE driver_deleted="+showDeleted+") as zap2 " +
+                "ON zap2.carId=cars.id) as carDriver " +
+                "ON carDriver.model=models.modelId");
+
+                
+                /*"SELECT zap2.*, cars.number FROM cars " +
                                     "INNER JOIN " +
                                     "(SELECT drivers.*, zap1.* FROM drivers " +
                                     "LEFT JOIN (SELECT max(waybillsDate) as lastBill, waybills.driverId FROM waybills WHERE waybillsDate>current_date() GROUP BY driverId) zap1 " +
                                     "ON drivers.driver_id=zap1.driverId WHERE driver_deleted="+showDeleted+") as zap2 " +
-                                    "ON zap2.carId=cars.id");
+                                    "ON zap2.carId=cars.id");*/
         Map listDriver = new HashMap<String, HashMap>();
         while(rs.next()){
             Map<String, String> rowDriver = new HashMap();
@@ -153,11 +161,12 @@ public class DriverSQL {
             rowDriver.put("driver_deposit", rs.getString("driver_deposit"));
             rowDriver.put("dayOff", rs.getString("driverDayOff"));
             rowDriver.put("lastBill", rs.getString("lastBill"));
-            if(!rs.wasNull()){
-                rowDriver.put("haveBill", "1");
+            rowDriver.put("modelName", rs.getString("modelName"));
+            if(rs.getString("lastBill")==null){
+                rowDriver.put("haveBill", "0");
             }
             else{
-                rowDriver.put("haveBill", "0");
+                rowDriver.put("haveBill", "1");
             }
             listDriver.put(rs.getString("driver_id"), rowDriver);
         }
