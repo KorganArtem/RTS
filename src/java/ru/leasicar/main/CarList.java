@@ -8,6 +8,9 @@ package ru.leasicar.main;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,7 +40,7 @@ public class CarList extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, ParseException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
@@ -56,7 +59,7 @@ public class CarList extends HttpServlet {
                     Map carList = wsql.carList();
                     Iterator<Map.Entry<String, Map>> entries = carList.entrySet().iterator();
                     out.println("<thead><tr><td>Гос. Номер</td><td>Модель</td><td>VIN</td><td>Год выпуска</td>"
-                            + "<td>КПП</td><td>СТС</td><td>Статус</td></tr></thead>");
+                            + "<td>КПП</td><td>СТС</td><td>Собственник</td><td>Время</td><td>Статус</td><td></td></tr></thead>");
                     while (entries.hasNext()) {
                         Map.Entry<String, Map> entry = entries.next();
                         Map carData = entry.getValue();
@@ -83,8 +86,79 @@ public class CarList extends HttpServlet {
                         else 
                             out.println("<td>Not</td>");
                         ////////////////////////////////////////////////////////
+                        
+                        /*
+                        rowDriver.put("ttoEndDate", rs.getString("ttoEndDate"));
+            rowDriver.put("licEndDate", rs.getString("licEndDate"));
+            rowDriver.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
+                        
+                        */
+                        String comment ="";
+                        long nowDate = new Date().getTime();
+                        boolean ttoEnded = false;
+                        if(carData.get("ttoEndDate")!=null){
+                            Date ttoEndDate=new SimpleDateFormat("yyyy-MM-dd").parse(carData.get("ttoEndDate").toString());
+                            if(ttoEndDate.getTime() < nowDate){
+                                ttoEnded = true;
+                                comment = comment+"Талон техосмотра просрочен "+carData.get("ttoEndDate")+"&#013;";
+                            }
+                        }
+                        boolean insuranceEnded = false;
+                        if(carData.get("insuranceDateEnd")!=null){
+                            Date insuranceDateEnd=new SimpleDateFormat("yyyy-MM-dd").parse(carData.get("insuranceDateEnd").toString()); 
+                            if(insuranceDateEnd.getTime() < nowDate){
+                                insuranceEnded = true;
+                                comment = comment+"Страховой полис просрочен "+carData.get("insuranceDateEnd")+"&#013;";
+                            }
+                        }
+                        boolean licEnded = false;
+                        if(carData.get("licEndDate")!=null){
+                            Date licEndDate=new SimpleDateFormat("yyyy-MM-dd").parse(carData.get("licEndDate").toString());  
+                            if(licEndDate.getTime() < nowDate){
+                                licEnded = true;
+                                comment = comment+"Лицензия просрочена "+carData.get("licEndDate")+"&#013;";
+                            }
+                        }
+                        
+                        boolean ttoNearEnd = false;
+                        if(carData.get("ttoEndDate")!=null){
+                            Date ttoEndDate=new SimpleDateFormat("yyyy-MM-dd").parse(carData.get("ttoEndDate").toString());
+                            if(ttoEndDate.getTime() < nowDate+60*60*24*7*1000&&ttoEndDate.getTime()>nowDate){
+                                ttoNearEnd = true;
+                                comment = comment+"Талон техосмотра  скоро закончится "+carData.get("ttoEndDate")+"&#013;";
+                            }
+                        }
+                        boolean insuranceNearEnd = false;
+                        if(carData.get("insuranceDateEnd")!=null){
+                            Date insuranceDateEnd=new SimpleDateFormat("yyyy-MM-dd").parse(carData.get("insuranceDateEnd").toString()); 
+                            if(insuranceDateEnd.getTime() < nowDate+60*60*24*7*1000&&insuranceDateEnd.getTime()>nowDate){
+                                insuranceEnded = true;
+                                comment = comment+"Страховой полис скоро закончится "+carData.get("insuranceDateEnd")+"&#013;";
+                            }
+                        }
+                        boolean licNearEnd = false;
+                        if(carData.get("licEndDate")!=null){
+                            Date licEndDate=new SimpleDateFormat("yyyy-MM-dd").parse(carData.get("licEndDate").toString());  
+                            if(licEndDate.getTime() < nowDate+60*60*24*7*1000&&licEndDate.getTime()>nowDate){
+                                licEnded = true;
+                                comment = comment+"Лицензия  скоро закончится "+carData.get("licEndDate")+"&#013;";
+                            }
+                        }
+                        
+                        
+                        String docStateImgPath="img/ok.png";
+                        if(licNearEnd||insuranceNearEnd||ttoNearEnd){
+                            docStateImgPath="img/alert.png";
+                        }
+                        if(licEnded||insuranceEnded||ttoEnded){
+                            docStateImgPath="img/down.png";
+                        }
+                        System.out.println(carData.get("sts")+" "+carData.get("ttoEndDate")+" "+carData.get("licEndDate")+" "+carData.get("insuranceDateEnd"));
                         out.println("<td>"+carData.get("sts")+"</td>");
-                        out.println("<td>"+carData.get("carStateName")+"</td></tr>");
+                        out.println("<td>"+carData.get("companyName")+"</td>");
+                        out.println("<td>"+carData.get("outTime")+"</td>");
+                        out.println("<td>"+carData.get("carStateName")+"</td>");
+                        out.println("<td><img class='alertImg' src='"+docStateImgPath+"' title='"+comment+"'/></td></tr>");
                     }
                     out.println("</table>");
                     //wsql.addAccrual();
@@ -116,6 +190,8 @@ public class CarList extends HttpServlet {
             Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -135,6 +211,8 @@ public class CarList extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

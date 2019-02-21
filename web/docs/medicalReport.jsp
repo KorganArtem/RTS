@@ -136,7 +136,7 @@
                             + "<td>Подпись работника</td></tr>";
                 }
                 rowCounter++;
-                table1 = table1 + "<tr><td>" + row.get("waybillsDate")+ " " + row.get("outTime")+ "</td>"
+                table1 = table1 + "<tr><td style='vertical-align: top;'>" + row.get("waybillsDate")+ " " + row.get("outTime")+ "</td>"
                         + "<td>" + row.get("driver_lastname") + " " + row.get("driver_firstname") + " " + row.get("driver_midName") + "</td>"
                         + "<td>" + row.get("sex") + "</td>"
                         + "<td>" + row.get("driver_bornDate") + "</td>"

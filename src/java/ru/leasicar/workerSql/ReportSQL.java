@@ -10,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -154,5 +156,35 @@ public class ReportSQL {
             payList.put(rsPayList.getString("source"), payRaw);
         }
         return payList;
+    }
+    public Map gerCarUseReport(String begin, String end) throws SQLException{
+        System.out.println("Get car use report");
+        Map<Integer, Map> carList = new HashMap();
+        long previevChange = new Date().getTime();
+        try{
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT carsChangeLog.changeType, carsChangeLog.carId, DATE_FORMAT(carsChangeLog.changeDate, '%Y-%m-%d') as changeDate, "
+                    + "cars.number FROM carsChangeLog " +
+                                    "INNER JOIN cars " +
+                                    "ON cars.id=carsChangeLog.carId " +
+                                    "WHERE carId!=0 ORDER by carId, changeDate desc ");
+            int currentCar=0;
+            while(rs.next()){
+                Date changeDate=new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("changeDate").toString());
+                if(currentCar != rs.getInt("carId")){
+                    System.out.println("Next Car: "+rs.getString("number"));
+                    currentCar = rs.getInt("carId");
+                    previevChange = new Date().getTime();
+                                        
+                }
+                long days = previevChange-changeDate.getTime();
+                System.out.println("\t"+rs.getString("changeType")+"   "+rs.getString("changeDate")+"  "+days/1000/24/60/60);
+                previevChange = changeDate.getTime();
+            }
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return carList;
     }
 }

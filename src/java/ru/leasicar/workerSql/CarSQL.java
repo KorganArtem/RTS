@@ -44,10 +44,17 @@ public class CarSQL {
     }
     public Map carList() throws SQLException {
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT carsZap.*, carState.* FROM carState " +
+        ResultSet rs = st.executeQuery("SELECT `companies`.`name` as companyName, carModel.* FROM companies "
+                +"INNER JOIN (SELECT carsZap.*, carState.* FROM carState "
+                +"INNER JOIN (SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId` ) as carsZap ON carsZap.state=carState.carStateId  WHERE `carsZap`.`state`>0) carModel "
+                +"ON carModel.carOwner=companies.companyId");
+        
+        
+        
+        /*ResultSet rs = st.executeQuery("SELECT `companies`.`name` as companyName, carState.* FROM carState " +
         "INNER JOIN (SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId` ) as carsZap " +
         "ON carsZap.state=carState.carStateId " +
-        "WHERE `carsZap`.`state`>0");
+        "WHERE `carsZap`.`state`>0");*/
         Map<String, Map> listDriver = new HashMap<>();
         while(rs.next()){
             Map rowDriver = new HashMap<String, HashMap>();
@@ -62,6 +69,11 @@ public class CarSQL {
             rowDriver.put("sts", rs.getString("sts"));
             rowDriver.put("glanasId", rs.getString("glanasId"));
             rowDriver.put("carStateName", rs.getString("carStateName"));
+            rowDriver.put("companyName", rs.getString("companyName"));
+            rowDriver.put("outTime", rs.getString("outTime"));
+            rowDriver.put("ttoEndDate", rs.getString("ttoEndDate"));
+            rowDriver.put("licEndDate", rs.getString("licEndDate"));
+            rowDriver.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
             listDriver.put(rs.getString("id"), rowDriver);
         }
         return listDriver;
