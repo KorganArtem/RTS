@@ -20,7 +20,7 @@
     int companyId = Integer.parseInt(request.getParameter("companyId"));
     CompanySQL cSQL = new CompanySQL();
     String companyName = cSQL.getCompanyName(companyId);
-    Map<String, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
+    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
     String dayStart = dateStart.split("-")[2];
     int mounth = Integer.parseInt(dateStart.split("-")[1])-1;
     String mounthStart = mounths[mounth];
@@ -95,24 +95,24 @@
             <div class="headerTitle">
                 <font style="font-size: 36px"><b>ЖУРНАЛ</b> </font><br>
                 <font style="font-size: 30px">Журнал послерейсовых медицинских осмотров.</font><br>
-                <font style="font-size: 30px">за 2019 год	</font>
+                <font style="font-size: 30px">за 2018 год	</font>
             </div>
             <div class="companyTitle">
                 <p style="font-size: 26px"><b><%= companyName %></b></p>	
             </div>
             <div class="dateTitle">
-                Начат	"<%= dayStart %>" <%= mounthStart %> <%= yerStart %><br>
-                Окончен	"<%= dayStart %>" <%= mounthStart %> <%= yerStart %>
+                Начат	"___" ___________ <%= yerStart %><br>
+                Окончен	"___" ___________ <%= yerStart %>
             </div>
         </div>
         <% 
             String table1 = "";
             int rowCounter = 0;
             int pageCounter = 0;
-            SortedSet<String> keys = new TreeSet<>(wbList.keySet());
+            SortedSet<Integer> keys = new TreeSet<>(wbList.keySet());
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
             boolean leftPage = true;
-            for (String key : keys) {
+            for (Integer key : keys) {
                 Map row = wbList.get(key);
                 String pageClass="leftPage";
                 if(!leftPage)

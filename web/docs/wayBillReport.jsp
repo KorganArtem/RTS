@@ -26,10 +26,11 @@
     int companyId = Integer.parseInt(request.getParameter("companyId"));
     CompanySQL cSQL = new CompanySQL();
     String companyName = cSQL.getCompanyName(companyId);
-    Map<String, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
+    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
     String dayStart = dateStart.split("-")[2];
-    int mounth = Integer.parseInt(dateStart.split("-")[1])+1;
-    String mounthStart = mounths[mounth];
+    int mounth = Integer.parseInt(dateStart.split("-")[1]);
+    System.out.println(mounth);
+    String mounthStart = mounths[mounth-1];
     String yerStart = dateStart.split("-")[0];
 %>
 <html>
@@ -56,7 +57,7 @@
                 width: 50mm;
             }
             .dateTitle{
-                margin-left: 130mm;
+                margin-left: 100mm;
                 margin-top: 100mm;
                 text-align: right;
             }
@@ -101,14 +102,14 @@
             <div class="headerTitle">
                 <font style="font-size: 36px"><b>ЖУРНАЛ</b> </font>
                 <font style="font-size: 30px">учета путевых листов</font><br>
-                <font style="font-size: 30px">за 2019 год	</font>
+                <font style="font-size: 30px">за 2018 год	</font>
             </div>
             <div class="companyTitle">
                 <p style="font-size: 26px"><b><%= companyName %></b></p>	
             </div>
             <div class="dateTitle">
-                Начат	"<%= dayStart %>" <%= mounthStart %> <%= yerStart %><br>
-                Окончен	"<%= dayStart %>" <%= mounthStart %> <%= yerStart %>
+                Начат	"___" ___________ <%= yerStart %><br>
+                Окончен	"___" ___________ <%= yerStart %>
             </div>
         </div>
         <% 
@@ -116,9 +117,9 @@
             String table2 = "";
             int rowCounter = 0;
             int pageCounter = 0;
-            SortedSet<String> keys = new TreeSet<>(wbList.keySet());
+            SortedSet<Integer> keys = new TreeSet<>(wbList.keySet());
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
-            for (String key : keys) {
+            for (Integer key : keys) {
                 Map row = wbList.get(key);
                 if(rowCounter==0){
                     table1=null;
@@ -135,7 +136,7 @@
                             + "<td>Подпись бухгалтера</td></tr>";
                 }
                 rowCounter++;
-                table1 = table1 + "<tr><td>" + row.get("docNumInBill") + "</td>"
+                table1 = table1 + "<tr><td>" + row.get("docNum") + "</td>"
                         + "<td>" + row.get("waybillsDate") + "</td>"
                         + "<td>" + row.get("driver_lastname") + " " + row.get("driver_firstname") + " " + row.get("driver_midName") + "</td>"
                         + "<td>" + row.get("driverId") + "</td></tr>";
@@ -147,11 +148,11 @@
                 if(rowCounter==30){ 
                     pageCounter++;
                     table1=table1+"</table>"
-                            + "<div style='width: 100%; text-align: center; padding=1.5mm;'>"+pageCounter+"</div>"
+                            + "<div style='width: 100%; text-align: center; padding=1mm;'>"+pageCounter+"</div>"
                             + "</div><p class='more'></p>";
                     pageCounter++;
                     table2=table2+"</table>"
-                            + "<div style='width: 100%; text-align: center; padding=1.5mm;'>"+pageCounter+"</div>"
+                            + "<div style='width: 100%; text-align: center; padding=1mm;'>"+pageCounter+"</div>"
                             + "</div><p class='more'></p>";
         %>
                     

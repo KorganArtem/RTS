@@ -22,7 +22,7 @@
         dateEnd = request.getParameter("dateStart");
     }
     int companyId = Integer.parseInt(request.getParameter("companyId"));
-    Map<String, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
+    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
     
 %>
 <html>
@@ -35,7 +35,7 @@
                 float: left;
                 text-align: center;
                 width: 170mm;
-                min-height: 270mm;
+                min-height: 250mm;
                 border-collapse: collapse; /* Убираем двойные линии между ячейками */
                }
             td{
@@ -56,19 +56,19 @@
                     border-collapse: collapse; /* Убираем двойные линии между ячейками */
                    }
                    tr{
-                       height: 8mm;
+                       height: 7mm;
                    }
                   .leftPage{
                       margin-left: 10mm;
                       margin-right: 20mm;
-                      margin-bottom: 20mm;
-                      margin-top: 15mm;
+                      margin-bottom: 10mm;
+                      margin-top: 10mm;
                   }
                   .rightPage{
                       margin-left: 20mm;
                       margin-right: 10mm;
                       margin-bottom: 10mm;
-                      margin-top: 15mm;
+                      margin-top: 10mm;
                   }
                 .more{
                  page-break-after: always;
@@ -82,21 +82,21 @@
             String table2 = "";
             int rowCounter = 0;
             int pageCounter = 0;
-            SortedSet<String> keys = new TreeSet<>(wbList.keySet());
+            SortedSet<Integer> keys = new TreeSet<>(wbList.keySet());
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
             int counterPP = 0;
-            for (String key : keys) {
+            for (Integer key : keys) {
                 Map row = wbList.get(key);
                 if(rowCounter==0){
                     table1=null;
                     table2=null;
-                    table1 = "<table class='firstPage leftPage' style='page-break-after: always'>"
+                    table1 = "<div class='firstPage leftPage' style=' page-break-after: always'><table>"
                             + "<tr style='height: 15mm;'><td>№ ПП</td>"
                             + "<td>Дата проведения инструктажа</td>"
                             + "<td>Марка ТС, гос. регистрационный знак</td>"
                             + "<td>ФИО водителя</td>"
                             + "<td>должность и ФИО лица проводившего инструктаж</td></tr>";
-                    table2 = "<table class='rightPage'>"
+                    table2 = "<div class='firstPage rightPage' style=' page-break-after: always'><table>"
                             + "<tr style='height: 15mm;'><td>Краткое содержание инструктажа</td>"
                             + "<td>подпись лица проводившего инструктаж</td>"
                             + "<td>Подпись водителя</td></tr>";
@@ -114,8 +114,13 @@
                 
                 if(rowCounter==30){ 
                     pageCounter++;
-                    table1=table1+"</table><p class='more'></p>";
-                    table2=table2+"</table><p class='more'></p>";
+                    table1=table1+"</table>"
+                            + "<div style='width: 100%; text-align: center; padding=1mm;'>"+pageCounter+"</div>"
+                            + "</div><p class='more'></p>";
+                    pageCounter++;
+                    table2=table2+"</table>"
+                            + "<div style='width: 100%; text-align: center; padding=1mm;'>"+pageCounter+"</div>"
+                            + "</div><p class='more'></p>";
         %>
                     
                     <%= table1 %>

@@ -163,11 +163,14 @@ public class ReportSQL {
         long previevChange = new Date().getTime();
         try{
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT carsChangeLog.changeType, carsChangeLog.carId, DATE_FORMAT(carsChangeLog.changeDate, '%Y-%m-%d') as changeDate, "
-                    + "cars.number FROM carsChangeLog " +
-                                    "INNER JOIN cars " +
-                                    "ON cars.id=carsChangeLog.carId " +
-                                    "WHERE carId!=0 ORDER by carId, changeDate desc ");
+            ResultSet rs = st.executeQuery("SELECT logCars.*, carState.* FROM carState " +
+                                "INNER JOIN " +
+                                "(SELECT carsChangeLog.changeType, carsChangeLog.carId, DATE_FORMAT(carsChangeLog.changeDate, '%Y-%m-%d') as changeDate, " +
+                                "cars.number FROM carsChangeLog " +
+                                "INNER JOIN cars " +
+                                "ON cars.id=carsChangeLog.carId " +
+                                "WHERE carId!=0 ORDER by carId, changeDate desc ) as logCars " +
+                                "ON logCars.changeType=carState.carStateId");
             int currentCar=0;
             while(rs.next()){
                 Date changeDate=new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("changeDate").toString());
@@ -178,7 +181,7 @@ public class ReportSQL {
                                         
                 }
                 long days = previevChange-changeDate.getTime();
-                System.out.println("\t"+rs.getString("changeType")+"   "+rs.getString("changeDate")+"  "+days/1000/24/60/60);
+                System.out.println("\t"+rs.getString("changeType")+"   "+rs.getString("changeDate")+"  "+days/1000/24/60/60+"   "+rs.getString("carStateName"));
                 previevChange = changeDate.getTime();
             }
         }
