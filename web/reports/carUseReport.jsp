@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <% 
     ReportSQL rsql = new ReportSQL();
-    rsql.gerCarUseReport("", "");
+    rsql.gerCarUseReport(request.getParameter("startDate"), request.getParameter("endDate"));
 %>
 <!DOCTYPE html>
 <html>

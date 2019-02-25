@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -157,9 +158,11 @@ public class ReportSQL {
         }
         return payList;
     }
-    public Map gerCarUseReport(String begin, String end) throws SQLException{
+    public Map gerCarUseReport(String begin, String end) throws SQLException, ParseException{
         System.out.println("Get car use report");
         Map<Integer, Map> carList = new HashMap();
+        Date startPeriodDate = new SimpleDateFormat("yyyy-MM-dd").parse(begin);
+        Date endPeriodDate = new SimpleDateFormat("yyyy-MM-dd").parse(end);
         long previevChange = new Date().getTime();
         try{
             Statement st = con.createStatement();
@@ -174,6 +177,10 @@ public class ReportSQL {
             int currentCar=0;
             while(rs.next()){
                 Date changeDate=new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("changeDate").toString());
+                if(startPeriodDate.getTime()>changeDate.getTime()){
+                    System.out.println("Out of period");
+                    changeDate = startPeriodDate;
+                }
                 if(currentCar != rs.getInt("carId")){
                     System.out.println("Next Car: "+rs.getString("number"));
                     currentCar = rs.getInt("carId");
@@ -183,6 +190,7 @@ public class ReportSQL {
                 long days = previevChange-changeDate.getTime();
                 System.out.println("\t"+rs.getString("changeType")+"   "+rs.getString("changeDate")+"  "+days/1000/24/60/60+"   "+rs.getString("carStateName"));
                 previevChange = changeDate.getTime();
+                
             }
         }
         catch(Exception ex){
