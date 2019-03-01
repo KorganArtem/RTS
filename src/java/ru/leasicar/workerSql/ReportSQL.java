@@ -175,6 +175,7 @@ public class ReportSQL {
                                 "WHERE carId!=0 ORDER by carId, changeDate desc ) as logCars " +
                                 "ON logCars.changeType=carState.carStateId");
             int currentCar=0;
+            boolean nextCar = false;
             while(rs.next()){
                 Date changeDate=new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("changeDate").toString());
                 if(startPeriodDate.getTime()>changeDate.getTime()){
@@ -182,15 +183,20 @@ public class ReportSQL {
                     changeDate = startPeriodDate;
                 }
                 if(currentCar != rs.getInt("carId")){
-                    System.out.println("Next Car: "+rs.getString("number"));
+                    System.out.println("Next Car: "+rs.getString("number")+"   -  "+rs.getString("carId"));
                     currentCar = rs.getInt("carId");
-                    previevChange = new Date().getTime();
-                                        
+                    previevChange = new Date().getTime();  
+                    nextCar=true;
                 }
                 long days = previevChange-changeDate.getTime();
                 System.out.println("\t"+rs.getString("changeType")+"   "+rs.getString("changeDate")+"  "+days/1000/24/60/60+"   "+rs.getString("carStateName"));
                 previevChange = changeDate.getTime();
-                
+                if(nextCar){
+                    days = previevChange-startPeriodDate.getTime();
+                    System.out.println("\t"+rs.getString("changeType")+"   "+rs.getString("changeDate")+"  "+days/1000/24/60/60+"   "+rs.getString("carStateName"));
+                    previevChange = changeDate.getTime();
+                    nextCar=false;
+                }
             }
         }
         catch(Exception ex){

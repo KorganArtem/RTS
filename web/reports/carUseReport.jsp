@@ -8,6 +8,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <% 
     ReportSQL rsql = new ReportSQL();
+    if(request.getParameter("startDate")==null || request.getParameter("endDate")==null){
+        %>
+        Did not send request parametr
+        <% return;
+    }
     rsql.gerCarUseReport(request.getParameter("startDate"), request.getParameter("endDate"));
 %>
 <!DOCTYPE html>

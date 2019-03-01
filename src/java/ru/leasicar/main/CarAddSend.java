@@ -64,11 +64,12 @@ public class CarAddSend extends HttpServlet {
             }
             else{
                 wrk.addCar(mapToSQL);
+                wrk.changeCarState(0, carId, Integer.parseInt(request.getParameter("carState")));
                 return;
             }
             if(!request.getParameter("carState").equals(request.getParameter("oldState")))
                 System.out.println("State was changed!");
-                wrk.changeCarState(0, carId, Integer.parseInt(request.getParameter("carState")));
+                wrk.changeCarState(wrk.getDriver(carId), carId, Integer.parseInt(request.getParameter("carState")));
             out.print(0);
         }
         catch(Exception ex){
