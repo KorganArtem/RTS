@@ -369,15 +369,14 @@
 			
                             </TD>
                             <TD  STYLE=" border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-sdfsd
                             </TD>
                         </TR>
                         <TR>
                                 <TD HEIGHT=15 STYLE=" border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %> </FONT></FONT></P>
+                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %><br><%= carData.get("outTime") %> </FONT></FONT></P>
                                 </TD>
                                 <TD STYLE="border-left: 1px solid #000000;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %> </FONT></FONT></P>
+                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %> <br><%= carData.get("outTime") %> </FONT></FONT></P>
                                 </TD>
                                 <TD STYLE="border-left: 1px solid #000000;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                         <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date2 %> </FONT></FONT></P>

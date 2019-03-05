@@ -118,7 +118,7 @@ public class CarSQL {
     public Map getCarDataForAct(int id) throws SQLException{
         Map carData = new HashMap<String, String>();
         try{
-            String query = "SELECT *  FROM `cars` " +
+            String query = "SELECT *, time_format(outTime, '%H-%i') as outTimeF FROM `cars` " +
                         "INNER JOIN `models` " +
                         "ON `cars`.`model`=`models`.`modelId` WHERE `id`="+id;
             Statement st = con.createStatement();
@@ -138,6 +138,8 @@ public class CarSQL {
                 carData.put("insuranceNamber", rs.getString("insuranceNamber"));
                 carData.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
                 carData.put("ttoNumber", rs.getString("ttoNumber"));
+                carData.put("outTime", rs.getString("outTimeF"));
+                System.out.println(rs.getString("outTimeF"));
             }
         }
         catch(Exception ex){
@@ -294,6 +296,11 @@ public class CarSQL {
                 + "`licNumber`='"+carData.get("carLicNumber")+"', "
                 + "`licEndDate`='"+carData.get("carLicDate")+"', "
                 + "`outTime`='"+carData.get("outTime")+"'"); 
+        ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID() as driverId");
+        int carId=0;
+        if(rs.next()){
+            carId=rs.getInt("driverId");
+        }
     }
     public String getFreeCarList() throws SQLException{
         String carData = "<option value='0'>Выбрать</option>";
@@ -333,5 +340,11 @@ public class CarSQL {
 
     public int getDriver(int carId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    public void changeCar(int driverId, int carId, int state) throws SQLException{
+        Statement st = con.createStatement();
+        st.execute("INSERT INTO `carsChangeLog` SET `carId`="+carId+",  `driverId`="+driverId+", `changeType`="+state+", `changeDate`=NOW()");
+        st.execute("UPDATE cars SET state="+state+" WHERE `id`="+carId);
+        st.close();
     }
 }

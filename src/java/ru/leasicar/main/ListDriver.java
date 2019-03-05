@@ -8,6 +8,7 @@ package ru.leasicar.main;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,7 +38,7 @@ public class ListDriver extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, ParseException {
         response.setContentType("text/html;charset=UTF-8");
         AccessControl ac = new AccessControl();
         if(ac.isLogIn(request.getSession().getId())){
@@ -101,9 +102,11 @@ public class ListDriver extends HttpServlet {
                             + report
                                     + "<td class='docsCol' driverId='"+entry.getKey()+"' >");  //driverId='"+entry.getKey()+"'
                     if(draverData.get("haveBill").equals("1"))
-                        out.println("<img src='img/docs.png' alt=''/></td></tr>");
-                    else
+                        out.println("<img src='img/docs.png' alt='' title='"+draverData.get("lastbill")+"'/></td></tr>");
+                    else if(draverData.get("haveBill").equals("0"))
                         out.println("<img src='img/doc1.png' alt=''/></td></tr>");
+                    else if(draverData.get("haveBill").equals("2"))
+                        out.println("<img src='img/doc2.png' alt='' title='"+draverData.get("lastbill")+"'/></td></tr>");
                 }
                 out.println("</table></div>");
                 if(showBalance)
@@ -138,6 +141,8 @@ public class ListDriver extends HttpServlet {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -157,6 +162,8 @@ public class ListDriver extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

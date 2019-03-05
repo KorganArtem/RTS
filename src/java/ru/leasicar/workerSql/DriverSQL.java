@@ -10,6 +10,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +45,7 @@ public class DriverSQL {
         }
     }
     // Новый механизм добавления водителя
-    public void writeDriver(Map<String, String> driverData) throws SQLException{
+    public void writeDriver(Map<String, String> driverData) throws SQLException, ClassNotFoundException{
         Statement st = con.createStatement();
         String insertQuery = "INSERT INTO `drivers` SET `driver_lastname`='"+ driverData.get("lastName") +"', "
                         + "`driver_firstname`='"+ driverData.get("firstName") +"', "
@@ -92,7 +95,8 @@ public class DriverSQL {
         writeDriverPassport(driveID, driverData.get("passportNumber"),
                 driverData.get("passportDate"), driverData.get("passportFrom"));
         //запись ста
-        changeCar(driveID, Integer.parseInt(driverData.get("car")), 1);
+        CarSQL csql = new CarSQL();
+        csql.changeCar(driveID, Integer.parseInt(driverData.get("car")), 1);
     }
     private void writeDriverAddres(Map<String, String> address, int driverId, int type) throws SQLException{
         String insertQuery = "INSERT INTO `driverAddress` SET `driverId`="+ driverId +", "
@@ -131,7 +135,7 @@ public class DriverSQL {
     }
     ////////////////////////////////////////////////////////////////////////////
 
-    public Map listDriver(int showDeleted) throws SQLException{
+    public Map listDriver(int showDeleted) throws SQLException, ParseException{
         Statement st = con.createStatement();
         String query = "Select carDriver.*, models.* FROM models " +
                 "INNER JOIN (SELECT zap2.*, cars.number, cars.model FROM cars  " +
@@ -140,7 +144,6 @@ public class DriverSQL {
                 "ON zap2.carId=cars.id) as carDriver " +
                 "ON carDriver.model=models.modelId";
         ResultSet rs = st.executeQuery(query);
-        System.out.println(query);
         Map listDriver = new HashMap<String, HashMap>();
         while(rs.next()){
             Map<String, String> rowDriver = new HashMap();
@@ -160,13 +163,18 @@ public class DriverSQL {
                 rowDriver.put("haveBill", "0");
             }
             else{
+                Date endPeriodDate = new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("lastBill"));
                 rowDriver.put("haveBill", "1");
+                if((endPeriodDate.getTime()/1000-new Date().getTime()/1000)<60*60*24){
+                    rowDriver.put("haveBill", "2");
+                }
+                rowDriver.put("lastbill", rs.getString("lastbill"));
             }
             listDriver.put(rs.getString("driver_id"), rowDriver);
         }
         return listDriver;
     }   
-    // Плучение данных для формы изменения водителя
+    // Плучение данных для формы изменения водителя 
     public Map getAllDataDriver(int driverId) {
         
         Map<String, String> rowDriver = new HashMap();
@@ -281,12 +289,13 @@ public class DriverSQL {
                 +"', `yaId`='"+yaId
                 +"' WHERE driver_id="+driverId);
     }
-    public void delDriver(String driverId) throws SQLException{
+    public void delDriver(String driverId) throws SQLException, ClassNotFoundException{
         Statement stDelDriver = con.createStatement();
         //запись статуса машины
         int carId = getCarId(driverId);
-        changeCar(Integer.parseInt(driverId), 0, 3);
-        changeCar(0, carId, 1);
+        CarSQL csql = new CarSQL();
+        csql.changeCar(Integer.parseInt(driverId), 0, 3);
+        csql.changeCar(0, carId, 1);
         stDelDriver.execute("UPDATE drivers SET `driver_deleted`=1, `driverEndDate`=CURRENT_DATE() WHERE `driver_id`="+driverId);
         stDelDriver.close();
         Statement stDelWayBill = con.createStatement();
@@ -328,7 +337,7 @@ public class DriverSQL {
         st.execute("UPDATE drivers SET `driverStartDate`=CURRENT_DATE() WHERE `driver_id`="+driverId);
     }
 
-    public void editDriver(Map<String, String> driverData, int driverId) throws SQLException {
+    public void editDriver(Map<String, String> driverData, int driverId) throws SQLException, ClassNotFoundException {
         Statement st = con.createStatement();
         boolean carChanged = carIsChanged(driverId, Integer.parseInt(driverData.get("car")));
         String updateQuery = "UPDATE`drivers` SET `driver_lastname`='"+ driverData.get("lastName") +"', "
@@ -349,8 +358,10 @@ public class DriverSQL {
                         + "`vyFrom`='"+ driverData.get("vyFrom") +"', "
                         + "`comment`='"+ driverData.get("comment") +"'  WHERE driver_id="+driverId;
         st.execute(updateQuery);
-        if(carChanged)
-            changeCar(driverId, Integer.parseInt(driverData.get("car")), 2);
+        if(carChanged){
+            CarSQL csql = new CarSQL();
+            csql.changeCar(driverId, Integer.parseInt(driverData.get("car")), 2);
+        }
         Map<String, String> address =new HashMap<>();
         address.put("country", driverData.get("country"));
         address.put("province", driverData.get("province"));
@@ -395,12 +406,7 @@ public class DriverSQL {
         stDogNumber.execute("UPDATE `drivers` SET `dogovorNumber`='"+numberDog+"', dogovorDate=CURRENT_DATE() WHERE `driver_id`="+DriverId);
         stDogNumber.close();
     }
-    public void changeCar(int driverId, int carId, int state) throws SQLException{
-        Statement st = con.createStatement();
-        st.execute("INSERT INTO `carsChangeLog` SET `carId`="+carId+",  `driverId`="+driverId+", `changeType`="+state+", `changeDate`=NOW()");
-        st.execute("UPDATE cars SET state="+state+" WHERE `id`="+carId);
-        st.close();
-    }
+    
 
     private boolean carIsChanged(int driverId, int newCarId) throws SQLException {
         Statement stGetCarId = con.createStatement();

@@ -55,7 +55,7 @@
                 </span> 
             </li>
             <li>
-                <select id="companyName" name="companyId" disabled style="width: 260px;">
+                <select id="companyName" name="companyId" style="width: 260px;">
                     <%= compSQL.getCompanyListSelect(Integer.parseInt(carData.get("carOwner"))) %>
                 </select>
             </li>

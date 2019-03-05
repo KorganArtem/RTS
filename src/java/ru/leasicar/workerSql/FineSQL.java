@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -134,8 +135,33 @@ public class FineSQL {
         }
         return oneFine;
     }
-    public void setDriver(int driverId, String bill_id) throws SQLException{
+    public void setDriver(int driverId, String bill_id) throws SQLException, ClassNotFoundException{
         Statement st = con.createStatement();
         st.execute("UPDATE offenses SET driverId="+driverId+" WHERE bill_id='"+ bill_id +"'");
+        PaySQL psql = new PaySQL();
+        psql.addPayDriver(driverId, getSumFine(bill_id)+30, 11, 0, bill_id);
+    }
+    public double getSumFine(String billId){
+        try{
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM offenses WHERE bill_id='"+ billId +"'");
+            double sumFine = 0.0;
+            if(rs.next()){
+
+                if(rs.getDate("gis_discount_uptodate").getTime()> new Date().getTime()){
+                    System.out.println("Fine is late");
+                    sumFine = rs.getDouble("pay_bill_amount");
+                }
+                else{
+                    System.out.println("Fine normal");
+                    sumFine = rs.getDouble("pay_bill_amount_with_discount");
+                }
+            }
+            return sumFine;
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return 0.0;
+        }
     }
 }
