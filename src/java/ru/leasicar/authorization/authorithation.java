@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,9 +34,11 @@ public class authorithation extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
+            throws ServletException, IOException, NamingException{
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+	    ServletContext sc = request.getSession().getServletContext();
+	    System.out.println(sc.toString());
             AccessControl ac = new AccessControl();
             if(ac.checkUser(request.getParameter("login"), request.getParameter("pass"), request.getSession().getId())){
                 response.sendRedirect("index.jsp");
@@ -62,7 +66,11 @@ public class authorithation extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+	try {
+	    processRequest(request, response);
+	} catch (NamingException ex) {
+	    Logger.getLogger(authorithation.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -76,7 +84,11 @@ public class authorithation extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+	try {
+	    processRequest(request, response);
+	} catch (NamingException ex) {
+	    Logger.getLogger(authorithation.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

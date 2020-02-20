@@ -4,6 +4,12 @@
     Author     : korgan
 --%>
 
+<%@page import="java.util.logging.Logger"%>
+<%@page import="ru.leasicar.main.ListDriver"%>
+<%@page import="java.util.logging.Level"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.DateFormat"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="ru.leasicar.workerSql.CarSQL"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"%>
 <!DOCTYPE html>
@@ -16,8 +22,10 @@
         return ; 
     }
     String carlist = "";
-    CarSQL crk = new CarSQL();
-    carlist = crk.getFreeCarList();
+    DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    String dateDiscountOut = format.format(new Date().getTime()+60*60*24*20*1000);
+    String datePayOut = format.format(new Date().getTime()+60*60*24*60*1000);
+    Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, "erwerwer", "sdfsdf");
 %>
 <html lang="us">
 <head>
@@ -59,12 +67,12 @@
                 <li>
                   <div id='carListButton'>Автомобили</div>
                 </li>
-                <li>
+                <!--li>
                   <div id='mainProp'>Настройки</div>
-                </li>
+                </li-->
                 
                 <li>
-                  <div id='mainProp'>отчеты</div>
+                  <div id='Reports'>отчеты</div>
                   <ul>
                     <li>
                       <div id="allPayReport"><a href="reports/allPayReport.jsp" target="_blank">Платежи</a></div>
@@ -72,27 +80,79 @@
                   </ul>
                 </li>
                 <li>
-                  <div id='mainProp'>Журналы</div>
+                  <div id='WayBillReport'>Журналы</div>
                   <ul>
                     <li>
-                      <div id="wayBillsReport"><a href="reports/allPayReport.jsp" target="_blank">Путевых листов</a></div>
+			<div id="wayBillsReport" class="docsWaiBillReport">Путевых листов</div>
                     </li>
                   </ul>
                 </li>
                 <li>
                   <div id="fineList">Штрафы</div>
                 </li>
+                <li>
+                  <div>Настройки</div>
+		  <ul>
+                    <li>
+			<div id="companyList">Компании</div>
+                    </li>
+                    <li>
+			<div id="userList">Пользователи</div>
+                    </li>
+                    <li>
+			<div id="passChange">Сменить Пароль</div>
+                    </li>
+                  </ul>
+                </li>
+		<li>
+                  <div id="logOut">Выйти</div>
+                </li>
               </ul>
         </div>
         <div id='mainContainer'>
             <div id='listDriverBox' class='itemDisplay'>
                 <input type='button' value='Добавить водителя' onclick='showAddDriverForm()'/>
+		<div id="filterProp"><div id="openDriverFilter" >Фильтр</div></div>
+		<div id="driverListFilter">
+		    <form name='driverFilterForm' id='driverFilterForm'>
+			<input type='checkbox' hidden="true" name='filtered' checked/>
+			<div class="filterItem">
+			    <input type="checkbox" id="addDate" name="addDate"/><label>Дата принятия</label>
+			    <div>
+				<label>C</label><input type="date" id="addDateS" name="addDateS"/>
+			    </div>
+			    <div>
+				<label>По</label><input type="date" id="addDateE" name="addDateE"/>
+			    </div>
+
+			</div>
+			<div class="filterItem">
+			    <input type="checkbox" id="showDeleted" name="deleted"/><label>Уволенные </label>
+			    <div>
+			       <label>C</label><input type="date" id="delDateS" name="delDateS"/>
+			    </div>
+			    <div>
+				<label>По</label><input type="date" id="delDateE" name="delDateE"/>
+			    </div>
+
+			</div>
+			<input type='button' name='search' id='searchButton' value="Найти"/>
+		    </form>
+		</div>
                 <div id='listDriver'>
                 </div>
             </div>
             <div id='carList' class='itemDisplay'></div>
             <div id='prop' class='itemDisplay'></div>
+            <div id='workPlace' class='itemDisplay'></div>
             <div id='fineListBlock' class='itemDisplay' style="display: none">
+		<div>
+		    <input type="checkbox" id="showDeletecarsfine"/><label>Показать удаленные машины</label>
+		    <input type="date" value="<%= dateDiscountOut %>" id="discountOut"/><label>Скидка до</label>
+		    <input type="date" value="<%= datePayOut %>" id="payOut"/><label>Оплатить до</label>
+		    <input type="button" value="Показать" id="fineFilter"/>
+		    <input type="button" value="Выгрузить" id="exportFine"/>
+		</div>
                 <table id="tableFine">
                     <thead>
                         <tr>
@@ -111,6 +171,7 @@
                 </table>
             </div>
         </div>
+        <div id="alarmer"><img src="img/alarm.png" width="50"/><div id="alarmCount"></div></div>
         <div id='editDriver'></div>
     </div>
     <div id='modal_form'>
@@ -146,4 +207,8 @@
     $( "#menu" ).menu();
 </script>
     <script src='js/main.js'></script>
+    <script src='js/company.js'></script>
+    <script src='js/menuproc.js'></script>
+    <script src='js/users.js'></script>
+    <script src='js/driver.js'></script>
 </html>

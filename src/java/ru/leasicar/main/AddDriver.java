@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,56 +35,12 @@ public class AddDriver extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         AccessControl ac = new AccessControl(); 
         if(ac.isLogIn(request.getSession().getId())){
             try (PrintWriter out = response.getWriter()) {
-                /* TODO output your page here. You may use following sample code. */
-                /*out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<meta http-equiv='Cache-Control' content='no-cache'>");
-                out.println("<meta http-equiv='Cache-Control' content='private'>");
-                //out.println("<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>");
-                out.println("<script src='https://code.jquery.com/jquery-1.12.4.js'></script>");
-                out.println("<script type='text/javascript' src='https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js'></script>");
-                //out.println("<link rel='stylesheet' type='text/css' href='https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css'/>");
-                out.println("<link rel='stylesheet' type='text/css'  href='css/main.css'/>");
-                out.println("<link rel='stylesheet' type='text/css'  href='css/datatabel.css'/>");
-                out.println("<title>Servlet AddDriver</title>");            
-                out.println("</head>");
-                out.println("<body><div class='place'>");
-                out.println("<div id='formDriver'><form class='addDriverForm'>");
-                out.println("<h3>Добавление водителя</h3>");
-                out.println("<div class='formItem'><label>Имя</label><br><input type='text' id='driver_name' /></div>");
-                out.println("<div class='formItem'><label>Фамилия</label><br><input type='text' id='driver_lastname' /></div>");
-                out.println("<div class='formItem'><label>Позывной</label><br><input type='text' id='driver_callsign' /></div>");
-                out.println("<div class='formItem'><label>Номер машины</label><br><input type='text' id='driver_carnumber' /></div>"); 
-                out.println("<div class='formItem'><label>Лимит</label><br><input type='text' id='driver_limit' /></div>");  
-                out.println("<div class='formItem'><label>Номер телефона</label><br><input type='text' id='driver_phone_number' /></div>");    
-                out.println("<div class='formItem'><label>Суточная Аренда</label><br><input type='text' id='driver_day_rent' /></div>");     
-                out.println("<div class='formItem'><label>График</label><br><select id='driver_schedule'>"
-                        + "<option value='0'>Без выходных</option>"
-                        + "<option value='11'>10/1</option>"
-                        + "</select></div>");              
-                out.println("<div class='formItem'><br><input type='button' id='driver_add' value='Добавить' /></div>");
-                out.println("</form></div>");
-                out.println("<div id='clickBox'><input id='carListButton' type='button' value='Car list'/><input id='driverListButton' type='button' disabled='true' value='Driver list'/></div>");
-                out.println("<div id='mainContainer'>"
-                        + "<div id='listDriver'></div>"
-                        + "<div id='carList'></div>"
-                        + "</div>");
-                out.println("<div id='editDriver'></div>");
-                out.println("");
-                out.println("</div><div id='modal_form'><!-- Сaмo oкнo --> \n" +
-                            "      <span id='modal_close'>X</span> <!-- Кнoпкa зaкрыть --> \n" +
-                            "      <!-- Тут любoе сoдержимoе -->\n" +
-                            "</div>\n" +
-                            "<div id='overlay'></div</body>");
-                out.println("<script src='js/main.js'></script>");
-                out.println("<script>listDriverShow()</script>");
-                out.println("</html>"); */
+               
             }   
         }
         else{
@@ -91,7 +48,6 @@ public class AddDriver extends HttpServlet {
             request.getRequestDispatcher("/").forward(request, response);
             return;
         }
-        ac.con.close();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -112,7 +68,9 @@ public class AddDriver extends HttpServlet {
             Logger.getLogger(AddDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(AddDriver.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -132,7 +90,9 @@ public class AddDriver extends HttpServlet {
             Logger.getLogger(AddDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(AddDriver.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

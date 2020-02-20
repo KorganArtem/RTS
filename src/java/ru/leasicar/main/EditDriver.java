@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -73,8 +74,9 @@ public class EditDriver extends HttpServlet {
                 request.getRequestDispatcher("/").forward(request, response);
                 return;
             }
-            ac.con.close();
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(EditDriver.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

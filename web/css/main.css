@@ -7,6 +7,101 @@ and open the template in the editor.
     Created on : 04.08.2017, 14:04:25
     Author     : korgan
 */
+#searchButton{
+    display: block;
+    float: right;
+    position: relative;
+    bottom: -41px;
+    right: 7px;
+}
+.filterItem{
+    float: left;
+}
+.filterItem input[type="date"]{
+    float: right;
+    width: 125px;
+    height: 13px;
+}
+.filterItem div{
+    overflow: overlay;
+}
+#driverListFilter{
+    border-bottom: solid 1px;
+    overflow: overlay;
+    display: none;
+    width: 100%;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+#openDriverFilter{
+    cursor: pointer;
+}
+#filterProp{
+    width: 100%;
+}
+#openDriverFilter{
+    float: right;
+}
+
+#UserListSection{
+    width: 50%;
+    float: left;
+}
+#userRulesSection{
+    width: 50%;
+    overflow: overlay;
+}
+.userItem{
+    overflow: overlay;
+}
+.userItem input[type=button]{
+    margin-top: 20px;
+}
+.passChangeConteiner input{
+    margin: 5px;
+}
+.passChangeConteiner label{
+    float: left;
+    margin-left: 5px;
+}
+.companyItem{
+    overflow: overlay;
+}
+.companyItem input[type=button]{
+    margin-top: 20px;
+}
+.formIntem{
+    float: left;
+    padding: 5px;
+}
+.formIntem label{
+    display: block;
+}
+.toolButton{
+    float: left;
+}
+#toolBox{
+    display: block;
+    float: none;
+    overflow: auto;
+}
+.alertList td{
+    padding: 5px;
+}
+#alarmCount{
+    
+    position: relative;
+    top: -38px;
+    left: 12px;
+    background: center;
+    font-size: 21px;
+    font-weight: 900;
+}
+#alarmer{
+    width: 30px;
+    background: center;
+    float: left;
+}
 .alertImg{
     width: 15px;
     height: 15px !important;

@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/RTS"/>
+<Context path="/RTS">
+    <Resource name="jdbc/dbconnect" 
+	      auth="Container"
+	      type="javax.sql.DataSource" 
+	      maxActive="10005"
+	      maxIdle="31" 
+	      username="root"
+	      password="onVEn0MGbF"
+	      driverClassName="com.mysql.jdbc.Driver"
+	      url="jdbc:mysql://lc.2kor.ru:3306/test"/>
+</Context>

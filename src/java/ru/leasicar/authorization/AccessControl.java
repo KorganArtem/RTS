@@ -11,59 +11,40 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
-import ru.leasicar.workerSql.ConfigurationReader;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 /**
  *
  * @author korgan
  */
 public class AccessControl {
-    public String url;
-    public String login;
-    public String pass;
-    public Connection con;
+    public DataSource ds;
     Map config;
     boolean iscon;
-    public AccessControl() throws ClassNotFoundException, SQLException{
-        ConfigurationReader cr = new ConfigurationReader();
-        config=cr.readFile();
-        url="jdbc:mysql://"+config.get("dbhost")+":"+config.get("dbport")+"/"+config.get("dbname");
-        try
-        {
-            Class.forName("com.mysql.jdbc.Driver"); 
-            login=config.get("dbuser").toString();
-            pass=config.get("dbpassword").toString();
-            con = DriverManager.getConnection(url, login, pass);
-            iscon = true;
-        }
-        catch(SQLException ex)
-        {
-            System.out.println("Mysql ERROR: "+ex.getMessage());
-        }
-        catch(Exception ex)
-        {
-            System.out.println("Some ERROR: "+ex.getMessage());
-        }
+    public AccessControl() throws ClassNotFoundException, SQLException, NamingException{
+        InitialContext initContext= new InitialContext();
+	ds = (DataSource) initContext.lookup("java:comp/env/jdbc/dbconnect");
     }
     public boolean checkUser(String username, String password, String sessionId) throws ClassNotFoundException, SQLException{
-        try{
-            Statement st = con.createStatement();
-            st.execute("DELETE FROM `session` WHERE `sessionId`='"+sessionId+"'");
-            ResultSet rs = st.executeQuery("SELECT `id` FROM `users` WHERE `username`='"
-                    +username+"' and `password`=md5('"+password+"')");
-            if(rs.next()){
-                System.out.println("Login successful username="+username+" user_id="+rs.getInt("id"));
-                writeSession(rs.getInt("id"), sessionId);
-                rs.close();
-                st.close();
-                return true;
-            }
-            else
-                System.out.println("Username or password is wrong! username="+username);
-            
-            rs.close();
-            st.close();
-        }
+        try (Connection con = ds.getConnection(); Statement st = con.createStatement()) {
+	    st.execute("DELETE FROM `session` WHERE `sessionId`='"+sessionId+"'");
+	    ResultSet rs = st.executeQuery("SELECT `id` FROM `users` WHERE `username`='"
+		    +username+"' and `password`=md5('"+password+"')");
+	    if(rs.next()){
+		System.out.println("Login successful username="+username+" user_id="+rs.getInt("id"));
+		writeSession(rs.getInt("id"), sessionId);
+		rs.close();
+		st.close();
+		con.close();
+		return true;
+	    }
+	    else
+		System.out.println("Username or password is wrong! username="+username);
+	    rs.close();
+	    con.close();
+	}
         catch(Exception ex ){
             System.out.println("Error in authorization!!!\n"+ex.getMessage());
         }
@@ -71,11 +52,13 @@ public class AccessControl {
     }
     private void writeSession(int userId, String sessionId){
         try{
+	    Connection con = ds.getConnection();
             Statement st = con.createStatement();
             st.execute("DELETE FROM `session` WHERE  unix_timestamp(`timeLastUse`)<unix_timestamp(NOW())-3000");
             st.execute("INSERT INTO `session` (`sessionId`, `userId`, `timeCreated`, `timeLastUse`)"
                     + "VALUES ('"+sessionId+"', "+userId+", NOW(), NOW())");
             st.close();
+	    con.close();
         }
         catch(Exception ex ){
             System.out.println("Error in authorization!!!\n"+ex.getMessage());
@@ -83,21 +66,24 @@ public class AccessControl {
     }
     public boolean isLogIn(String sessionId){
         try{
+	    Connection con = ds.getConnection();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT `userId` FROM `session` "
                     + "WHERE `sessionId`='"+sessionId+"' "
-                    + "AND unix_timestamp(`timeLastUse`) > unix_timestamp(NOW())-6000000");
+                    + "AND unix_timestamp(`timeLastUse`) > unix_timestamp(NOW())-6000000 LIMIT 1");
             if(rs.next()){
                 rs.close();
                 String updateQuery = "UPDATE `session` SET `timeLastUse`=NOW() WHERE `sessionId`='"+sessionId+"'";
                 //System.out.println("Update session time 'sessionId'='"+sessionId+"' \n "+updateQuery);
                 st.execute(updateQuery);
                 st.close();
+		con.close();
                 return true;
             }
             rs.close();
             st.execute("DELETE FROM `session` WHERE `sessionId`='"+sessionId+"'");
             st.close();
+	    con.close();
         }
         catch(Exception ex ){
             System.out.println("Error in authorization!!!\n"+ex.getMessage());
@@ -106,8 +92,8 @@ public class AccessControl {
     }
     public boolean checkPermission(int userId, String permissionName){
         boolean allow = false;
-        //System.out.print("Check permission for user "+userId+" in "+permissionName);
         try{
+	    Connection con = ds.getConnection();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM `userrules` "
                     + "WHERE userId="+userId+" "
@@ -120,6 +106,7 @@ public class AccessControl {
                 System.out.println(" - forbidden");
             rs.close();
             st.close();
+	    con.close();
         }
         catch(Exception ex){
             System.out.println("Error in check permission \n" + ex.getMessage());
@@ -129,17 +116,17 @@ public class AccessControl {
     }
     public int getUserId(String sessionId){
         int userId = 0;
-        try{
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM `session` "
-                    + "WHERE sessionId='"+sessionId+"'");
-            if(rs.next()){
-                userId=rs.getInt("userId");
-            }
-            else 
-                System.out.println("You can not do it!");
-            rs.close();
-            st.close();
+        try (Connection con = ds.getConnection()) {
+		Statement st = con.createStatement();
+		ResultSet rs = st.executeQuery("SELECT * FROM `session` "
+			+ "WHERE sessionId='"+sessionId+"'  LIMIT 1");
+		if(rs.next()){
+		    userId=rs.getInt("userId");
+		}
+		else
+		    System.out.println("You can not do it!");
+		rs.close();
+		st.close();
         }
         catch(Exception ex){
             System.out.println("Error in get user id \n" + ex.getMessage());
@@ -148,23 +135,29 @@ public class AccessControl {
     }
     public void logOut(String sessionId){
         try{
+	    Connection con = ds.getConnection();
             Statement st = con.createStatement();
             st.execute("DELETE FROM `session` WHERE `sessionId`='"+sessionId+"'");
             st.close();
+	    con.close();
         }
         catch(Exception ex ){
             System.out.println("Error in authorization!!!\n"+ex.getMessage());
         }
     }
 
-    void changePass(int userId, String password) throws SQLException {
+    void changePass(int userId, String password) throws SQLException, InterruptedException {
+	Connection con = ds.getConnection();
         Statement st = con.createStatement();
         st.execute("UPDATE `users` SET `password`=md5('"+password+"') WHERE `id`="+userId);
+	st.close();
+	con.close();
     }
 
     String getUserName(int userId) {
         String userName = null;
         try{
+	    Connection con = ds.getConnection();
             Statement st = con.createStatement();
             String query = "SELECT * FROM `users` WHERE `id`='"+userId+"'";
             ResultSet rs = st.executeQuery(query);
@@ -175,6 +168,7 @@ public class AccessControl {
                 System.out.println("You can not do it!");
             rs.close();
             st.close();
+	    con.close();
         }
         catch(Exception ex){
             System.out.println("Error in get users name \n" + ex.getMessage());

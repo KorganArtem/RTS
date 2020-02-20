@@ -20,6 +20,7 @@
         System.out.println(ex.getMessage());
         return;
     }
+    
     DriverSQL dsql = new DriverSQL();
     Map<String, String> driverData = dsql.getAllDataDriver(driverId);
     CarSQL csql = new CarSQL();
@@ -28,6 +29,7 @@
     SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd");
     String startDate =sdt.format(new Date().getTime());
     String endDate =sdt.format(new Date().getTime()+(60*60*24*7*1000));
+    System.out.println(Integer.parseInt(carData.get("carOwner")));
 %>
 <div id="wayBillPrintForm">
     <form id="prinWayBill" class="appnitro"  action="docs/wayBillPrint.jsp" method="post" target="_blank">
@@ -57,6 +59,11 @@
             <li>
                 <select id="companyName" name="companyId" style="width: 260px;">
                     <%= compSQL.getCompanyListSelect(Integer.parseInt(carData.get("carOwner"))) %>
+                </select>
+            </li>
+	    <li>
+                <select id="serviceMan" name="serviceMan" style="width: 260px;">
+                    <%= compSQL.getServiceManList() %>
                 </select>
             </li>
             <li>

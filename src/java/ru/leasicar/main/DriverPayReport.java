@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,54 +43,73 @@ public class DriverPayReport extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
-        response.setContentType("text/html;charset=UTF-8");
-        AccessControl ac = new AccessControl();
-        if(ac.isLogIn(request.getSession().getId())){
-            try (PrintWriter out = response.getWriter()) {
-                DriverSQL dsql = new DriverSQL();
-                int driverId = 0;
-                String begin = request.getParameter("begin");
-                String end = request.getParameter("end");
-                try{
-                    driverId = Integer.parseInt(request.getParameter("driverId"));
-                    
-                }
-                catch(Exception ex){
-                    System.out.println("Driver ID is not passed!");
-                }
-                if(driverId==0)
-                    return;
-                out.println("<div style='float: right'>"+dsql.getDriverName(driverId)+"</div>");
-                out.println("<div id='driverReportDiv' >");
-                ReportSQL rsql = new ReportSQL();
-                Map payList = new TreeMap<>(rsql.getPayList(driverId, begin, end));
-                out.println("<table id='driverReport' class='report'>");
-                out.println("<thead><tr><td>Дата</td><td>Тип</td><td>Источник</td><td>Сумма</td><td>Баланс</td><td>Коментарий</td></tr></thead>");
-                Iterator<Map.Entry<String, Map>> entries = payList.entrySet().iterator();
-                while (entries.hasNext()) {
-                    Map.Entry<String, Map> entry = entries.next();
-                    Map payRaw = entry.getValue();
-                    out.println("<tr><td>"+payRaw.get("date")+"</td><td>"+payRaw.get("payTypeName")
-                            +"</td><td>"+payRaw.get("payName")+"</td><td>"+payRaw.get("sum")
-                            +"</td><td>"+payRaw.get("balance")+"</td>"
-                            +"<td>"+payRaw.get("comment")+"</td></tr>");
-                }
-                out.println("</table><div>");
-                Map<String, HashMap> payGroup = rsql.getGroupPay(driverId, begin, end);
-                Set keys = payGroup.keySet();
-                for(Object key : keys){
-                    out.println(payGroup.get(key).get("payName")+"  "+ payGroup.get(key).get("sum") +"<br>");
-                }
-                out.println("</div></div>");
-                rsql.con.close();
-
-            }
-        }
-        else{
-            System.out.println("Go to login Page!");
-            request.getRequestDispatcher("/").forward(request, response);
-            return;
-        }
+	try {
+	    response.setContentType("text/html;charset=UTF-8");
+	    AccessControl ac = new AccessControl();
+	    if(ac.isLogIn(request.getSession().getId())){
+		boolean permissinDelPay = ac.checkPermission(ac.getUserId(request.getSession().getId()), "delPay");
+		if(permissinDelPay)
+		    System.out.println("You have permission for remove pay!");
+		else
+		    System.out.println("You do not have permission for del pay!");
+		try (PrintWriter out = response.getWriter()) {
+		    DriverSQL dsql = new DriverSQL();
+		    int driverId = 0;
+		    String begin = request.getParameter("begin");
+		    String end = request.getParameter("end");
+		    try{
+			driverId = Integer.parseInt(request.getParameter("driverId"));
+			
+		    }
+		    catch(Exception ex){
+			System.out.println("Driver ID is not passed!");
+		    }
+		    if(driverId==0)
+			return;
+		    out.println("<div style='float: right'>"+dsql.getDriverName(driverId)+"</div>");
+		    out.println("<div id='driverReportDiv' >");
+		    ReportSQL rsql = new ReportSQL();
+		    Map payList = new TreeMap<>(rsql.getPayList(driverId, begin, end));
+		    out.println("<table id='driverReport' class='report'>");
+		    out.println("<thead><tr><td>Дата</td>"
+			    + "<td>Тип</td>"
+			    + "<td>Источник</td>"
+			    + "<td>Сумма</td>"
+			    + "<td>Баланс</td>"
+			    + "<td>Коментарий</td>");
+		    if(permissinDelPay)
+			out.println("<td onClick='delPay()'></td>");
+		    out.println("</tr></thead>");
+		    Iterator<Map.Entry<String, Map>> entries = payList.entrySet().iterator();
+		    while (entries.hasNext()) {
+			Map.Entry<String, Map> entry = entries.next();
+			Map payRaw = entry.getValue();
+			out.println("<tr><td>"+payRaw.get("date")+"</td><td>"+payRaw.get("payTypeName")
+				+"</td><td>"+payRaw.get("payName")+"</td><td>"+payRaw.get("sum")
+				+"</td><td>"+payRaw.get("balance")+"</td>"
+					+"<td>"+payRaw.get("comment")+"</td>");
+			if(permissinDelPay)
+			    out.println("<td onClick='delPay("+entry.getKey()+")'>Удалить</td>");
+			out.println("</tr>");
+		    }
+		    out.println("</table><div>");
+		    Map<String, HashMap> payGroup = rsql.getGroupPay(driverId, begin, end);
+		    Set keys = payGroup.keySet();
+		    for(Object key : keys){
+			out.println(payGroup.get(key).get("payName")+"  "+ payGroup.get(key).get("sum") +"<br>");
+		    }
+		    out.println("</div></div>");
+		    
+		}
+	    }
+	    else{
+		System.out.println("Go to login Page!");
+		request.getRequestDispatcher("/").forward(request, response);
+		return;
+	    }
+	} catch (NamingException ex) {
+	    Logger.getLogger(DriverPayReport.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -88,11 +88,11 @@
         <form  id="createCar" enctype="multipart/form-data" method="post">
             <div>
                 <div class="rowInForm">
-                    <h3> Основная информация </h3>
+                    <h3> Основная информация </h3> 
                     <div class="itemInRow gosNum  ">
                         <label for="gosNum">Гос номер</label>
-                        <input required type="text" id="gosNum" name="gosNum" size="6" value="" placeholder="А111АА" class="editable">
-                        <input required type="text" id="numReg" name="numReg" size="3" value="" placeholder="777" pattern="\d{3}" class="editable">
+                        <input required type="text" id="gosNum1" name="gosNum" size="6" value="" placeholder="А111АА" class="editable">
+                        <input required type="text" id="numReg1" name="numReg" size="3" value="" placeholder="777"  class="editable">
                     </div>
                     <div class="itemInRow">
                         <label for="carSTS">Номер СТС</label>

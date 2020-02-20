@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -38,13 +39,13 @@ public class ListDriver extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException, ParseException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, ParseException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         AccessControl ac = new AccessControl();
         if(ac.isLogIn(request.getSession().getId())){
             try (PrintWriter out = response.getWriter()) {
-                /* TODO output your page here. You may use following sample code. */
-                out.println("<table id='listDriverTabel' class='listDriver'>"); 
+                DriverSQL wsql = new DriverSQL();
+		out.println("<table id='listDriverTabel' class='listDriver'>"); 
                 ///////////////////////////////////////////////////////////////
                 boolean delete = ac.checkPermission(ac.getUserId(request.getSession().getId()), "deletDriver");
                 String colDel="";
@@ -53,11 +54,47 @@ public class ListDriver extends HttpServlet {
                 ///////////////////////////////////////////////////////////////
                 boolean showBalance = ac.checkPermission(ac.getUserId(request.getSession().getId()), "showBalance");
                 String colsBalance="";
-                if(showBalance)
+                if(showBalance){
                     colsBalance="<td>Лимит</td><td>Баланс</td><td>Депозит</td><td class='noPrint'> </td><td class='noPrint'></td>";   
-                int showDeleted = Integer.parseInt(request.getParameter("deleted"));
-                DriverSQL wsql = new DriverSQL();
-                Map listDriver = wsql.listDriver(showDeleted);
+                
+		}
+		Map listDriver=null;
+		if(request.getParameter("filtered")!=null){
+		    String where="";
+		    if(request.getParameter("addDate")!=null){
+			if(request.getParameter("addDateS")!=null){
+			    if(where.length()>1)
+				where=where+" AND ";
+			    where=where+" driverStartDate>'"+request.getParameter("addDateS")+"' ";
+			}
+			if(request.getParameter("addDateE")!=null){
+			    if(where.length()>1)
+				where=where+" AND ";
+			    where=where+" driverStartDate<'"+request.getParameter("addDateE")+"' ";
+			}
+		    }
+		    if(request.getParameter("deleted")!=null){
+			if(where.length()>1)
+				where=where+" AND ";
+			where=where+" driver_deleted=1";
+			if(request.getParameter("delDateS")!=null){
+			    if(where.length()>1)
+				where=where+" AND ";
+			    where=where+" driverEndDate>'"+request.getParameter("delDateS")+"' ";
+			}
+			if(request.getParameter("delDateE")!=null){
+			    if(where.length()>1)
+				where=where+" AND ";
+			    where=where+" driverEndDate<'"+request.getParameter("delDateE")+"' ";
+			}
+		    }
+		    System.out.println(where);
+		    listDriver = wsql.listDriver(where);
+		}
+		else{
+		    int showDeleted = Integer.parseInt(request.getParameter("deleted"));
+		    listDriver = wsql.listDriver("driver_deleted="+showDeleted);
+		}
                 Iterator<Map.Entry<String, Map>> entries = listDriver.entrySet().iterator();
                 out.println("<div class='scrollingBlock'>");
                 out.println("<thead><tr><td>Фамилия</td><td>Имя</td><td>Номер</td><td>Марка</td><td>Телефон</td>");
@@ -73,7 +110,7 @@ public class ListDriver extends HttpServlet {
                     String colorRow = "white";
                     if(Double.parseDouble((String) draverData.get("driver_current_debt"))<0.0)
                         colorRow="yellow";
-                    if(Double.parseDouble((String) draverData.get("driver_current_debt"))<Integer.parseInt((String) draverData.get("driver_limit"))*-1)
+                    if(Double.parseDouble((String) draverData.get("driver_current_debt"))<Integer.parseInt((String) draverData.get("driver_limit")))
                         colorRow="red";
                     String delButton = "";
                     if(delete)
@@ -86,6 +123,7 @@ public class ListDriver extends HttpServlet {
                     else
                         colsBalance="";
                     String report = "";
+		    
                     if(showBalance)
                         report="<td class='wrkday noPrint' onClick='getReport("+entry.getKey()+")'>отчет</td>";
                     out.println("<tr class="+colorRow+">"
@@ -101,18 +139,16 @@ public class ListDriver extends HttpServlet {
                             + "<td class='wrkday noPrint'>"+day_off+"</td>"
                             + report
                                     + "<td class='docsCol' driverId='"+entry.getKey()+"' >");  //driverId='"+entry.getKey()+"'
-                    if(draverData.get("haveBill").equals("1"))
+                    if(draverData.get("haveBill").equals("2"))
                         out.println("<img src='img/docs.png' alt='' title='"+draverData.get("lastbill")+"'/></td></tr>");
                     else if(draverData.get("haveBill").equals("0"))
-                        out.println("<img src='img/doc1.png' alt=''/></td></tr>");
-                    else if(draverData.get("haveBill").equals("2"))
+                        out.println("<img src='img/doc1.png' alt='' title='"+draverData.get("lastbill")+"'/></td></tr>");
+                    else if(draverData.get("haveBill").equals("1"))
                         out.println("<img src='img/doc2.png' alt='' title='"+draverData.get("lastbill")+"'/></td></tr>");
                 }
                 out.println("</table></div>");
                 if(showBalance)
                     out.println("Итоговый баланс: "+wsql.getCurentGlobalBalance());
-                //wsql.addAccrual();
-                wsql.con.close();
                 
             }
         }
@@ -143,7 +179,9 @@ public class ListDriver extends HttpServlet {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -165,7 +203,9 @@ public class ListDriver extends HttpServlet {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

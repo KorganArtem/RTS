@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,12 +34,13 @@ public class ChangePassword extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             AccessControl ac = new AccessControl();
             if(ac.isLogIn(request.getSession().getId())){ 
                 int userId = ac.getUserId(request.getSession().getId());
+		System.out.println(userId);
                 String username=ac.getUserName(userId);
                 if(ac.checkUser(username, request.getParameter("oldpass"), request.getSession().getId())){
                     ac.changePass(userId, request.getParameter("newpass"));
@@ -47,7 +49,9 @@ public class ChangePassword extends HttpServlet {
                 else
                    out.print(2); 
             }
-        }
+        } catch (InterruptedException ex) {
+	    Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -68,7 +72,9 @@ public class ChangePassword extends HttpServlet {
             Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -88,7 +94,9 @@ public class ChangePassword extends HttpServlet {
             Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

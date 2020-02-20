@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -44,10 +45,14 @@ public class CarList extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            AccessControl ac = new AccessControl();
+            AccessControl ac = null;
+	    try {
+		ac = new AccessControl();
+	    } catch (NamingException ex) {
+		Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
+	    }
             if(ac.isLogIn(request.getSession().getId())){
-                    out.println("<input type='button' value='Add Car' onClick='addCar()'/>");
-                    out.println("<input type='button' value='Add Car Test' onClick='addCarNew()'/>");
+                    out.println("<input type='button' value='Добавить машину' onClick='addCarNew()'/>");
                     out.println("<table id='carListTabel' class='listDriver'>");
                     ///////////////////////////////////////////////////////////////
                     boolean delete = ac.checkPermission(ac.getUserId(request.getSession().getId()), "deletDriver");
@@ -153,7 +158,6 @@ public class CarList extends HttpServlet {
                         if(licEnded||insuranceEnded||ttoEnded){
                             docStateImgPath="img/down.png";
                         }
-                        System.out.println(carData.get("sts")+" "+carData.get("ttoEndDate")+" "+carData.get("licEndDate")+" "+carData.get("insuranceDateEnd"));
                         out.println("<td>"+carData.get("sts")+"</td>");
                         out.println("<td>"+carData.get("companyName")+"</td>");
                         out.println("<td>"+carData.get("outTime")+"</td>");
@@ -161,15 +165,15 @@ public class CarList extends HttpServlet {
                         out.println("<td><img class='alertImg' src='"+docStateImgPath+"' title='"+comment+"'/></td></tr>");
                     }
                     out.println("</table>");
-                    //wsql.addAccrual();
-                    wsql.con.close();
                 }
             else{
                 System.out.println("Go to login Page!");
                 request.getRequestDispatcher("/").forward(request, response);
                 return;
             }
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(CarList.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

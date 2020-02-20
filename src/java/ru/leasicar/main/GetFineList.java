@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,12 +35,21 @@ public class GetFineList extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             FineSQL fsql = new FineSQL();
-            out.println(fsql.getAllFineOG());
+	    boolean showDeletedCar = false;
+//	    System.out.println(request.getParameter("deleted")+"  "+request.getParameter("discountOutDate"));
+//	    if(request.getParameter("deleted").equals("true"))
+//		showDeletedCar = true;
+//	    if(request.getParameter("discountOutDate")!=null&&request.getParameter("payOutDate")!=null){
+//		System.out.println("Date filter");
+//		out.println(fsql.getAllFineOG(showDeletedCar, request.getParameter("discountOutDate"), request.getParameter("payOutDate")));
+//	    }
+//	    else
+		out.println(fsql.getAllFineOG(showDeletedCar));
         }
     }
 
@@ -61,7 +71,9 @@ public class GetFineList extends HttpServlet {
             Logger.getLogger(GetFineList.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(GetFineList.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(GetFineList.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -81,7 +93,9 @@ public class GetFineList extends HttpServlet {
             Logger.getLogger(GetFineList.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(GetFineList.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(GetFineList.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

@@ -22,6 +22,10 @@
     Map dataDriver = dsql.getAllDataDriver(driverId);
     int dayOffCicle = Integer.parseInt(dataDriver.get("driverDayOffPeriod").toString());
     String editRent = "";
+    String dopPay = "";
+    System.out.println(dataDriver.get("dopPay"));
+    if(dataDriver.get("dopPay").equals("1"))
+	dopPay="checked";
     if(ac.checkPermission(ac.getUserId(request.getSession().getId()), "editRent")){ 
         editRent = "<div class='formItem'>"
                     + "<label>Аренда</label><br>"
@@ -30,6 +34,7 @@
                         + "<label>График</label><br>"
                         + "<select id='driver_schedule'>"+dsql.getOptions(dayOffCicle)+ "</select></div>";
     }
+
 %>
     <div >
     <div id="form_container">
@@ -102,7 +107,7 @@
 			<label>Серия номер</label>
                     </span>
                     <span>
-                        <input type="date" id="element_1_2" name= "vyDate" class="element text" size="14" value="<%= dataDriver.get("vyDate") %>"/>
+                        <input type="date" id="element_1_2" name= "vyDate" class="element text" size="14" value="<%= dataDriver.get("vyDate1") %>"/>
                         <label>Дата выдачи</label>
                     </span> 
                     <span>
@@ -203,9 +208,13 @@
                         <label>Лимит</label>
                     </span> 
                     <span>
+                        <input type='checkbox' id='takeDep' name='takeDep' <%=  dopPay %> />
+                        <label style="float: left">Списывать депозит</label>
+                    </span>
+                    <!--span>
                         <input type='text' id='yaId' name='yaId' value='<%= dataDriver.get("yaId") %>' />
                         <label>yaId</label>
-                    </span> 
+                    </span--> 
 		</li>		
                 <li id="li_4" >
                     <label class="description" for="element_4">Комментарий </label>

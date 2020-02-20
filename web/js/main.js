@@ -43,13 +43,58 @@ function addDriverN(){
 ////////////////////////////////////////////////////////////////////////////////
 $(document).ready(function() {
     listDriverShow(0);
+    getAlarmCount();
 });
+function getAlarmCount(){
+    $.ajax({
+        type: 'POST',
+        url: 'Alarmer',
+        data:'show=0',
+        success: function(data){
+            if(data!=0){
+                $('#alarmCount').html(data);
+                $('#alarmer').click(function (){
+                    showAlarm();
+                });
+            }
+            else{
+                $('#alarmer').css('display', 'none');
+            }
+        }
+    });
+}
+function showAlarm(){
+    $.ajax({
+        type: 'POST',
+        url: 'Alarmer',
+        data:'show=1',
+        success: function(data){
+            $('#modalConteiner').html(data);
+            openModWind(400, 400);
+        }
+    });
+}
 var showDeleted = 0;
 function listDriverShow(deleted){
         $.ajax({
         type: 'POST',
         url: 'LD',
         data: 'deleted='+deleted,
+        success: function(data){
+            $('#listDriver').html(data);
+            $('#listDriverTabel').DataTable( {
+                "paging":   false,
+                "scrollY": "75vh"
+            });
+            docListener();
+        }
+    });
+}
+function listDriverShowFiltred(filter){
+        $.ajax({
+        type: 'POST',
+        url: 'LD',
+        data: filter,
         success: function(data){
             $('#listDriver').html(data);
             $('#listDriverTabel').DataTable( {
@@ -315,11 +360,15 @@ $('#mainProp').click(function (){
         }
     });
 });
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /////                             Show fine list                           /////
 ////////////////////////////////////////////////////////////////////////////////
-var tableFine;
-function showFine(){
+//var tableFine;
+function showFine(deleted, discountOutDate, payOutDate, newData){
+    if(newData)
+	tableFine.destroy();
     $('.itemDisplay').css('display', 'none');
     $('.itemMenu').attr('disabled', false);
     $('#mainProp').attr('disabled', true);
@@ -327,17 +376,11 @@ function showFine(){
     $.ajax({
         type: 'POST',
         dataType: 'json',
+	data: 'deleted='+deleted+'&discountOutDate='+discountOutDate+'&payOutDate='+payOutDate,
         url: 'GFL',
         success: function(data){
             tableFine = $('#tableFine').DataTable( {
             dom: 'Bfrtip',
-            buttons:[
-                {
-                    text: 'My button',
-                    action: function ( e, dt, node, config ) {
-                        alert( 'Button activated' );
-                    }
-                }],
             data: data,
             select: true,
             retrieve: true,
@@ -367,14 +410,11 @@ function showFine(){
                 { data: 'gis_discount_uptodate' },
                 { data: 'last_bill_date' }
             ],
-            createdRow: function( row, data, dataIndex){
-                if( data ){ //data[2] ==  `someVal`
-                    $(row).addClass('redClass');
-                }
-            },
             idSrc: 'fineUis'
         } );
         $("div.toolbar").html('<b>Custom tool bar! Text/images etc.</b>');
+	
+	tableFine.draw();
         workWithFine();
         },
         error:function (msg){
@@ -383,8 +423,47 @@ function showFine(){
     });
 }
 $('#fineList').click(function(){
-    showFine();
+    showFine(false, false);
 });
+//$('#showDeletecarsfine').change(function(){
+//    if(this.checked) {
+//        showFine(true, true);
+//    }
+//    else
+//	showFine(false, true);
+//});
+
+$('#fineFilter').click(function(){
+    var showDeletedCar = false
+    if($('#showDeletecarsfine').checked) {
+        showDeletedCar=true;
+    }
+    else
+        showDeletedCar=false;
+    showFine(showDeletedCar, $('#discountOut').val(), $('#payOut').val(), true);
+});
+$('#exportFine').click(function(){
+    var table = $('#tableFine').DataTable();
+    var offenceArray = new Array();
+    var offenceJSON = new JSONArray();
+    var data = table.rows().data();
+    for (var item in data) { // "foreach"
+	if(data[item].bill_id===undefined)
+	    continue;
+	offenceArray.push(data[item].bill_id);
+	o
+    }
+    console.log(data);
+    var listFine=JSON.parse(data);
+    $.ajax({type: 'POST',
+        dataType: 'json',
+	data: 'offenceList='+listFine,
+        url: 'GFLEXPORT',
+	success: function(data){
+	    
+	}
+    });
+})
 
 
 
@@ -542,26 +621,25 @@ function docListener(){
     $(".docsCol").click(function(e){
 	var driverId = $(this).attr('driverId');/*.dialog("option", optionName, [value])*/
         wayBillWindow(driverId);
-        /*$('#menuBox').dialog("open");
-        $('#menuBox').dialog("option", "position", 'top');
-        console.log('Showed'+driverId);
-        $(".menuItem").click(function(){
-            if($(this).attr('data')==="dogovor"){
-                downloadDogowor(driverId);
-            }
-            if($(this).attr('data')==="aktvidachi"){
-                downloadAktvidachi(driverId);
-            }
-            if($(this).attr('data')==="aktpriema"){
-                downloadAktpriema(driverId);
-            }
-            if($(this).attr('data')==="putevoilist"){
-                downloadPutevoilist(driverId);
-            }
-        });*/
+    });
+    $(".docsWaiBillReport").click(function(e){
+        wayBillReport();
     });
     $("#closeMenu").click(function(){
         $('#menuBox').hide();
+    });
+}
+function wayBillReport(){
+    $.ajax({
+        type: 'POST',
+        url: 'docs/wayBillRep.jsp',
+        success: function(data){
+            $('#modalConteiner').html(data);
+            openModWind(340, 200);
+        },
+        error:function (msg){
+            alert('Error in geting dogovor!'+msg);
+        }
     });
 }
 function wayBillWindow(driverIdForDog){
@@ -598,6 +676,21 @@ function downloadDogowor(driverIdForDog){
     $.ajax({
         type: 'POST',
         url: 'DM',
+        data: 'driverId='+driverIdForDog,
+        success: function(data){
+            window.open(data);
+        },
+        error:function (msg){
+            alert('Error in geting dogovor!'+msg);
+        }
+    });
+}
+function downloadWayBillExcel(driverIdForDog){
+    if(driverIdForDog===null)
+        return;
+    $.ajax({
+        type: 'POST',
+        url: 'WBE',
         data: 'driverId='+driverIdForDog,
         success: function(data){
             window.open(data);

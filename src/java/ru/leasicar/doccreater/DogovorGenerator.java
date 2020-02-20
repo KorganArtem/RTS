@@ -19,6 +19,7 @@ import ru.leasicar.workerSql.DriverSQL;
 import com.ibm.icu.text.*;
 import java.util.Calendar;
 import java.util.HashMap;
+import javax.naming.NamingException;
 import ru.leasicar.workerSql.CarSQL;
 /**
  *
@@ -40,8 +41,9 @@ public class DogovorGenerator {
         mounths.put(11, "ноября");
         mounths.put(12, "декабря");
     }
-    public String  createDog(int DriverId, String filePath) throws ClassNotFoundException, SQLException { 
-        System.out.println(System.getProperty("catalina.base"));
+    public String  createDog(int DriverId, String filePath) throws ClassNotFoundException, SQLException, NamingException { 
+	
+        System.out.println(filePath);
         DriverSQL dsql = new DriverSQL();
         int numberDog = dsql.getDogNumber();
         Map<String, String> draverData = dsql.getAllDataDriver(DriverId);
@@ -62,7 +64,7 @@ public class DogovorGenerator {
         }
         try {
             String fullName = draverData.get("driver_lastname")+" "+draverData.get("driver_firstname")+" "+draverData.get("driver_midName");
-            POIFSFileSystem pfs = new POIFSFileSystem(new FileInputStream("/table/doc_tmp/dogovor_tmp.doc"));
+            POIFSFileSystem pfs = new POIFSFileSystem(new FileInputStream(filePath+"/doc_tmp/dogovor_tmp.doc"));
             HWPFDocument doc = new HWPFDocument(pfs);
             String fileName = "dogFor_"+numberDog+".doc";
             Range range = doc.getRange(); 
@@ -74,6 +76,7 @@ public class DogovorGenerator {
             range.replaceText("{%passportNumber%}", draverData.get("passportNumber"));
             range.replaceText("{%passportFrom%}", draverData.get("passportFrom"));
             range.replaceText("{%passportDate%}", draverData.get("passportDate"));
+            range.replaceText("{%driver_bornDate%}", draverData.get("driver_bornDate"));
             range.replaceText("{%carTransmission%}", transmission);
             range.replaceText("{%currentDogDate%}", dataDog);
             range.replaceText("{%carModel%}", carData.get("modelName"));
@@ -85,8 +88,12 @@ public class DogovorGenerator {
             range.replaceText("{%carSTS%}", carData.get("sts"));
             range.replaceText("{%carTTO%}", carData.get("ttoNumber"));
             range.replaceText("{%carOSAGO%}", carData.get("insuranceNamber"));
+            range.replaceText("{%carMileage%}", carData.get("carMileage"));
             ////////////////////////////////////////////////////////////////////////
             String address = draverData.get("postCode") +", "+draverData.get("country");
+            range.replaceText("{%vyNumber%}", draverData.get("vyNumber"));
+            range.replaceText("{%vyFrom%}", draverData.get("vyFrom")); //
+	    range.replaceText("{%vyDate%}", draverData.get("vyDate"));
             if(draverData.get("province").length()>1)
                 address = address + ", "+draverData.get("province");
             if(draverData.get("city").length()>1)
@@ -113,6 +120,11 @@ public class DogovorGenerator {
             range.replaceText("{%driverAddAddress%}", addAddress);
             range.replaceText("{%driverEmail%}", draverData.get("driver_email"));
             range.replaceText("{%driverPhone%}", draverData.get("driver_phone_number"));
+	    
+            range.replaceText("{%driver_bornDate%}", draverData.get("driver_bornDate"));
+            range.replaceText("{%vyNumber%}", draverData.get("vyNumber"));
+            range.replaceText("{%vyDate%}", draverData.get("vyDate"));
+            range.replaceText("{%vyFrom%}", draverData.get("vyFrom"));
             ////////////////////////////////////////////////////////////////////
             RuleBasedNumberFormat nf = new RuleBasedNumberFormat(Locale.forLanguageTag("ru"),
                 RuleBasedNumberFormat.SPELLOUT);

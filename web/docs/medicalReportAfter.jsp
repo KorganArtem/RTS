@@ -1,3 +1,4 @@
+<%@page import="java.util.Random"%>
 <%@page import="ru.leasicar.workerSql.CompanySQL"%>
 <%@page import="java.util.TreeSet"%>
 <%@page import="java.util.SortedSet"%>
@@ -15,12 +16,12 @@
     }
     String dateEnd = null;
     if(request.getParameter("dateEnd")!=null){
-        dateEnd = request.getParameter("dateStart");
+        dateEnd = request.getParameter("dateEnd");
     }
     int companyId = Integer.parseInt(request.getParameter("companyId"));
     CompanySQL cSQL = new CompanySQL();
     String companyName = cSQL.getCompanyName(companyId);
-    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
+    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId, 0);
     String dayStart = dateStart.split("-")[2];
     int mounth = Integer.parseInt(dateStart.split("-")[1])-1;
     String mounthStart = mounths[mounth];
@@ -95,7 +96,7 @@
             <div class="headerTitle">
                 <font style="font-size: 36px"><b>ЖУРНАЛ</b> </font><br>
                 <font style="font-size: 30px">Журнал послерейсовых медицинских осмотров.</font><br>
-                <font style="font-size: 30px">за 2018 год	</font>
+                <font style="font-size: 30px">за 2019 год	</font>
             </div>
             <div class="companyTitle">
                 <p style="font-size: 26px"><b><%= companyName %></b></p>	
@@ -113,7 +114,25 @@
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
             boolean leftPage = true;
             for (Integer key : keys) {
-                Map row = wbList.get(key);
+                Map<String, String> row = wbList.get(key);
+		Random r = new Random();
+		String outTime = row.get("outTime");
+		int minOut = Integer.parseInt(outTime.split("-")[1]);
+		minOut=minOut+6+r.nextInt(4);
+		String min ="";
+		if(minOut<10)
+		    min="0"+minOut;
+		else
+		    min=""+minOut;
+		int hourOut = Integer.parseInt(outTime.split("-")[0]);
+		
+		hourOut=hourOut+10;
+		if(hourOut<10)
+		    outTime="0"+hourOut+":"+min;
+		else if(hourOut>24)
+		    outTime=""+(hourOut-24)+":"+min;
+		else
+		    outTime=""+hourOut+":"+outTime.split("-")[1];
                 String pageClass="leftPage";
                 if(!leftPage)
                     pageClass = "rightPage";
@@ -135,7 +154,7 @@
                             + "<td>Подпись работника</td></tr>";
                 }
                 rowCounter++;
-                table1 = table1 + "<tr><td>" + row.get("waybillsDate")+ " " + row.get("outTime")+ "</td>"
+                table1 = table1 + "<tr><td>" + row.get("waybillsDate")+ " " +outTime+ "</td>"
                         + "<td>" + row.get("driver_lastname") + " " + row.get("driver_firstname") + " " + row.get("driver_midName") + "</td>"
                         + "<td>" + row.get("sex") + "</td>"
                         + "<td>" + row.get("driver_bornDate") + "</td>"
@@ -146,8 +165,8 @@
                         + "<td>" + row.get("pulse") + "</td>"
                         + "<td>0,00</td>"
                         + "<td>Признаки воздействия вредных (опасных) факторов, состояний и заболеваний отсутствуют</td>"
-                        + "<td>" + row.get("waybillsDate") + "</td>"
-                        + "<td>" + row.get("driverId") + "</td></tr>";
+                        + "<td><br>Алексанян С.С.</td>"
+                        + "<td></td></tr>";
                 
                 
                 if(rowCounter==20){ 

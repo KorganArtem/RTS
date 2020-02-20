@@ -41,6 +41,9 @@ public class AddDriverNew extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             DriverSQL dsql = new DriverSQL();
             Map<String, String> driverData = new HashMap();
+	    int takeDep = 0;
+	    if(request.getParameter("takeDep")!=null)
+		takeDep=1;
             driverData.put("lastName",	request.getParameter("lastName"));
             driverData.put("firstName",	request.getParameter("firstName")); 
             driverData.put("midlName",	request.getParameter("midlName")); 
@@ -77,9 +80,13 @@ public class AddDriverNew extends HttpServlet {
             driverData.put("vyNumber", request.getParameter("vyNumber"));
             driverData.put("vyDate", request.getParameter("vyDate"));
             driverData.put("vyFrom", request.getParameter("vyFrom"));
+            driverData.put("dopPay", takeDep+"");
             System.out.println(request.toString());
             dsql.writeDriver(driverData);
         }
+	catch(Exception ex){
+	    System.out.println("Error beach!!! "+ex.getMessage());
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

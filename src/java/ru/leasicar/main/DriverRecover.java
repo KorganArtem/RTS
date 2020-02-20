@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,14 +38,21 @@ public class DriverRecover extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
-        AccessControl ac = new AccessControl(); 
+        AccessControl ac = null; 
+	try {
+	    ac = new AccessControl();
+	} catch (NamingException ex) {
+	    Logger.getLogger(DriverRecover.class.getName()).log(Level.SEVERE, null, ex);
+	}
         if(ac.isLogIn(request.getSession().getId())){
             try (PrintWriter out = response.getWriter()) {
                 /* TODO output your page here. You may use following sample code. */
                 DriverSQL dsql = new DriverSQL();
                 dsql.driverRecovery(request.getParameter("driverId"));
                 out.println("ok");
-            }
+            } catch (NamingException ex) {
+		Logger.getLogger(DriverRecover.class.getName()).log(Level.SEVERE, null, ex);
+	    }
         }
     }
 

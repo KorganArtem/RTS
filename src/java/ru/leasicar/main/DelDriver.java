@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,7 +40,12 @@ public class DelDriver extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            AccessControl ac = new AccessControl();
+            AccessControl ac = null;
+	    try {
+		ac = new AccessControl();
+	    } catch (NamingException ex) {
+		Logger.getLogger(DelDriver.class.getName()).log(Level.SEVERE, null, ex);
+	    }
             /* TODO output your page here. You may use following sample code. */
             if(ac.isLogIn(request.getSession().getId()) && ac.checkPermission(ac.getUserId(request.getSession().getId()), "deletDriver")){
                 DriverSQL wsql = new DriverSQL();
@@ -49,8 +55,9 @@ public class DelDriver extends HttpServlet {
                 out.println("notpermit");
                 return;
             }
-            ac.con.close();
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(DelDriver.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

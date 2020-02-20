@@ -4,6 +4,9 @@
     Author     : korgan
 --%>
 
+<%@page import="ru.leasicar.workerSql.UserSQL"%>
+<%@page import="ru.leasicar.doccreater.WayBillExcel"%>
+<%@page import="ru.leasicar.workerSql.ProperSQL"%>
 <%@page import="ru.leasicar.healthCheck.HealthDataGenerator"%>
 <%@page import="ru.leasicar.workerSql.WayBillSQL"%>
 <%@page import="java.util.Date"%>
@@ -14,39 +17,16 @@
 <%@page import="ru.leasicar.workerSql.CarSQL"%>
 <%@page import="ru.leasicar.workerSql.DriverSQL"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-        <script src='https://code.jquery.com/jquery-1.12.4.js'></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE></TITLE>
-	<STYLE TYPE="text/css">
-            @media print {
-                @page { margin: 0; }
-                div { margin: 1.6cm; }
-              }
-	<!--
-		/*@page {margin-right: 0.59in; margin-top: 0.37in; margin-bottom: 0.5in }*/
-		P { margin-top: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
-		P.western { font-family: "Times New Roman", serif; font-size: 14pt; so-language: ru-RU }
-		P.cjk { font-family: "Times New Roman", serif; font-size: 14pt }
-		P.ctl { font-family: "Times New Roman", serif; font-size: 10pt; so-language: ar-SA }
-                
-	-->
-	</STYLE>
-</HEAD>
-<BODY LANG="en-US" TEXT="#000000" DIR="LTR">
-    <%
+<%
         
     Map<String, String> driverData;
     Map<String, String> carData ;
     Map<String, String> compData;
+    UserSQL usSQL = new UserSQL();
     int cmpanyId = Integer.parseInt(request.getParameter("companyId"));
     int driverId = Integer.parseInt(request.getParameter("driverId"));
     int carId = Integer.parseInt(request.getParameter("carId"));
+    Map serviceMan = usSQL.getUser(Integer.parseInt(request.getParameter("serviceMan")));
     DriverSQL dsql = new DriverSQL();
     driverData = dsql.getAllDataDriver(driverId);
     CarSQL csql = new CarSQL();
@@ -64,6 +44,17 @@
     }
     else
         driverLicNum=driverData.get("comment");*/
+    ProperSQL parsql = new ProperSQL();
+    boolean showOutTime = parsql.getBoolParam("showOutTime");
+    int wayBilForm=parsql.getIntParam("wayBillTemplate");
+    if(wayBilForm==2){
+	System.out.println("Get wayBill by excel");
+	ServletContext sc = request.getServletContext();
+	String fullPath = sc.getRealPath("");
+	WayBillExcel wbe = new WayBillExcel();
+	String path = wbe.write(driverId, fullPath, carId, cmpanyId);
+	return;
+    }
     WayBillSQL wbsql = new WayBillSQL();
     int years = Integer.parseInt(driverData.get("driver_age"));
     for(long i=startDate.getTime(); i<=endDate.getTime(); i=i+(60*60*24*1000)){
@@ -79,11 +70,50 @@
         String date2 = formatOut.format(date.getTime()+(60*60*24*1000));
         HealthDataGenerator hdg = new HealthDataGenerator();
         double bodyTemp = hdg.getBodyTem();
-        System.out.println(bodyTemp);
         String bloodPressure = hdg.getBloodPressure(years);
         int pulse = hdg.getPulse(years);
         int wayBillId = wbsql.writeWayBill(driverId, carId, cmpanyId, date, docNum, bodyTemp, bloodPressure, pulse);
+	
     %>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+        <script src='https://code.jquery.com/jquery-1.12.4.js'></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<STYLE TYPE="text/css">
+            @media print {
+		html, body {
+		    width: 148mm;
+		    height: 210mm;
+		}
+                @page { margin: 0;
+			size: A5;
+		}
+                div { margin: 0.5cm; }
+              }
+	      html, body {
+		    width: 148mm;
+		    height: 210mm;
+		}
+                @page { margin: 0;
+			size: A5;
+		}
+                div { margin: 0.5cm; }
+	<!--
+		/*@page {margin-right: 0.59in; margin-top: 0.37in; margin-bottom: 0.5in }*/
+		P { margin-top: 0.08in; direction: ltr; color: #000000; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 14pt; so-language: ru-RU }
+		P.cjk { font-family: "Times New Roman", serif; font-size: 14pt }
+		P.ctl { font-family: "Times New Roman", serif; font-size: 10pt; so-language: ar-SA }
+                
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" DIR="LTR">
+    
     
     
     <div STYLE="page-break-before: always">
@@ -95,7 +125,7 @@
 		</TD>
 		<TD COLSPAN=17 WIDTH=282 VALIGN=BOTTOM STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><FONT SIZE=2 STYLE="font-size: 9pt"><B>ПУТЕВОЙ
-			ЛИСТ № ТМ </B></FONT><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN LANG="en-US"><B><%= docNum+wayBillId %></B></SPAN></FONT></FONT></FONT></P>
+			ЛИСТ № ТМ </B></FONT><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN LANG="en-US"><B><%= docNum %></B></SPAN></FONT></FONT></FONT></P>
 		</TD>
 		<TD ROWSPAN=2 COLSPAN=15 WIDTH=291 VALIGN=TOP STYLE="border: none; padding: 0in">
 			<P  ALIGN=RIGHT><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt"><I>Типовая
@@ -147,7 +177,10 @@
 			<P ><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">Организация</FONT></FONT></P>
 		</TD>
 		<TD COLSPAN=21 WIDTH=346 VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding: 0in">
-                    <P  ALIGN=CENTER STYLE="margin-bottom: 0in; widows: 0; orphans: 0"><FONT SIZE=3><B><%= compData.get("name") %></B></FONT></P>
+                    <P  ALIGN=CENTER STYLE="margin-bottom: 0in; widows: 0; orphans: 0">
+			<FONT SIZE=3><B><%= compData.get("name") %></B></FONT><br>
+			<FONT SIZE=1><%= compData.get("address") %> <br>тел. <%= compData.get("phone") %></FONT>
+		    </P>
 		</TD>
 		<TD COLSPAN=5 WIDTH=77 VALIGN=TOP STYLE="border: none; padding: 0in">
 			<P  ALIGN=RIGHT><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">по ОКПО</FONT></FONT></P>
@@ -266,7 +299,7 @@
 		</TD>
 	</TR>
     </TABLE>
-    <TABLE>
+    <TABLE WIDTH=694>
 	<TR>
             <TD WIDTH=90 HEIGHT=21 STYLE="border: none; padding: 0in">
                 <P ><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">Удостоверение № </FONT></FONT></P>
@@ -315,10 +348,10 @@
 		</TD>
 	</TR>
     </TABLE>
-    <TABLE>
+    <TABLE WIDTH=694>
            <TR>
-               <TD>
-                   <TABLE WIDTH=298 cellspacing="0" STYLE="border: 2.25pt solid #000000;">
+               <TD STYLE="width: 40%;">
+                   <TABLE cellspacing="0" STYLE="width: 100%; border: 2.25pt solid #000000;">
                         <TR STYLE="border-bottom: 1px solid #000000;">
                             <TD COLSPAN=4  HEIGHT=15 VALIGN=TOP STYLE="border-bottom: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                 <P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 6pt">Время</FONT></FONT></P>
@@ -373,10 +406,10 @@
                         </TR>
                         <TR>
                                 <TD HEIGHT=15 STYLE=" border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %><br><%= carData.get("outTime") %> </FONT></FONT></P>
+                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %><br><% if(showOutTime){%> <%= carData.get("outTime") %> <%}%> </FONT></FONT></P>
                                 </TD>
                                 <TD STYLE="border-left: 1px solid #000000;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
-                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %> <br><%= carData.get("outTime") %> </FONT></FONT></P>
+                                        <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date1 %> <br><% if(showOutTime){%> <%= carData.get("outTime") %> <%}%></FONT></FONT></P>
                                 </TD>
                                 <TD STYLE="border-left: 1px solid #000000;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                         <P ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=1> <%= date2 %> </FONT></FONT></P>
@@ -388,8 +421,8 @@
                         </TR>
                    </TABLE>
                </TD>
-               <TD>
-                   <TABLE>
+               <TD STYLE="width: 60%;">
+                   <TABLE  STYLE="width: 100%;">
                         <TR>
                             <TD COLSPAN="4" WIDTH=388 VALIGN=BOTTOM STYLE="border-top: none; border-bottom: none;  border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.02in; padding-right: 0in">
                                 <P  ALIGN=RIGHT STYLE="margin-bottom: 0in">       
@@ -434,7 +467,7 @@
                             <TD WIDTH=15>
                             </TD>
                             <TD ALIGN=CENTER STYLE="border-bottom: 1pt solid #000000;">
-                                Микаилов А.Н.
+                                <%= serviceMan.get("ful_name") %>
                             </TD>
                         </TR>
                         <TR>
@@ -465,7 +498,7 @@
                </TD>
            </TR>
     </TABLE>
-    <TABLE cellpadding="5">
+    <TABLE cellpadding="5" WIDTH=694>
         <TR valign="bottom" >
             <TD height="40" WIDTH=35 STYLE="border: none; padding: 0in">
                     <P  ALIGN=LEFT>                  
@@ -490,7 +523,7 @@
 		
 		</TD>
 		<TD ALIGN=CENTER WIDTH=110 STYLE="border-bottom: 1pt solid #000000;; padding: 0in"> 
-                    Микаилов А.Н.
+                    <%= serviceMan.get("ful_name") %>
 		</TD>
 		<TD WIDTH=67 STYLE="border: none; padding: 0in">
 			<P  ALIGN=CENTER><FONT FACE="Arial, sans-serif"><FONT SIZE=2>Водитель</FONT></FONT></P>
@@ -543,48 +576,63 @@
 		</TD>
 	</TR>
 </TABLE>
+<TABLE WIDTH=690>
+    <TR>
+	<TD>
+	    <TABLE WIDTH=285 CELLPADDING=7 CELLSPACING=0>
+		    <COL WIDTH=123>
+		    <COL WIDTH=128>
+		    <TR VALIGN=TOP>
+			    <TD WIDTH=123 HEIGHT=13 STYLE="border-top: 2.25pt solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
+				    <P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>Операция</FONT></FONT></P>
+			    </TD>
+			    <TD WIDTH=128 STYLE="border-top: 2.25pt solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
+				    <P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>Показание
+				    спидометра</FONT></FONT></P>
+			    </TD>
+		    </TR>
+		    <TR VALIGN=TOP>
+			    <TD WIDTH=123 HEIGHT=10 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
+				    <P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>При
+				    возвращении</FONT></FONT></P>
+			    </TD>
+			    <TD WIDTH=128 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
 
-<TABLE WIDTH=285 CELLPADDING=7 CELLSPACING=0>
-	<COL WIDTH=123>
-	<COL WIDTH=128>
-	<TR VALIGN=TOP>
-		<TD WIDTH=123 HEIGHT=13 STYLE="border-top: 2.25pt solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
-			<P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>Операция</FONT></FONT></P>
-		</TD>
-		<TD WIDTH=128 STYLE="border-top: 2.25pt solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
-			<P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>Показание
-			спидометра</FONT></FONT></P>
-		</TD>
-	</TR>
-	<TR VALIGN=TOP>
-		<TD WIDTH=123 HEIGHT=10 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
-			<P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>При
-			возвращении</FONT></FONT></P>
-		</TD>
-		<TD WIDTH=128 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
-			
-		</TD>
-	</TR>
-	<TR VALIGN=TOP>
-		<TD WIDTH=123 HEIGHT=18 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
-			<P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>При
-			выезде        </FONT></FONT>
-			</P>
-		</TD>
-		<TD WIDTH=128 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
-			
-		</TD>
-	</TR>
-	<TR VALIGN=TOP>
-		<TD WIDTH=123 HEIGHT=14 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
-			<P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>Результат</FONT></FONT></P>
-		</TD>
-		<TD WIDTH=128 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
-			
-		</TD>
-	</TR>
+			    </TD>
+		    </TR>
+		    <TR VALIGN=TOP>
+			    <TD WIDTH=123 HEIGHT=18 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
+				    <P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>При
+				    выезде        </FONT></FONT>
+				    </P>
+			    </TD>
+			    <TD WIDTH=128 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
+
+			    </TD>
+		    </TR>
+		    <TR VALIGN=TOP>
+			    <TD WIDTH=123 HEIGHT=14 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 2.25pt solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
+				    <P  CLASS="western"><FONT FACE="Arial, sans-serif"><FONT SIZE=1>Результат</FONT></FONT></P>
+			    </TD>
+			    <TD WIDTH=128 STYLE="border-top: 1px solid #000000; border-bottom: 2.25pt solid #000000; border-left: 1px solid #000000; border-right: 2.25pt solid #000000; padding: 0in 0.08in">
+
+			    </TD>
+		    </TR>
+	    </TABLE>
+	</TD>
+	<TD>
+	    Г. МОСКВА И <BR> МОСКОВСКАЯ ОБЛАСТЬ
+	</TD>
+    </TR>
 </TABLE>
+		
+		
+		
 
+		
+		
+		
+		
 <TABLE WIDTH=320 CELLPADDING=2 CELLSPACING=0>
 	<TR>
 		<TD WIDTH=60 VALIGN=TOP STYLE="border: none; padding: 0in" colspan=5>
@@ -635,8 +683,20 @@
 	<TR> 
 		<TD VALIGN=TOP WIDTH=345  HEIGHT=150  style="border-right: 1pt solid #000000;">
 			<P  CLASS="western" STYLE="margin-bottom: 0in">
-				<FONT FACE="Arial, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">Отметка техпомощи:                                                  
-             </FONT></FONT></P>
+				<FONT FACE="Arial, sans-serif">
+					<FONT SIZE=1 STYLE="font-size: 8pt">
+					    Отметка техпомощи:                                                  
+					</FONT>
+				</FONT>
+			</P>
+			    <P  CLASS="western" STYLE="margin-bottom: 0in">
+				<FONT FACE="Arial, sans-serif">
+					<FONT SIZE=1 STYLE="font-size: 13pt">
+					    ЗАМЕНА МАСЛА <BR>
+					    ДО КМ "__________"
+					</FONT>
+				</FONT>
+			    </P>
 		</TD>
 		<TD VALIGN=TOP WIDTH=345 >
 			<TABLE>

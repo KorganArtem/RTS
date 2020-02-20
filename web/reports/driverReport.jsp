@@ -24,6 +24,7 @@ if(request.getParameter("driverId")==null){
 Date dt = new Date();
 String dateNow =dtf.format(dt);
 String dateWeek =dtf.format(dt.getTime()-604800000);
+
 %>
 <html>
     <head>
@@ -43,6 +44,21 @@ String dateWeek =dtf.format(dt.getTime()-604800000);
         <div id="reportPlace">
         </div>
         <script> 
+	    function delPay(payId, sum){
+		if(confirm('Удалить платеж на сумму '+sum+'?')){
+		    $.ajax({
+			type: 'POST',
+			url: '../RemovePay',
+			data: 'payId='+payId+'&driverId='+<%= request.getParameter("driverId")%>,
+			success: function(data){
+			    getDriverReport($("#beginPeriod").val(), $("#endPeriod").val());
+			},
+			error: function(msg){
+			    alert(msg);
+			}
+		    });
+		}
+	    }
             function getDriverReport(begin, end){
                 $.ajax({
                     type: 'POST',

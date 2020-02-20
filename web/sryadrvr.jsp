@@ -19,9 +19,8 @@
     
     <script>
         $(document).ready(function() {
-            getYa('b53db491026b445bbe2bc05880f26152');
-            getYa('8203496c7a52479ab5035650b910fef3');
-            getAllData('61f532420df640fd8741d3aacf732307', '8203496c7a52479ab5035650b910fef3');
+            getYa('0f228a5ce9474be383b873494feb3a96');
+            //getAllData('61f532420df640fd8741d3aacf732307', '8203496c7a52479ab5035650b910fef3');
            // getAllData('61f532420df640fd8741d3aacf732307', 'b53db491026b445bbe2bc05880f26152');
         });
         function getYa(token){

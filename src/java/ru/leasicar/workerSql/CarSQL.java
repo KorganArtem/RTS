@@ -5,56 +5,36 @@
  */
 package ru.leasicar.workerSql;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 /**
  *
  * @author korgan
  */
 public class CarSQL {
-    
-    public String url;
-    public String login;
-    public String pass;
-    public Connection con;
-    Map config;
-    boolean iscon;
-    public CarSQL() throws ClassNotFoundException, SQLException{
-        ConfigurationReader cr = new ConfigurationReader();
-        config=cr.readFile();
-        url="jdbc:mysql://"+config.get("dbhost")+":"+config.get("dbport")+"/"+config.get("dbname")+"?useUnicode=true&characterEncoding=UTF-8";
-        try
-        {
-            Class.forName("com.mysql.jdbc.Driver"); 
-            login=config.get("dbuser").toString();
-            pass=config.get("dbpassword").toString();
-            con = DriverManager.getConnection(url, login, pass);
-            iscon = true;
-        }
-        catch(SQLException ex)
-        {
-            System.out.println("Mysql ERROR: "+ex.getMessage());
-        }
+    DataSource ds;
+    public CarSQL() throws ClassNotFoundException, SQLException, NamingException{
+	InitialContext initContext= new InitialContext();
+	ds = (DataSource) initContext.lookup("java:comp/env/jdbc/dbconnect");
     }
     public Map carList() throws SQLException {
+	Connection con = ds.getConnection();
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT `companies`.`name` as companyName, carModel.* FROM companies "
                 +"INNER JOIN (SELECT carsZap.*, carState.* FROM carState "
-                +"INNER JOIN (SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId` ) as carsZap ON carsZap.state=carState.carStateId  WHERE `carsZap`.`state`>0) carModel "
+                +"INNER JOIN (SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId` WHERE `cars`.state!=8) as carsZap ON carsZap.state=carState.carStateId  WHERE `carsZap`.`state`>0) carModel "
                 +"ON carModel.carOwner=companies.companyId");
         
-        
-        
-        /*ResultSet rs = st.executeQuery("SELECT `companies`.`name` as companyName, carState.* FROM carState " +
-        "INNER JOIN (SELECT *  FROM `cars` INNER JOIN `models` ON `cars`.`model`=`models`.`modelId` ) as carsZap " +
-        "ON carsZap.state=carState.carStateId " +
-        "WHERE `carsZap`.`state`>0");*/
         Map<String, Map> listDriver = new HashMap<>();
         while(rs.next()){
             Map rowDriver = new HashMap<String, HashMap>();
@@ -76,11 +56,15 @@ public class CarSQL {
             rowDriver.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
             listDriver.put(rs.getString("id"), rowDriver);
         }
+        rs.close();
+        st.close();
+	con.close();
         return listDriver;
     }
     public Map getCarData(int id) throws SQLException{
         Map<String, String> carData = new HashMap<>();
         try{
+	    Connection con = ds.getConnection();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT *  FROM `cars` WHERE `id`="+id);
             if(rs.next()){
@@ -109,6 +93,9 @@ public class CarSQL {
                 carData.put("ttoEndDate", rs.getString("ttoEndDate"));
                 carData.put("outTime", rs.getString("outTime"));
             }
+            rs.close();
+            st.close();
+	    con.close();
         }
         catch(Exception ex){
             System.out.println("Error " + ex.getMessage());
@@ -118,6 +105,7 @@ public class CarSQL {
     public Map getCarDataForAct(int id) throws SQLException{
         Map carData = new HashMap<String, String>();
         try{
+	    Connection con = ds.getConnection();
             String query = "SELECT *, time_format(outTime, '%H-%i') as outTimeF FROM `cars` " +
                         "INNER JOIN `models` " +
                         "ON `cars`.`model`=`models`.`modelId` WHERE `id`="+id;
@@ -138,35 +126,21 @@ public class CarSQL {
                 carData.put("insuranceNamber", rs.getString("insuranceNamber"));
                 carData.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
                 carData.put("ttoNumber", rs.getString("ttoNumber"));
-                carData.put("outTime", rs.getString("outTimeF"));
+                carData.put("carMileage", rs.getString("carMileage"));
+                carData.put("outTime", rs.getString("outTimeF")); 
                 System.out.println(rs.getString("outTimeF"));
             }
+            rs.close();
+            st.close();
+	    con.close();
         }
         catch(Exception ex){
             System.out.println("Error " + ex.getMessage());
         }
         return carData;
     }
-//    public void writeCarData(String carNumber, 
-//            String carVIN, String carModel, String carTransmission,
-//            String carYear, String carCost, String carGlanasId, String carId,
-//            String carStsNumber, String carOsagoNumber, String carOsagoEnd, String ttoNumber) throws SQLException {
-//        System.out.println("Попытка внести изменения в информации о машине()");
-//        Statement st = con.createStatement();
-//        st.execute("UPDATE `cars` SET `number`='" +carNumber+ "'"+
-//                                            ", `model`='" + carModel+ "'"+
-//                                            ", `VIN`='" + carVIN+"'"+
-//                                            ", `transmission`='" + carTransmission+"'"+
-//                                            ", `year`='" + carYear+"'"+
-//                                            ", `cost`='" + carCost+"'"+
-//                                            ", `glanasId`= '"+ carGlanasId+"'"+
-//                                            ", `sts`= '"+ carStsNumber+"'"+
-//                                            ", `insuranceNamber`= '"+ carOsagoNumber+"'"+
-//                                            ", `insuranceDateEnd`= '"+ carOsagoEnd+"'"+
-//                                            ", `ttoNumber`= '"+ ttoNumber+"'"+
-//                                            " WHERE `id`="+carId);
-//    }
     public void writeCarData(Map carData) throws SQLException {
+	Connection con = ds.getConnection();
         System.out.println("Попытка внести изменения в информации о машине()");
         Statement st = con.createStatement();
         st.execute("UPDATE `cars` SET "
@@ -196,8 +170,10 @@ public class CarSQL {
                 + "`outTime`='"+carData.get("outTime")+"' "
                         + "WHERE `id`="+carData.get("carId")); 
         st.close();
+	con.close();
     }
     public String modelLisc(int currentIds) throws SQLException{
+	Connection con = ds.getConnection();
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM `models`");
         String forRet="";
@@ -207,9 +183,13 @@ public class CarSQL {
                 forRet = forRet+" selected "; 
             forRet =forRet+ ">" + rs.getString("modelName")+"</option>";           
         }
+        rs.close();
+        st.close();
+	con.close();
         return forRet;
     }
     public String insCompList(int currentIds) throws SQLException{
+	Connection con = ds.getConnection();
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM `insuranceCompany`");
         String forRet="";
@@ -219,10 +199,14 @@ public class CarSQL {
                 forRet = forRet+" selected "; 
             forRet =forRet+ ">" + rs.getString("insuranceCompanyName")+"</option>";           
         }
+        rs.close();
+        st.close();
+	con.close();
         return forRet;
     }
     public String stateList(int currentIds) throws SQLException{
         try{
+	    Connection con = ds.getConnection();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM `carState`");
             String forRet="";
@@ -232,6 +216,9 @@ public class CarSQL {
                     forRet = forRet+" selected "; 
                 forRet =forRet+ ">" + rs.getString("carStateName")+"</option>";           
             }
+            rs.close();
+            st.close();
+	    con.close();
             return forRet;
         }
         catch(Exception ex){
@@ -240,6 +227,7 @@ public class CarSQL {
         return null;
     }
     public String modelLisc() throws SQLException{
+	Connection con = ds.getConnection();
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM `models`");
         String forRet="";
@@ -247,28 +235,26 @@ public class CarSQL {
             forRet =forRet+"<option value='"+rs.getInt("modelId")+"' ";
             forRet =forRet+ ">" + rs.getString("modelName")+"</option>";           
         }
+        rs.close();
+        st.close();
+	con.close();
         return forRet;
     }
-//    public void addCar(String carNumber, 
-//            String carVIN, String carModel, String carTransmission,
-//            String carYear, String carCost, String carGlanasId,
-//            String carStsNumber, String carOsagoNumber, String carOsagoEnd, String ttoNumber) throws SQLException {
-//        System.out.println("Попытка внести изменения в информации о машине()");
-//        Statement st = con.createStatement();
-//        st.execute("INSERT INTO `cars` (`number`, `model`, `VIN`, `transmission`, "
-//                + "`year`, `cost`, `glanasId`, `sts`, `insuranceNamber`, `insuranceDateEnd`, `ttoNumber`)"
-//                + " VALUES ('" +carNumber+ "', '"+carModel+ "', "+
-//                                            " '" + carVIN+"', "+
-//                                            " '" + carTransmission+"', "+
-//                                            " '" + carYear+"', "+
-//                                            " '" + carCost+"', "+
-//                                            " '"+ carGlanasId+"', "+
-//                                            " '"+ carStsNumber+"', "+
-//                                            " '"+ carOsagoNumber+"', "+
-//                                            " '"+ carOsagoEnd+"', "+
-//                                            " '"+ ttoNumber+"')");
-//    }
-    public void addCar(Map carData) throws SQLException {
+    public Map modelLiscArr() throws SQLException{
+	Connection con = ds.getConnection();
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT * FROM `models`");
+	Map<String, String> modList = new HashMap();
+        while(rs.next()) {
+	    modList.put(rs.getString("modelId"), rs.getString("modelName"));        
+        }
+        rs.close();
+        st.close();
+	con.close();
+        return modList;
+    }
+    public int addCar(Map carData) throws SQLException {
+	Connection con = ds.getConnection();
         System.out.println("Попытка внести изменения в информации о машине()");
         Statement st = con.createStatement();
         st.execute("INSERT INTO `cars` SET "
@@ -301,8 +287,13 @@ public class CarSQL {
         if(rs.next()){
             carId=rs.getInt("driverId");
         }
+        rs.close();
+        st.close();
+	con.close();
+        return carId;
     }
     public String getFreeCarList() throws SQLException{
+	Connection con = ds.getConnection();
         String carData = "<option value='0'>Выбрать</option>";
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT zap1.*, models.* FROM models \n" +
@@ -311,9 +302,13 @@ public class CarSQL {
         while(rs.next()){
             carData = carData +"<option value='"+rs.getString("id")+"'>"+rs.getString("number")+"("+rs.getString("modelName")+")</option>";
         }
+        rs.close();
+        st.close();
+	con.close();
         return carData;
     }
     public String getFreeCarList(int driverId) throws SQLException{
+	Connection con = ds.getConnection();
         String carData = "<option value='0'>Выбрать</option>";
         Statement st = con.createStatement();
         int currentCarId=0;
@@ -330,21 +325,75 @@ public class CarSQL {
                 selected="selected";
             carData = carData +"<option value='"+rs.getString("id")+"' "+selected+">"+rs.getString("number")+"("+rs.getString("modelName")+")</option>";
         }
+        rs.close();
+        st.close();
+	con.close();
         return carData;
     }
     public void changeCarState(int driverId, int carId, int state) throws SQLException{
+	Connection con = ds.getConnection();
         Statement st = con.createStatement();
         st.execute("INSERT INTO `carsChangeLog` SET `carId`="+carId+",  `driverId`="+driverId+", `changeType`="+state+", `changeDate`=NOW()");
         st.close();
-    }
-
-    public int getDriver(int carId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	con.close();
     }
     public void changeCar(int driverId, int carId, int state) throws SQLException{
+	Connection con = ds.getConnection();
         Statement st = con.createStatement();
         st.execute("INSERT INTO `carsChangeLog` SET `carId`="+carId+",  `driverId`="+driverId+", `changeType`="+state+", `changeDate`=NOW()");
         st.execute("UPDATE cars SET state="+state+" WHERE `id`="+carId);
         st.close();
+	con.close();
+    }
+    public JsonArray getCarHistori(int carId) throws SQLException{
+	Connection con = ds.getConnection();
+        Statement carHistorySt = con.createStatement();
+        ResultSet carHistoryRs = carHistorySt.executeQuery("SELECT zapLog.changeDate, zapLog.carStateName, drivers.driver_lastname, "
+                + "drivers.driver_firstname FROM drivers " +
+                    "RIGHT JOIN " +
+                    "(SELECT changeType, carId, driverId, changeDate, carState.carStateName FROM carsChangeLog " +
+                    "INNER JOIN carState " +
+                    "ON carState.carStateId=carsChangeLog.changeType WHERE carId="+carId+") as zapLog " +
+                    "ON zapLog.driverId=drivers.driver_id");
+        JsonArray eventslist = new JsonArray();
+        while(carHistoryRs.next()){
+            JsonObject event = new JsonObject();
+            event.addProperty("changeDate", carHistoryRs.getString("changeDate"));
+            event.addProperty("carStateName", carHistoryRs.getString("carStateName"));
+            String driverName = "";
+            if(carHistoryRs.getString("driver_lastname")!=null)
+                driverName = carHistoryRs.getString("driver_lastname")+" "+carHistoryRs.getString("driver_firstname");
+            event.addProperty("driverName", driverName);
+            eventslist.add(event);
+        }
+        carHistoryRs.close();
+        carHistorySt.close();
+	con.close();
+        return eventslist;
+    }
+
+    public Map gerCarAlert() throws SQLException {
+	Connection con = ds.getConnection();
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT `id`, `number`, `insuranceDateEnd`, `licEndDate`, `ttoEndDate`, carMileage-lastService as aftTO FROM cars \n" +
+        "WHERE ((TO_DAYS(NOW())-TO_DAYS(`insuranceDateEnd`))>-7\n" +
+        "OR (TO_DAYS(NOW())-TO_DAYS(`licEndDate`))>-7\n" +
+        "OR (TO_DAYS(NOW())-TO_DAYS(`ttoEndDate`))>-7\n" +
+        "OR carMileage-lastService>(SELECT `paramValue`-(SELECT `paramValue` FROM `param` WHERE `paramName`='minServCom') FROM `param` WHERE `paramName`='serviseInterval'))\n" +
+        "AND state!=8");
+        Map<Integer, Map> alarmList = new HashMap();
+        while(rs.next()){
+            Map<String, String> row = new HashMap();
+            row.put("insuranceDateEnd", rs.getString("insuranceDateEnd"));
+            row.put("licEndDate", rs.getString("licEndDate"));
+            row.put("ttoEndDate", rs.getString("ttoEndDate"));
+            row.put("aftTO", rs.getString("aftTO"));
+            row.put("number", rs.getString("number"));
+            alarmList.put(rs.getInt("id"), row);
+        }
+        rs.close();
+        st.close();
+	con.close();
+        return alarmList;
     }
 }

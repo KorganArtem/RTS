@@ -12,38 +12,51 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 /**
  *
  * @author korgan
  */
 public class PaySQL {
-    public String url;
-    public String login;
-    public String pass;
-    public Connection con;
-    Map config;
-    boolean iscon;
-    public PaySQL() throws ClassNotFoundException, SQLException{
-        ConfigurationReader cr = new ConfigurationReader();
-        config=cr.readFile();
-        url="jdbc:mysql://"+config.get("dbhost")+":"+config.get("dbport")+"/"+config.get("dbname")+"?useUnicode=true&characterEncoding=UTF-8";
-        try
-        {
-            Class.forName("com.mysql.jdbc.Driver"); 
-            login=config.get("dbuser").toString();
-            pass=config.get("dbpassword").toString();
-            con = DriverManager.getConnection(url, login, pass);
-            iscon = true;
-        }
-        catch(SQLException ex)
-        {
-            System.out.println("Mysql ERROR: "+ex.getMessage());
-        }
+    DataSource ds;
+    public PaySQL() throws ClassNotFoundException, SQLException, NamingException{
+        InitialContext initContext= new InitialContext();
+	ds = (DataSource) initContext.lookup("java:comp/env/jdbc/dbconnect");
+	
     }
-    
-    public void addPayDriver(int driverId, double sum, int source, int userId, String comment) throws SQLException{
+   public void deletePay(String idPay, int driverId) throws SQLException{
+       Connection con = ds.getConnection();
+       System.out.println("I will remove pay "+idPay);
+       Statement stGetSumPay = con.createStatement();
+       ResultSet rsGetPaySum = stGetSumPay.executeQuery("SELECT `sum` FROM `pay` WHERE `id`='"+idPay+"'");
+       double sumPay;
+       if(rsGetPaySum.next()){
+	   sumPay = rsGetPaySum.getDouble("sum");
+       }
+       else{
+	   System.out.println("I did not get sum");
+	   rsGetPaySum.close();
+	   stGetSumPay.close();
+	   return;
+       }
+       Statement stRemovePay = con.createStatement();
+       stRemovePay.execute("DELETE FROM pay WHERE `id`='"+idPay+"'");
+       /////// change all affter
+       System.out.println("Balance"+(1000-sumPay));
+       
+       Statement stChangePays = con.createStatement();
+       stChangePays.execute("UPDATE pay SET `balance`=`balance`-"+sumPay+"  WHERE `id`>'"+idPay+"' AND driverId="+driverId);
+       
+       Statement stChangeBalance = con.createStatement();
+       stChangeBalance.execute("UPDATE drivers SET `driver_current_debt`=`driver_current_debt`-"+sumPay+" WHERE driver_id="+driverId);
+       con.close();
+   }
+   public void addPayDriver(int driverId, int payType, double sum, int source, int userId, String comment) throws SQLException{
         double balanceDriver = 0;
+       Connection con = ds.getConnection();
         if(source!=6){
             Statement stGetBalance = con.createStatement();
             ResultSet rsGetBalance = stGetBalance.executeQuery("SELECT `driver_current_debt` FROM `drivers` "
@@ -53,7 +66,7 @@ public class PaySQL {
         }
         Statement st = con.createStatement();
         st.execute("INSERT INTO `pay` (`type`, `date`, `source`, `sum`, `driverId`, `user`, `balance`, `comment`) "
-                + "VALUES ('1', NOW(), '"+source+"', '"+sum+"', '"+driverId+"', '"+userId+"', '"+balanceDriver+"', '"+comment+"')");
+                + "VALUES ('"+payType+"', NOW(), '"+source+"', '"+sum+"', '"+driverId+"', '"+userId+"', '"+balanceDriver+"', '"+comment+"')");
         st.close();
         if(source==6){
            Statement stUpdateCurrentDebt = con.createStatement();
@@ -63,10 +76,11 @@ public class PaySQL {
         Statement stUpdateCurrentDebt = con.createStatement();
         stUpdateCurrentDebt.execute("UPDATE `drivers` SET `driver_current_debt`=(SELECT sum(`sum`) FROM `pay` WHERE driverId="+driverId+" and type!=3) WHERE `driver_id`="+driverId);
         stUpdateCurrentDebt.close();
+	con.close();
     }
 
-
     public void addPayDeposit(int driverId, double sum, int source, int userId) throws SQLException {
+       Connection con = ds.getConnection();
         Statement st = con.createStatement();
         st.execute("INSERT INTO `pay` (`type`, `date`, `source`, `sum`, `driverId`, `user`) "
                 + "VALUES ('3', NOW(), '"+source+"', '"+sum+"', '"+driverId+"', '"+userId+"')");
@@ -74,15 +88,20 @@ public class PaySQL {
         Statement stUpdateCurrentDebt = con.createStatement();
         stUpdateCurrentDebt.execute("UPDATE `drivers` SET `driver_deposit`=`driver_deposit`+"+sum+" WHERE `driver_id`="+driverId);
         stUpdateCurrentDebt.close();
+	con.close();
     }
 
     public String paySourceSelect() throws SQLException{
+       Connection con = ds.getConnection();
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM `paySource` WHERE `active`=1");
         String forRet = "";
         while(rs.next()){
             forRet = forRet+"<option value='" + rs.getString("payId")+"'>" + rs.getString("payName") + "</option>";
         }
+        rs.close();
+        st.close();
+	con.close();
         return forRet;
     }
 }

@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,7 +46,11 @@ public class ActMaker extends HttpServlet {
             String fileName=null;
             if(request.getParameter("actType").equals("1")){
                 ActInGenerator ai = new ActInGenerator(); 
-                fileName = "docs/"+ai.createAct(driverId, fullPath);
+		try {
+		    fileName = "docs/"+ai.createAct(driverId, fullPath);
+		} catch (NamingException ex) {
+		    Logger.getLogger(ActMaker.class.getName()).log(Level.SEVERE, null, ex);
+		}
             }
             if(request.getParameter("actType").equals("2")){
                 ActOutGenerator ai = new ActOutGenerator(); 
@@ -55,7 +60,9 @@ public class ActMaker extends HttpServlet {
                 out.println(fileName);
             else
                 out.println("ERROR");
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(ActMaker.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

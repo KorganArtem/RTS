@@ -191,7 +191,17 @@
                         <input id="element_1_2" name= "debtLimit" class="element text"  size="8" value="0"/>
                         <label>Лимит</label>
                     </span> 
-		</li>		
+			
+                    <span>
+                        <input type='checkbox' id='takeDep' name='dopPay' />
+                        <label style="float: left">Списывать депозит</label>
+                    </span>
+                    <!--span>
+                        <input type='text' id='yaId' name='yaId' value='' />
+                        <label>yaId</label>
+                    </span--> 
+		</li>	
+		
                 <li id="li_4" >
                     <label class="description" for="element_4">Комментарий </label>
                     <div>

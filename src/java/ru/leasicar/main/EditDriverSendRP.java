@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,7 +36,7 @@ public class EditDriverSendRP extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
@@ -57,7 +58,6 @@ public class EditDriverSendRP extends HttpServlet {
                 out.println("notpermit");
                 return;
             }
-            ac.con.close();
         }
     }
 
@@ -79,7 +79,9 @@ public class EditDriverSendRP extends HttpServlet {
             Logger.getLogger(EditDriverSendRP.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(EditDriverSendRP.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(EditDriverSendRP.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -99,7 +101,9 @@ public class EditDriverSendRP extends HttpServlet {
             Logger.getLogger(EditDriverSendRP.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(EditDriverSendRP.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(EditDriverSendRP.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

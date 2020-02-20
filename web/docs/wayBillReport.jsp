@@ -9,6 +9,8 @@
 <%@page import="java.util.SortedSet"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.Map"%>
+<%@page import="java.text.DateFormat"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="ru.leasicar.workerSql.WayBillSQL"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -21,12 +23,12 @@
     }
     String dateEnd = null;
     if(request.getParameter("dateEnd")!=null){
-        dateEnd = request.getParameter("dateStart");
+        dateEnd = request.getParameter("dateEnd");
     }
     int companyId = Integer.parseInt(request.getParameter("companyId"));
     CompanySQL cSQL = new CompanySQL();
     String companyName = cSQL.getCompanyName(companyId);
-    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
+    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId, 0);
     String dayStart = dateStart.split("-")[2];
     int mounth = Integer.parseInt(dateStart.split("-")[1]);
     System.out.println(mounth);
@@ -102,7 +104,7 @@
             <div class="headerTitle">
                 <font style="font-size: 36px"><b>ЖУРНАЛ</b> </font>
                 <font style="font-size: 30px">учета путевых листов</font><br>
-                <font style="font-size: 30px">за 2018 год	</font>
+                <font style="font-size: 30px">за 2019 год	</font>
             </div>
             <div class="companyTitle">
                 <p style="font-size: 26px"><b><%= companyName %></b></p>	
@@ -120,7 +122,10 @@
             SortedSet<Integer> keys = new TreeSet<>(wbList.keySet());
             //for(Entry<String, Map> wayBill : wbList.entrySet()){
             for (Integer key : keys) {
-                Map row = wbList.get(key);
+                Map<String, String> row = wbList.get(key);
+                DateFormat formatDocNum = new SimpleDateFormat("yyMMdd");
+                String docNum = row.get("carIdO")+1000;  
+                //docNum = formatDocNum.format(date)+docNum.substring(1);
                 if(rowCounter==0){
                     table1=null;
                     table2=null;
@@ -136,7 +141,7 @@
                             + "<td>Подпись бухгалтера</td></tr>";
                 }
                 rowCounter++;
-                table1 = table1 + "<tr><td>" + row.get("docNum") + "</td>"
+                table1 = table1 + "<tr><td>" + row.get("docNumInBill")+row.get("wayBillsId")+ "</td>"
                         + "<td>" + row.get("waybillsDate") + "</td>"
                         + "<td>" + row.get("driver_lastname") + " " + row.get("driver_firstname") + " " + row.get("driver_midName") + "</td>"
                         + "<td>" + row.get("driverId") + "</td></tr>";
@@ -159,7 +164,7 @@
                     <%= table1 %>
                     <%= table2 %>
                     <%  rowCounter = 0;
-                    if(pageCounter==60) break;     
+                    if(pageCounter==160) break;     
                 }
               ;
             }

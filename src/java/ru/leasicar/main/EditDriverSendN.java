@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,9 +38,13 @@ public class EditDriverSendN extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+	    System.out.println(request);
+	    int takeDep = 0;
+	    if(request.getParameter("takeDep")!=null)
+		takeDep=1;
             DriverSQL dsql = new DriverSQL();
             Map<String, String> driverData = new HashMap();
             driverData.put("lastName",	request.getParameter("lastName"));
@@ -79,6 +84,7 @@ public class EditDriverSendN extends HttpServlet {
             driverData.put("vyNumber", request.getParameter("vyNumber"));
             driverData.put("vyDate", request.getParameter("vyDate"));
             driverData.put("vyFrom", request.getParameter("vyFrom"));
+            driverData.put("takeDep", takeDep+"");
             driverData.put("changeSchedule",	request.getParameter("changeSchedule")); 
             int driverId = Integer.parseInt(request.getParameter("driverId")); 
             int changeSchedule = Integer.parseInt(request.getParameter("changeSchedule"));
@@ -112,7 +118,9 @@ public class EditDriverSendN extends HttpServlet {
             Logger.getLogger(EditDriverSendN.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(EditDriverSendN.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(EditDriverSendN.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -132,7 +140,9 @@ public class EditDriverSendN extends HttpServlet {
             Logger.getLogger(EditDriverSendN.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(EditDriverSendN.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(EditDriverSendN.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

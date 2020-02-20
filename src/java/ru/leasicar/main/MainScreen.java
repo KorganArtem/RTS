@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,7 +36,7 @@ public class MainScreen extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         AccessControl ac = new AccessControl();
         if(ac.isLogIn(request.getSession().getId())){
@@ -77,7 +78,9 @@ public class MainScreen extends HttpServlet {
             Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -97,7 +100,9 @@ public class MainScreen extends HttpServlet {
             Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**

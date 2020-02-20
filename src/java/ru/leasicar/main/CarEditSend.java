@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,38 +37,42 @@ public class CarEditSend extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
-        response.setContentType("text/html;charset=UTF-8");
-        AccessControl ac = new AccessControl();
-        if(!ac.isLogIn(request.getSession().getId()))
-            return;
-        int userId = ac.getUserId(request.getSession().getId());
-        try (PrintWriter out = response.getWriter()) {
-            String carNumber = request.getParameter("carNumber");
-            String carModel = request.getParameter("carModel");
-            String carVIN = request.getParameter("carVIN");
-            String carTransmission = request.getParameter("carTransmission");
-            String carYear = request.getParameter("carYear");
-            String carCost = request.getParameter("carCost");
-            String carGlanasId = request.getParameter("carGlanasId");
-            String carId = request.getParameter("carId");
-            String carStsNumber = request.getParameter("carStsNumber");
-            String carOsagoNumber = request.getParameter("carOsagoNumber");
-            String carOsagoEnd = request.getParameter("carOsagoEnd");
-            String ttoNumber = request.getParameter("ttoNumber");
-            CarSQL wrk = new CarSQL();
+        try {
+	    response.setContentType("text/html;charset=UTF-8");
+	    AccessControl ac = new AccessControl();
+	    if(!ac.isLogIn(request.getSession().getId()))
+		return;
+	    int userId = ac.getUserId(request.getSession().getId());
+	    try (PrintWriter out = response.getWriter()) {
+		String carNumber = request.getParameter("carNumber");
+		String carModel = request.getParameter("carModel");
+		String carVIN = request.getParameter("carVIN");
+		String carTransmission = request.getParameter("carTransmission");
+		String carYear = request.getParameter("carYear");
+		String carCost = request.getParameter("carCost");
+		String carGlanasId = request.getParameter("carGlanasId");
+		String carId = request.getParameter("carId");
+		String carStsNumber = request.getParameter("carStsNumber");
+		String carOsagoNumber = request.getParameter("carOsagoNumber");
+		String carOsagoEnd = request.getParameter("carOsagoEnd");
+		String ttoNumber = request.getParameter("ttoNumber");
+		CarSQL wrk = new CarSQL();
 //            wrk.writeCarData(carNumber, carVIN,  carModel,  carTransmission,
 //            carYear, carCost, carGlanasId, carId,
 //            carStsNumber, carOsagoNumber, carOsagoEnd, ttoNumber);
-            System.out.println("INFO: Car data chenged bu user "+userId+" (id="+carId
-                    +" carNumber="+carNumber
-                    +" carModel="+carModel
-                    +" carVIN="+carVIN
-                    +" carTransmission="+carTransmission
-                    +" carYear="+carYear
-                    +" carCost="+carCost
-                    +" carGlanasId="+carGlanasId);
-            
-        }
+System.out.println("INFO: Car data chenged bu user "+userId+" (id="+carId
+	+" carNumber="+carNumber
+	+" carModel="+carModel
+	+" carVIN="+carVIN
+	+" carTransmission="+carTransmission
+	+" carYear="+carYear
+	+" carCost="+carCost
+	+" carGlanasId="+carGlanasId);
+
+	    }
+	}	catch (NamingException ex) {
+	    Logger.getLogger(CarEditSend.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,53 +43,56 @@ public class AllPaysReport extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
-        response.setContentType("text/html;charset=UTF-8");
-        AccessControl ac = new AccessControl();
-        if(ac.isLogIn(request.getSession().getId())){
-            try (PrintWriter out = response.getWriter()) {
-                int operatorId = 0;
-                String begin = request.getParameter("begin");
-                String end = request.getParameter("end");
-                try{
-                    operatorId = Integer.parseInt(request.getParameter("operatorId"));
-                }
-                catch(Exception ex){
-                    System.out.println("operator ID is not passed! "+request.getParameter("operatorId"));
-                }
-                ReportSQL rsql = new ReportSQL();
-                Map report;
-                if(request.getParameter("paySource").equals("0"))
-                    report = rsql.getAllPayList(operatorId, begin, end);
-                else
-                    report = rsql.getAllPayList(operatorId, begin, end, request.getParameter("paySource"));
-                Map payList = new TreeMap<>(report);
-                out.println("<table id='driverReport' class='report'>");
-                out.println("<thead><tr><td>Дата</td><td>Тип</td><td>Источник</td><td>Сумма</td><td>Оператор</td><td>Водитель</td></tr></thead>");
-                Iterator<Map.Entry<String, Map>> entries = payList.entrySet().iterator();
-                while (entries.hasNext()) {
-                    Map.Entry<String, Map> entry = entries.next();
-                    Map payRaw = entry.getValue();
-                    out.println("<tr><td>"+payRaw.get("date")+"</td><td>"+payRaw.get("payTypeName")
-                            +"</td><td>"+payRaw.get("payName")+"</td><td>"+payRaw.get("sum")
-                            +"</td><td>"+payRaw.get("user")+"</td>" 
-                            +"</td><td>"+payRaw.get("driver")+"</td></tr>");
-                }
-                out.println("</table><div class='groupPay'><table>");
-                Map<String, HashMap> payGroup = rsql.getGroupPayByOperator(operatorId, begin, end);
-                Set keys = payGroup.keySet();
-                for(Object key : keys){
-                    out.println("<tr><td>"+payGroup.get(key).get("payName")+"</td><td>"+ payGroup.get(key).get("sum") +"</td><tr>");
-                }
-                out.println("</table></div></div>");
-                rsql.con.close();
-
-            }
-        }
-        else{
-            System.out.println("Go to login Page!");
-            request.getRequestDispatcher("/").forward(request, response);
-            return;
-        }
+	try {
+	    response.setContentType("text/html;charset=UTF-8");
+	    AccessControl ac = new AccessControl();
+	    if(ac.isLogIn(request.getSession().getId())){
+		try (PrintWriter out = response.getWriter()) {
+		    int operatorId = 0;
+		    String begin = request.getParameter("begin");
+		    String end = request.getParameter("end");
+		    try{
+			operatorId = Integer.parseInt(request.getParameter("operatorId"));
+		    }
+		    catch(Exception ex){
+			System.out.println("operator ID is not passed! "+request.getParameter("operatorId"));
+		    }
+		    ReportSQL rsql = new ReportSQL();
+		    Map report;
+		    if(request.getParameter("paySource").equals("0"))
+			report = rsql.getAllPayList(operatorId, begin, end);
+		    else
+			report = rsql.getAllPayList(operatorId, begin, end, request.getParameter("paySource"));
+		    Map payList = new TreeMap<>(report);
+		    out.println("<table id='driverReport' class='report'>");
+		    out.println("<thead><tr><td>Дата</td><td>Тип</td><td>Источник</td><td>Сумма</td><td>Оператор</td><td>Водитель</td></tr></thead>");
+		    Iterator<Map.Entry<String, Map>> entries = payList.entrySet().iterator();
+		    while (entries.hasNext()) {
+			Map.Entry<String, Map> entry = entries.next();
+			Map payRaw = entry.getValue();
+			out.println("<tr><td>"+payRaw.get("date")+"</td><td>"+payRaw.get("payTypeName")
+				+"</td><td>"+payRaw.get("payName")+"</td><td>"+payRaw.get("sum")
+				+"</td><td>"+payRaw.get("user")+"</td>"
+					+"</td><td>"+payRaw.get("driver")+"</td></tr>");
+		    }
+		    out.println("</table><div class='groupPay'><table>");
+		    Map<String, HashMap> payGroup = rsql.getGroupPayByOperator(operatorId, begin, end);
+		    Set keys = payGroup.keySet();
+		    for(Object key : keys){
+			out.println("<tr><td>"+payGroup.get(key).get("payName")+"</td><td>"+ payGroup.get(key).get("sum") +"</td><tr>");
+		    }
+		    out.println("</table></div></div>");
+		    
+		}
+	    }
+	    else{
+		System.out.println("Go to login Page!");
+		request.getRequestDispatcher("/").forward(request, response);
+		return;
+	    }
+	} catch (NamingException ex) {
+	    Logger.getLogger(AllPaysReport.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

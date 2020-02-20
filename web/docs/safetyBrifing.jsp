@@ -4,6 +4,8 @@
     Author     : Artem
 --%>
 
+<%@page import="ru.leasicar.workerSql.CarSQL"%>
+<%@page import="ru.leasicar.workerSql.CompanySQL"%>
 <%@page import="java.util.TreeSet"%>
 <%@page import="java.util.SortedSet"%>
 <%@page import="java.util.Map.Entry"%>
@@ -12,6 +14,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
+    CarSQL carSQL = new CarSQL();
+    Map<String, String> modelList = carSQL.modelLiscArr();
+    String[] mounths = {"Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"};
     WayBillSQL wsql = new WayBillSQL();
     String dateStart = null;
     if(request.getParameter("dateStart")!=null){
@@ -19,11 +24,17 @@
     }
     String dateEnd = null;
     if(request.getParameter("dateEnd")!=null){
-        dateEnd = request.getParameter("dateStart");
+        dateEnd = request.getParameter("dateEnd");
     }
     int companyId = Integer.parseInt(request.getParameter("companyId"));
-    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId);
-    
+    CompanySQL cSQL = new CompanySQL();
+    String companyName = cSQL.getCompanyName(companyId);
+    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId, 0);
+    String dayStart = dateStart.split("-")[2];
+    int mounth = Integer.parseInt(dateStart.split("-")[1]);
+    System.out.println(mounth);
+    String mounthStart = mounths[mounth-1];
+    String yerStart = dateStart.split("-")[0];
 %>
 <html>
     <head>
@@ -41,6 +52,23 @@
             td{
                 border: solid #000 1px;
                        height: 8mm;
+            }.titlePage{
+                /*width: 210mm;
+                height: 290mm;  */
+            }
+            .headerTitle{
+                margin-left: 80mm;
+                margin-top: 100mm;
+                text-align: center;
+                width: 50mm;
+            }
+            .dateTitle{
+                margin-left: 100mm;
+                margin-top: 100mm;
+                text-align: right;
+            }
+            .companyTitle{
+                text-align: center;
             }
             @media print {
                 @page {
@@ -76,7 +104,22 @@
             } 
         </style>
     </head>
-    <body>
+    <body><div class="titlePage more">
+            <div class="headerTitle">
+                <font style="font-size: 36px"><b>ЖУРНАЛ</b> </font>
+                <font style="font-size: 25px">по проведению предрейсовых инструктажей </font><br>
+                <font style="font-size: 25px">с водительским составом </font><br>
+                <font style="font-size: 25px">по безопасности дорожного движения</font><br>
+                <font style="font-size: 25px">за 2019 год	</font>
+            </div>
+            <div class="companyTitle">
+                <p style="font-size: 26px"><b><%= companyName %></b></p>	
+            </div>
+            <div class="dateTitle">
+                Начат	"___" ___________ <%= yerStart %><br>
+                Окончен	"___" ___________ <%= yerStart %>
+            </div>
+        </div>
         <% 
             String table1 = "";
             String table2 = "";
@@ -105,10 +148,10 @@
                 counterPP++;
                 table1 = table1 + "<tr><td>" + counterPP + "</td>"
                         + "<td>" + row.get("waybillsDate") + "</td>"
-                        + "<td>" +  row.get("number") + "</td>"
+                        + "<td>" + modelList.get(row.get("model"))+ " <br> " +  row.get("number") +"</td>"
                         + "<td>" + row.get("driver_lastname") + " " + row.get("driver_firstname") + " " + row.get("driver_midName") + "</td>"
-                        + "<td>механик Микаилов А.Н.</td></tr>";
-                table2 = table2 + "<tr><td> ПДД,    погодные условия, правила перевозки</td>"
+                        + "<td>Специалист по БДД Марьин Е.М.</td></tr>";
+                table2 = table2 + "<tr><td> ПДД,    погодные условия, правила перевозки, режим движения, организация отдыха и приема пищи</td>"
                         + "<td></td>"
                         + "<td></td></tr>";
                 

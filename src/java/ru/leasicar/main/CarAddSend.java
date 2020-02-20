@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import ru.leasicar.authorization.AccessControl;
 import ru.leasicar.workerSql.CarSQL;
+import ru.leasicar.workerSql.DriverSQL;
 
 /**
  *
@@ -39,41 +41,49 @@ public class CarAddSend extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
         
-        AccessControl ac = new AccessControl();
-        if(!ac.isLogIn(request.getSession().getId()))
-            return;
-        int userId = ac.getUserId(request.getSession().getId());
-        try (PrintWriter out = response.getWriter()) {
-            Map<String, String[]> param = new HashMap<>();
-            param = request.getParameterMap();
-            Map<String, String> mapToSQL = new HashMap<>();
-            for (Map.Entry<String, String[]> entry : param.entrySet()) {
-                mapToSQL.put(entry.getKey(), entry.getValue()[0]);
-            } 
-            
-            CarSQL wrk = new CarSQL();
-            int carId=0;
-            try{
-                carId = Integer.parseInt(request.getParameter("carId"));
-            }
-            catch(Exception ex){
-                System.out.println("Car ID is not Integer!");
-            }
-            if(carId!=0){
-                wrk.writeCarData(mapToSQL);
-            }
-            else{
-                wrk.addCar(mapToSQL);
-                wrk.changeCarState(0, carId, Integer.parseInt(request.getParameter("carState")));
-                return;
-            }
-            if(!request.getParameter("carState").equals(request.getParameter("oldState")))
-                System.out.println("State was changed!");
-                wrk.changeCarState(wrk.getDriver(carId), carId, Integer.parseInt(request.getParameter("carState")));
-            out.print(0);
-        }
-        catch(Exception ex){
-            System.out.println(ex);
+        try {
+	    
+	    AccessControl ac = new AccessControl();
+	    if(!ac.isLogIn(request.getSession().getId()))
+		return;
+	    int userId = ac.getUserId(request.getSession().getId());
+	    try (PrintWriter out = response.getWriter()) {
+		Map<String, String[]> param = new HashMap<>();
+		param = request.getParameterMap();
+		Map<String, String> mapToSQL = new HashMap<>();
+		for (Map.Entry<String, String[]> entry : param.entrySet()) {
+		    mapToSQL.put(entry.getKey(), entry.getValue()[0]);
+		}
+		
+		CarSQL wrk = new CarSQL();
+		int carId=0;
+		try{
+		    carId = Integer.parseInt(request.getParameter("carId"));
+		}
+		catch(Exception ex){
+		    System.out.println("Car ID is not Integer!");
+		}
+		if(carId!=0){
+		    wrk.writeCarData(mapToSQL);
+		}
+		else{
+		    carId = wrk.addCar(mapToSQL);
+		    wrk.changeCarState(0, carId, Integer.parseInt(request.getParameter("carState")));
+		    return;
+		}
+		if(!request.getParameter("carState").equals(request.getParameter("oldState"))){
+		    System.out.println("State was changed!");
+		    DriverSQL dsql = new DriverSQL();
+		    wrk.changeCarState(dsql.getDriverIdbyCar(carId), carId, Integer.parseInt(request.getParameter("carState")));
+		}
+		out.print(0);
+	    }
+	    catch(Exception ex){
+		System.out.println(ex);
+	    }
+	}
+        catch(NamingException ex){
+            Logger.getLogger(CarAddSend.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

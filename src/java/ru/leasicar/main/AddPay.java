@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,7 +36,7 @@ public class AddPay extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         AccessControl ac = new AccessControl();
         if(ac.isLogIn(request.getSession().getId())){
@@ -50,11 +51,10 @@ public class AddPay extends HttpServlet {
                     String payComment = request.getParameter("comment");
                     PaySQL wsql = new PaySQL();
                     if(typePay==1)
-                        wsql.addPayDriver(driverId, sum, source, userId, payComment);
+                        wsql.addPayDriver(driverId, 1, sum, source, userId, payComment);
                     if(typePay==3)
                         wsql.addPayDeposit(driverId, sum, source, userId);
                     //wsql.addAccrual();
-                    wsql.con.close();
                     out.print("OK");
                 }
                 catch(Exception ex){
@@ -87,7 +87,9 @@ public class AddPay extends HttpServlet {
             Logger.getLogger(AddPay.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddPay.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(AddPay.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
@@ -107,7 +109,9 @@ public class AddPay extends HttpServlet {
             Logger.getLogger(AddPay.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddPay.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (NamingException ex) {
+	    Logger.getLogger(AddPay.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }
 
     /**
