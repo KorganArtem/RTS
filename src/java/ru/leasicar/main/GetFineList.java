@@ -41,15 +41,7 @@ public class GetFineList extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             FineSQL fsql = new FineSQL();
 	    boolean showDeletedCar = false;
-//	    System.out.println(request.getParameter("deleted")+"  "+request.getParameter("discountOutDate"));
-//	    if(request.getParameter("deleted").equals("true"))
-//		showDeletedCar = true;
-//	    if(request.getParameter("discountOutDate")!=null&&request.getParameter("payOutDate")!=null){
-//		System.out.println("Date filter");
-//		out.println(fsql.getAllFineOG(showDeletedCar, request.getParameter("discountOutDate"), request.getParameter("payOutDate")));
-//	    }
-//	    else
-		out.println(fsql.getAllFineOG(showDeletedCar));
+	    out.println(fsql.getAllFineOG(showDeletedCar));
         }
     }
 

@@ -27,7 +27,7 @@ import ru.leasicar.workerSql.DriverSQL;
  * @author korgan
  */
 @WebServlet(name = "LD", urlPatterns = {"/LD"})
-public class ListDriver extends HttpServlet {
+public class ListDriverJ extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +46,16 @@ public class ListDriver extends HttpServlet {
             try (PrintWriter out = response.getWriter()) {
                 DriverSQL wsql = new DriverSQL();
 		out.println("<table id='listDriverTabel' class='listDriver'>"); 
+                ///////////////////////////////////////////////////////////////
+                boolean delete = ac.checkPermission(ac.getUserId(request.getSession().getId()), "deletDriver");
+                String colDel="";
+                if(delete)
+                    colDel="<td></td>";
+                ///////////////////////////////////////////////////////////////
                 boolean showBalance = ac.checkPermission(ac.getUserId(request.getSession().getId()), "showBalance");
                 String colsBalance="";
                 if(showBalance){
-                    colsBalance="<td>Баланс</td><td>Депозит</td><td class='noPrint'> </td><td class='noPrint'></td>";   
+                    colsBalance="<td>Лимит</td><td>Баланс</td><td>Депозит</td><td class='noPrint'> </td><td class='noPrint'></td>";   
                 
 		}
 		Map listDriver=null;
@@ -91,34 +97,36 @@ public class ListDriver extends HttpServlet {
 		}
                 Iterator<Map.Entry<String, Map>> entries = listDriver.entrySet().iterator();
                 out.println("<div class='scrollingBlock'>");
-                out.println("<thead><tr><td>"
-			+ "<input type='checkbox' name='allCh' value='allCh'>"
-				+ "</td><td>Фамилия</td><td>Имя</td><td>Номер</td><td>Марка</td><td>Телефон</td>");
-                out.println(colsBalance+"<td class='noPrint'></td></tr></thead>");
+                out.println("<thead><tr><td>Фамилия</td><td>Имя</td><td>Номер</td><td>Марка</td><td>Телефон</td>");
+                out.println(colsBalance+"<td class='noPrint'></td>"+colDel+"<td class='noPrint'></td></tr></thead>");
                 while (entries.hasNext()) {
                     Map.Entry<String, Map> entry = entries.next();
                     Map<String, String> draverData = entry.getValue();
                     String day_off="";
                     if(draverData.get("dayOff")==null || draverData.get("dayOff").equals("1"))
-                        day_off="<div claa='dayOff'>Выходной</div>";
+                        day_off="<img src='img/day_off.png'/>";
                     else
-                        day_off="<div claa='wrkDay'>Работает</div>";
-                    String colorRow = "green";
+                        day_off="<img src='img/wrk.png'/>";
+                    String colorRow = "white";
                     if(Double.parseDouble((String) draverData.get("driver_current_debt"))<0.0)
                         colorRow="yellow";
                     if(Double.parseDouble((String) draverData.get("driver_current_debt"))<Integer.parseInt((String) draverData.get("driver_limit")))
                         colorRow="red";
+                    String delButton = "";
+                    if(delete)
+                        delButton="<td onClick='delDriver("+entry.getKey()+")'>Уволить</td>";
                     if(showBalance)
-                        colsBalance="<td><div class="+colorRow+" onClick='takePay("+entry.getKey()+")'>"+draverData.get("driver_current_debt")+"</div></td>"
-                            + "<td>"+draverData.get("driver_deposit")+"</td>";
+                        colsBalance="<td>"+draverData.get("driver_limit")+"</td>"
+                            + "<td>"+draverData.get("driver_current_debt")+"</td>"
+                            + "<td>"+draverData.get("driver_deposit")+"</td>"
+                            + "<td class='takeMoney noPrint' onClick='takePay("+entry.getKey()+")'><img src='img/takeMoney.png'/></td>";
                     else
                         colsBalance="";
                     String report = "";
 		    
                     if(showBalance)
-                        report="<td><div class='reportButt' onClick='getReport("+entry.getKey()+")'>отчет</div></td>";
-                    out.println("<tr>"
-			    +"<td><input type='checkbox' name='"+entry.getKey()+"' value='"+entry.getKey()+"'></td>"
+                        report="<td class='wrkday noPrint' onClick='getReport("+entry.getKey()+")'>отчет</td>";
+                    out.println("<tr class="+colorRow+">"
                             + "<td ondblclick='editDriver("+entry.getKey()+")' class='clickable' id='listDriverFirstName"+entry.getKey()+"'>"+draverData.get("driver_lastname")+"</td>"
                             + "<td id='listDriverLastName"+entry.getKey()+"'>"+draverData.get("driver_firstname")+"</td>"
                             /*+ "<td id='listDriverCarNamber"+entry.getKey()+"'>"+draverData.get("driver_carnumber")+"</td>"*/
@@ -126,7 +134,8 @@ public class ListDriver extends HttpServlet {
                             + "<td>"+draverData.get("modelName")+"</td>"
                             + "<td class='phoneInList'>"+draverData.get("driver_phone_number")+"</td>"
                             /*+ "<td>"+draverData.get("modelName")+"</td>"*/
-                            + colsBalance     
+                            + colsBalance 
+                            + delButton        
                             + "<td class='wrkday noPrint'>"+day_off+"</td>"
                             + report
                                     + "<td class='docsCol' driverId='"+entry.getKey()+"' >");  //driverId='"+entry.getKey()+"'
@@ -165,13 +174,13 @@ public class ListDriver extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
-            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-	    Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
 	}
     }
 
@@ -189,13 +198,13 @@ public class ListDriver extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
-            Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-	    Logger.getLogger(ListDriver.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(ListDriverJ.class.getName()).log(Level.SEVERE, null, ex);
 	}
     }
 
