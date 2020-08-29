@@ -541,4 +541,42 @@ public class DriverSQL {
 	con.close();
         return driverId;
     }
+    public int getDriverCount() throws SQLException{
+	Connection con = ds.getConnection();
+        int driverCount = 0;
+        Statement St = con.createStatement();
+        ResultSet Rs = St.executeQuery("SELECT count(`driver_id`) as `total` FROM `drivers` WHERE `driver_deleted`=0;");
+	if(Rs.next())
+	    driverCount=Rs.getInt("total");
+	Rs.close();
+        St.close();
+	con.close();
+	return driverCount;
+    }
+    
+    public int addToday() throws SQLException{
+	Connection con = ds.getConnection();
+        int driverCount = 0;
+        Statement St = con.createStatement();
+        ResultSet Rs = St.executeQuery("SELECT count(`driver_id`) as `total` FROM `drivers` WHERE `driver_deleted`=0 AND `driverStartDate`=curdate();");
+	if(Rs.next())
+	    driverCount=Rs.getInt("total");
+	Rs.close();
+        St.close();
+	con.close();
+	return driverCount;
+    }
+    
+    public int fireToday() throws SQLException{
+	Connection con = ds.getConnection(); 
+        int driverCount = 0;
+        Statement St = con.createStatement();
+        ResultSet Rs = St.executeQuery("SELECT count(`driver_id`) as `total` FROM `drivers` WHERE `driver_deleted`=0 AND `driverEndDate`=curdate();");
+	if(Rs.next())
+	    driverCount=Rs.getInt("total");
+	Rs.close();
+        St.close();
+	con.close();
+	return driverCount;
+    }
 }

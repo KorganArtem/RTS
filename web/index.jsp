@@ -4,6 +4,8 @@
     Author     : korgan
 --%>
 
+<%@page import="ru.leasicar.workerSql.PaySQL"%>
+<%@page import="ru.leasicar.workerSql.DriverSQL"%>
 <%@page import="java.util.logging.Logger"%>
 <%@page import="ru.leasicar.main.ListDriver"%>
 <%@page import="java.util.logging.Level"%>
@@ -21,6 +23,8 @@
         <%
         return ; 
     }
+    DriverSQL dsql = new DriverSQL();
+    PaySQL psql = new PaySQL();
     String carlist = "";
     DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     String dateDiscountOut = format.format(new Date().getTime()+60*60*24*20*1000);
@@ -98,25 +102,26 @@
         <div id="header">
         <div id="logo">RTS-SOFT</div>
         
-            <div id="Top_1">
+	<div id="Top_1" class="topPanelItem topActive">
+		<% if(ac.checkPermission(ac.getUserId(request.getSession().getId()), "showBalance")){ %>
                 <div id="Top_1_LeftPart">
                 <span>Суммарный баланс:</span>
-                <span class="Top_Margin_Right Top_Value" id="Top_1_SummBalanceValue">-100000</span>
+                <span class="Top_Margin_Right Top_Value" id="Top_1_SummBalanceValue"><%= dsql.getCurentGlobalBalance() %></span>
                 <span >Поступления:</span>
-                <span class="Top_Value" id="Top_1_Incomes">300000</span>
+                <span class="Top_Value" id="Top_1_Incomes"><%= psql.getPayToday() %></span>
                 </div>
-                
-                <div id="Top_1_RightPart" class="topPanelItem">
+                <%}%>
+                <div id="Top_1_RightPart" class="topPanelItem topActive">
                 <span>Работают:</span>
-                <span class="Top_Value" id="Top_1_Working">80</span>
+                <span class="Top_Value" id="Top_1_Working"><%= dsql.getDriverCount() %></span>
                 <i class="Top_Margin_Right Top_Value fas fa-caret-down"></i>
                 
                 <span>Принято:</span>
-                <span class="Top_Value" id="Top_1_AcceptedHR">3</span>
+                <span class="Top_Value" id="Top_1_AcceptedHR"><%= dsql.addToday() %></span>
                 <i class="Top_Margin_Right Top_Value fas fa-caret-down"></i>
                     
                 <span>Уволено:</span>
-                <span class="Top_Value" id="Top_1_Uvoleno">2</span>
+                <span class="Top_Value" id="Top_1_Uvoleno"><%= dsql.fireToday() %></span>
                 <i class="Top_Value fas fa-caret-down"></i>
                 </div>
                 
@@ -177,13 +182,10 @@
                   <div ><i class="left-menu-icon fas fa-users"></i> Персонал</div>
                   <ul>
                       <li>
-                      <div id='driverListAll'>Все</div>
+                      <div id='driverListButton'>Все</div>
                     </li>
                       <li>
                       <div id='driverListHR'>Соискатель</div>
-                    </li>
-                    <li>
-                      <div id='driverListButton'>Работающие</div>
                     </li>
                     <li>
                       <div id="driversListDeleted">Уволенные</div>   
@@ -195,14 +197,14 @@
                 </li>
                 <li>
                   <div id='carListButton'><i class="left-menu-icon fas fa-car"></i> Автопарк</div>
-                <ul>
+                <!--ul>
                     <li>
                       <div id="carListButtonAll">Все</div>
                     </li>
                     
 
 
-                  </ul>
+                  </ul-->
                 </li>
                 
                 <li>
@@ -298,7 +300,7 @@
         <div id='mainContainer'>
             <div id='listDriverBox' class='itemDisplay'>
                 <div id="action-panel">
-                    <a  class="add-rows-a-btn" id="add-rows" href="">
+                    <a  class="add-rows-a-btn" id="add-rows" onclick="showAddDriverForm()">
                         
                         <div class="add-rows-div-btn hover-plus">
                             
@@ -308,7 +310,7 @@
                         
                         <span> Выбрано:</span> <span id="selected-rows">1</span>
                     
-                    <a class="first-and-second-a-btn" id="download" href="">
+                    <a class="first-and-second-a-btn" id="download" >
                         
                         <i class="after-add-i-btn hover-plus fas fa-download"></i> 
                         
@@ -317,11 +319,11 @@
                         </a>
                     
                         
-                    <a class="first-and-second-a-btn"  id="do-print" href="">
+                    <a class="first-and-second-a-btn"  id="do-print" >
                         
                         <i class="after-add-i-btn hover-plus fas fa-print"></i> <span  class="after-add-span-btn">Печать</span></a>
                     
-                        <a class="third-a-btn" id="sms" href="">
+                        <a class="third-a-btn" id="sms" >
                             
                             <i class="after-add-i-btn hover-plus  fas fa-sms"></i> <span class="after-add-span-btn">Сообщение</span></a>
                     </div>
@@ -373,13 +375,13 @@
                 <table id="tableFine">
                     <thead>
                         <tr>
-                            <th>Номер машины</th>
+                            <th>Г/Н</th>
                             <th>Дата</th>
-                            <th>Номер постановления</th>
+                            <th>Постановление</th>
                             <th>Адрес нарушения</th>
                             <th>Статья</th>
-                            <th>Нарушитель</th>
-                            <th>Статья</th>
+                            <th>Водитель</th>
+                            <th>Сумма</th>
                             <th>Скидка</th>
                             <th>Скидка до</th>
                             <th>Оплатить до</th>

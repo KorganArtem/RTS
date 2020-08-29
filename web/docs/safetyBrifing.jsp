@@ -29,7 +29,7 @@
     int companyId = Integer.parseInt(request.getParameter("companyId"));
     CompanySQL cSQL = new CompanySQL();
     String companyName = cSQL.getCompanyName(companyId);
-    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId, 0);
+    Map<Integer, Map> wbList = wsql.getWayBillTabel(dateStart, dateEnd, companyId, 0, true);
     String dayStart = dateStart.split("-")[2];
     int mounth = Integer.parseInt(dateStart.split("-")[1]);
     System.out.println(mounth);

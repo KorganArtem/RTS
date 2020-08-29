@@ -622,8 +622,21 @@
 	</TD>
 	<TD>
 	    Г. МОСКВА И <BR> МОСКОВСКАЯ ОБЛАСТЬ
+	    <TABLE STYLE="border: 2.25pt solid #000000;">
+		<TR>
+		    <TD>
+			одноразовые маски 5шт. <br>
+			дезинфицирующие салфетки 5шт. <br> 
+			кожный антисептик 1 шт. <br>
+			дезинфицирующее средство 1 шт. <br>
+			получил ____________
+
+		    </TD>
+		</TR>
+	    </TABLE>
 	</TD>
     </TR>
+    
 </TABLE>
 		
 		
@@ -672,8 +685,6 @@
 	Телефоны организации: <%= compData.get("phone") %></FONT></FONT></P>
 	
 <TABLE>
-	<TR ><TD WIDTH=690 HEIGHT=15 style="border-bottom: 1pt solid #000000;"> <TD></TR>
-	<TR ><TD WIDTH=690 HEIGHT=15 style="border-bottom: 1pt solid #000000;"> <TD></TR>
 	<TR ><TD WIDTH=690 HEIGHT=15 style="border-bottom: 1pt solid #000000;"> <TD></TR>
 	<TR ><TD WIDTH=690 HEIGHT=15 style="border-bottom: 1pt solid #000000;"> <TD></TR>
 	<TR ><TD WIDTH=690 HEIGHT=15 style="border-bottom: 1pt solid #000000;"> <TD></TR>

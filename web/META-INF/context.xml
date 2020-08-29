@@ -8,5 +8,5 @@
 	      username="root"
 	      password="onVEn0MGbF"
 	      driverClassName="com.mysql.jdbc.Driver"
-	      url="jdbc:mysql://lc.2kor.ru:3306/test"/>
+	      url="jdbc:mysql://lc.2kor.ru:3306/RTS"/>
 </Context>

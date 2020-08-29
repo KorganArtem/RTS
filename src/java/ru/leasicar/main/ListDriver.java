@@ -100,9 +100,9 @@ public class ListDriver extends HttpServlet {
                     Map<String, String> draverData = entry.getValue();
                     String day_off="";
                     if(draverData.get("dayOff")==null || draverData.get("dayOff").equals("1"))
-                        day_off="<div claa='dayOff'>Выходной</div>";
+                        day_off="<div class='dayOff'>Выходной</div>";
                     else
-                        day_off="<div claa='wrkDay'>Работает</div>";
+                        day_off="<div class='wrkDay'>Работает</div>";
                     String colorRow = "green";
                     if(Double.parseDouble((String) draverData.get("driver_current_debt"))<0.0)
                         colorRow="yellow";
@@ -138,8 +138,6 @@ public class ListDriver extends HttpServlet {
                         out.println("<img src='img/doc2.png' alt='' title='"+draverData.get("lastbill")+"'/></td></tr>");
                 }
                 out.println("</table></div>");
-                if(showBalance)
-                    out.println("Итоговый баланс: "+wsql.getCurentGlobalBalance());
                 
             }
         }

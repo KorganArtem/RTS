@@ -287,104 +287,14 @@ and open the template in the editor.
 .takeMoney img{
     height: 30px;
 }
-
-.wrkDay
-{
-    color:white;
-    background: #4caf50;
-    border-radius: 99px;
-    text-align: center;
-width: 86px;
-        margin-left: auto;
-    margin-right: auto;
-}
-
-.odd
-{
-    
-    background-color: #f7f7f7!important;
-}
-.row:hover
-{
-    background: #faf9e9!important;
-}
-
-input[type='checkbox']:after{
-    line-height: 1.5em;
-    content: '';
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    margin-top: -4px;
-    margin-left: -4px;
-    border: 1px solid rgb(192,192,192);
-    border-radius: 0.25em;
-    background: rgb(224,224,224);
-}
-
-input[type='checkbox'], 
-input[type='checkbox']:active, 
-input[type='checkbox']:checked, 
-input[type='checkbox']:focus {
-    outline: none;
-}
-
-input[type='checkbox']:checked:after {
-width: 15px;
-    height: 15px;
-    border: 1px solid #383a4538;
-    background: URL(../css/checked.jpg);
-    background-size: cover;
-}
-.sorting_1
-{text-align: center;}
-.sorting_asc
-{text-align: center;}
-.sorting_desc
-{text-align: center;}
-
-
-
-.dataTables_scroll
-{
-border-left: 1px solid #e8e8e8;
-border-top: 1px solid #e8e8e8;}
-
-td
-    {border-right: 1px solid #e8e8e8;border-bottom: 1px solid #e8e8e8!important;}
-
-.dayOff
-{
-    background: #7a8fdd;
-    color: white;
-    border-radius: 99px;
-    text-align: center;
-width: 86px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.reportButt
-{
-     background: #777777;
-    color: white;
-    border-radius: 99px;
-    text-align: center;
-    cursor: pointer;
-    width: 86px;
-        margin-left: auto;
-    margin-right: auto;
-}
-
-.green{color:#4caf50;cursor: pointer}
 .white{
     background-color: white;
 }
 .yellow{
-    color:#2dbada;cursor: pointer;
+    background-color: #6eff002b !important;
 }
 .red{
-    color:red;cursor: pointer;
+    background-color: rgba(255, 59, 0, 0.45098039215686275) !important;
 }
 .listDriverTabel{
     overflow: scroll;

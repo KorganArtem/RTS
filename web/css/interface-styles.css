@@ -1,4 +1,11 @@
-      html{ overflow:  hidden; }
+
+.topPanelItem{
+    display: none;
+}
+.topActive{
+    display: block;
+}
+html{ overflow:  hidden; }
       
 body {
     padding: 0!important;
@@ -20,7 +27,7 @@ body {
     margin:0!important;
     }
     
-    .ui-menu-item-wrapper 
+    .ui-menu-item-wrapper   
       {
           padding: 15px 15px 10px 6px!important;
       }
@@ -294,7 +301,7 @@ outline: none;
       #listDriverTabel_filter
       {
       position: fixed;
-    top: 75px!important;
+    top: 78px!important;
     right: 20px!important;
       }
       .yellow-button
@@ -401,47 +408,52 @@ position: relative;
       
       
       .Top_Margin_Right_Large{margin-right: 45px;}
-      #selected-rows{margin-right: 60px;}
+      #selected-rows{margin-right: 42px;}
       
       
-       .first-and-second-a-btn{color: rgba(0, 0, 0, 0.65);text-decoration: none!important;margin-right: 0;}
+       .first-and-second-a-btn{color: rgba(0, 0, 0, 0.65);text-decoration: none!important;    margin-right: -15px;}
        .add-rows-a-btn{color: rgba(0, 0, 0, 0.65);text-decoration: none!important;margin-right: 15px;}
       .third-a-btn{color: rgba(0, 0, 0, 0.65);text-decoration: none!important;}
       
       
       
-      .after-add-i-btn{background: #f7eb70;
+      .after-add-i-btn{    background: #f7eb70;
     border-radius: 99px;
     text-align: center;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-                        border: 1px solid #383a4538;    position: relative;
-          z-index: 1;}
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    border: 1px solid #383a4538;
+    position: relative;
+    z-index: 1;}
       .add-rows-div-btn{background: #f7eb70;
     border-radius: 99px;
     text-align: center;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-      border: 1px solid #383a4538;}
+       width: 25px;
+    height: 25px;
+    line-height: 25px;
+      border: 1px solid #383a4538;    top: 4px;
+    left: 5px;
+}
       
-    .after-add-span-btn{border-radius: 99px;
+    .after-add-span-btn{    border-radius: 99px;
     border: 1px solid #383a4561;
-    padding: 0 10px 2px 19px;
+    padding: 0 10px 2px 23px;
     position: relative;
     left: -22px;
+    top: -1px;
     z-index: 0;
     box-shadow: inset 0 -5px 5px rgba(0,0,0,0.05);
-      color: rgba(0, 0, 0, 0.65)}
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;}
       
       #openDriverFilter > i
       {font-size: 20px;
     position: absolute;
     right: 283px;
-          top: 81px;}
+    top: 86px;}
     
     .control-btns-div{left: 200px;
-       top: 74px;
+       top: 79px;
       position: absolute;}
       #action-panel{font-size: 15px!important}

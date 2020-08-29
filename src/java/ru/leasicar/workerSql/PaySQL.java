@@ -104,4 +104,16 @@ public class PaySQL {
 	con.close();
         return forRet;
     }
+    public double getPayToday() throws SQLException{
+	Connection con = ds.getConnection();
+        Statement st = con.createStatement();
+	double sum = 0.0;
+        ResultSet rs = st.executeQuery("SELECT sum(`sum`) as gotTo FROM `pay` WHERE `date` > curdate() and `type`=1");
+	if(rs.next())
+	    sum=rs.getDouble("gotTo");
+	rs.close();
+        st.close();
+	con.close();
+	return sum;
+    }
 }
